@@ -116,5 +116,22 @@ of them. To get the public IP from Azure, run
         If you destroyed the datasci environment and are rebuilding it, you have to remove the datasci node 
         information from ~/.ssh/known_hosts in order to avoid 'WARNING: POSSIBLE DNS SPOOFING DETECTED!' warnings from SSH.
         Also, it helps to manually connect to datasci-\* nodes with ssh so proper keys are exchanged with new machines.**
-1. 
-##
+1. The last application to get installed should be Jupyter Notebook. 
+
+######## To open a Jupyter notebook on one of the nodes
+ 1. Note the output printed by ansible from the above command. It should look similar to this.
+    ```
+    TASK [notebook : debug] ********************************************************
+    ok: [datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net] => {
+        "out.stderr_lines": [
+            "[I 21:45:23.470 NotebookApp] Serving notebooks from local directory: /home/datasci_admin", 
+            "[I 21:45:23.470 NotebookApp] The Jupyter Notebook is running at:", 
+            "[I 21:45:23.471 NotebookApp] http://localhost:8888/?token=c153e52cb3c6ad4a5368df00cd8fe4f6116c35f48152fd08", 
+            "[I 21:45:23.471 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).", 
+            "[C 21:45:23.474 NotebookApp] ", 
+    ```
+1. Setup ssh port forwarding for port 8888 (which is the default port used by Jupyter notebook server)
+    ```
+    ssh -N -f -L localhost:8888:localhost:8888 datasci_admin@datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net
+   ```
+1. Open the url from step 1 (i.e http://localhost:8888/?token=c153e52cb3c6ad4a5368df00cd8fe4f6116c35f48152fd08") in a browser on localhost   

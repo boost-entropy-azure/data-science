@@ -1,0 +1,17 @@
+- name: Install pip
+  apt:
+    name: python-pip
+    state: latest
+
+- name: Upgrade pip
+  shell: pip install --upgrade pip
+
+- name: Install Jupyter notebook using pip
+  pip:
+    name: notebook
+
+- name: Start the notebook server
+  shell: nohup jupyter notebook --no-browser --allow-root &
+  register: out
+
+- debug: var=out.stderr_lines
