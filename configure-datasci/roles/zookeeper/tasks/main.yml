@@ -1,0 +1,4 @@
+---
+  - include: zookeeper-install.yml
+    tags:
+      - zokeeper-install

@@ -1,0 +1,15 @@
+---
+- hosts: all
+  remote_user: datasci_admin
+  become: true
+  roles:
+    - role: "zookeeper"
+    - {
+      role: "kafka",
+      kafka_hosts: "{{ groups.kafka | list }}",
+      kafka_zookeeper_hosts: "{{ zookeeper_hosts | list }}",
+      kafka_version: 2.4.0,     # Kafka version override.
+      kafka_scala_serverion: 2.11 # Scala version override.
+    }
+    - role: "spark"
+    - role: "spark-cluster-admin"

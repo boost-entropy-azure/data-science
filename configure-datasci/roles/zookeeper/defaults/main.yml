@@ -1,0 +1,5 @@
+zookeeper_server:
+  port: 2181
+  host_name: 10.0.1.4
+
+zookeeper_port_test_timeout_seconds: 120
