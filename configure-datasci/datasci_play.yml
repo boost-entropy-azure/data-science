@@ -1,16 +1,25 @@
 ---
-- hosts: all
+- name: "Install Azure CLI and Query Azure components"
+  hosts: 127.0.0.1
+  connection: local
+  roles:
+    - role: "azure-cli"
+
+- name: "Configure VM nodes"
+  hosts: all
   remote_user: datasci_admin
   become: true
   roles:
-#    - role: "zookeeper"
-#    - {
-#      role: "kafka",
-#      kafka_hosts: "{{ groups.kafka | list }}",
-#      kafka_zookeeper_hosts: "{{ zookeeper_hosts | list }}",
-#      kafka_version: 2.4.0,     # Kafka version override.
-#      kafka_scala_serverion: 2.11 # Scala version override.
-#    }
-#    - role: "spark"
-#    - role: "spark-cluster-admin"
+    - role: "common"
+    - role: "zookeeper"
+    - {
+      role: "kafka",
+      kafka_hosts: "{{ groups.kafka | list }}",
+      kafka_zookeeper_hosts: "{{ zookeeper_hosts | list }}",
+      kafka_version: 2.4.0,     # Kafka version override.
+      kafka_scala_serverion: 2.11 # Scala version override.
+    }
+    - role: "azure-connector"
+    - role: "spark"
+    - role: "spark-cluster-admin"
     - role: "notebook"

@@ -116,8 +116,21 @@ of them. To get the public IP from Azure, run
         If you destroyed the datasci environment and are rebuilding it, you have to remove the datasci node 
         information from ~/.ssh/known_hosts in order to avoid 'WARNING: POSSIBLE DNS SPOOFING DETECTED!' warnings from SSH.
         Also, it helps to manually connect to datasci-\* nodes with ssh so proper keys are exchanged with new machines.**
-1. The last application to get installed should be Jupyter Notebook. 
+1. The last application to get installed should be Jupyter Notebook.
+`
+1. Add device to the provisioned IoT Hub and copy its primary connection string to NS Android app.
+1. Build the NS app and send some records
 
+###### Verify 
+1. zookeeper: 
+    1. `telnet localhost 2181`
+    1. `ruok`
+    1. should receive `imok` response
+1. kafka
+    1. in first terminal, add message `/usr/local/kafka/bin/kafka-console-producer.sh --broker-list locahost:9092 --topic IoTHub` (or skip if you're sending messages from Android NS app)
+    1. type in a message or two and close the producer console with Ctrl-D (or skip this step if you're sending messages from the Android NS app)
+    1. in second terminal, start consumer: `/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic IoTHub --from-beginning  --partition 0`
+    
 ######## To open a Jupyter notebook on one of the nodes
  1. Note the output printed by ansible from the above command. It should look similar to this.
     ```

@@ -1,0 +1,8 @@
+---
+- include: iothub-connector-install.yml
+  tags:
+    - iot-hub-connector-install
+
+- include: start-iothub-connector.yml
+  tags:
+    - start-iothub-connector

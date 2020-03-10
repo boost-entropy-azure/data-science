@@ -1,0 +1,16 @@
+- name: Install pip
+  apt:
+    name: python-pip
+    state: latest
+
+- name: Upgrade pip
+  shell: pip install --upgrade pip
+
+- name: Install setuptools
+  pip:
+    name: setuptools
+
+- name: Install psutil
+  pip:
+    name: psutil
+

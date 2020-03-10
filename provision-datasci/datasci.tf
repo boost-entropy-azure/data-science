@@ -66,7 +66,7 @@ resource "azurerm_public_ip" "datasci_ip" {
     location                     = azurerm_resource_group.datasci_group.location
     resource_group_name          = azurerm_resource_group.datasci_group.name
     allocation_method            = "Static"
-    domain_name_label            = join("", ["datasci-", var.environment, "${count.index}"])
+    domain_name_label            = join("", ["datasci-", var.environment, count.index])
 }
 
 # Generate random text for a unique storage account name
@@ -91,7 +91,7 @@ resource "azurerm_storage_account" "datasci_storage" {
 # Create virtual machine
 resource "azurerm_virtual_machine" "datasci_node" {
     count                 = var.node_count
-    name                  = join("", ["datasci-", var.environment, "${count.index}"])
+    name                  = join("", ["datasci-", var.environment, count.index])
     location              = azurerm_resource_group.datasci_group.location
     resource_group_name   = azurerm_resource_group.datasci_group.name
     network_interface_ids = [element(azurerm_network_interface.datasci_nic.*.id, count.index)]
@@ -112,7 +112,7 @@ resource "azurerm_virtual_machine" "datasci_node" {
     }
 
     os_profile {
-        computer_name  = join("", ["datasci", var.environment, "${count.index}"])
+        computer_name  = join("", ["datasci", var.environment, count.index])
         admin_username = "datasci_admin"
     }
 
@@ -127,5 +127,27 @@ resource "azurerm_virtual_machine" "datasci_node" {
     boot_diagnostics {
         enabled = "true"
         storage_uri = azurerm_storage_account.datasci_storage.primary_blob_endpoint
+    }
+
+}
+
+# Create IoT hub
+resource "azurerm_iothub" "datasci_iothub" {
+    name                        = join("-", ["datasci", var.environment, "iothub"])
+    resource_group_name         = azurerm_resource_group.datasci_group.name
+    location                    = azurerm_resource_group.datasci_group.location
+
+    sku {
+        name = "B1"
+        capacity = "1"
+        tier = "Basic"
+    }
+
+    route {
+        name           = "defaultroute"
+        source         = "DeviceMessages"
+        condition      = "true"
+        endpoint_names = ["events"]
+        enabled        = true
     }
 }

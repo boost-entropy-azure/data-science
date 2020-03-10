@@ -1,5 +1,5 @@
 ---
-zookeeper_hosts: datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net
+zookeeper_hosts: ['localhost']
 kafka_zookeeper_port: 2181
 
 kafka_hosts: # <-- must be overridden further up the chain
