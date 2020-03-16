@@ -1,9 +1,37 @@
 ---
-- name: "Install Azure CLI and Query Azure components"
-  hosts: 127.0.0.1
-  connection: local
+- hosts: localhost
+  gather_facts: True
+  check_mode: no
+  tasks:
+    - name: "Extract host_group name from inventory variable"
+      shell: echo "{{ inventory }}" | sed 's/\(.*\):\(.*\):\(.*\)/\2/'
+      register: host_group
+
+    - name: "Extract host name from inventory variable"
+      shell: echo "{{ inventory }}" | sed 's/\(.*\):\(.*\):\(.*\)/\3/'
+      register: host_name
+
+    - name: "Add public ip addresses to an dynamic inventory"
+      add_host:
+        name: "{{ host_name.stdout_lines[0] }}"
+        groups: "{{ host_group.stdout_lines[0] }}"
   roles:
-    - role: "azure-cli"
+      - role: "azure-cli"
+      - role: "iothub-query"
+
+- hosts: all
+  gather_facts: False
+  check_mode: no
+  become: True
+  tasks:
+    - name: "Install python 2.7"
+      raw: >
+        test -e /usr/bin/python ||
+        (
+          (sudo apt install python)
+        )
+      args:
+        creates: /usr/bin/python
 
 - name: "Configure VM nodes"
   hosts: all
@@ -14,7 +42,7 @@
     - role: "zookeeper"
     - {
       role: "kafka",
-      kafka_hosts: "{{ groups.kafka | list }}",
+      kafka_hosts: "{{ groups.nodes | list }}",
       kafka_zookeeper_hosts: "{{ zookeeper_hosts | list }}",
       kafka_version: 2.4.0,     # Kafka version override.
       kafka_scala_serverion: 2.11 # Scala version override.

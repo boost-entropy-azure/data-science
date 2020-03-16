@@ -1,3 +1,8 @@
+variable "admin_username" {
+  type = string
+  description = "Admin user"
+}
+
 variable "location" {
   type        = string
   description = "Region to provision resources in"

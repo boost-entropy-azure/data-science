@@ -1,0 +1,10 @@
+---
+- name: "Check if iothub connector config already exists"
+  stat:
+    path: /tmp/connect-iothub-source.properties
+  register: config_status
+
+- include: iothub-query.yml
+  when: not config_status.stat.exists
+  tags:
+    - query-iot-hub

@@ -1,7 +1,8 @@
 ---
-- name: "Get resource group"
-  shell: grep -A 1 master inventory.ini | awk 'NR>1 { print $1 }' | cut -d'.' -f1 | sed 's/[0-9+]$//' | sed 's/$/-group/' | sed 's/-/_/g'
+- name: "Extract resource group name from inventory variable"
+  shell: echo "{{ inventory }}" | sed 's/\(.*\):\(.*\):\(.*\)/\1/'
   register: resource_group
+  when: resource_group.stdout_lines[0] is not defined
 
 - debug:
     var: resource_group.stdout_lines[0]
@@ -9,6 +10,7 @@
 - name: "Get the count of iot hubs"
   shell: az iot hub list --resource-group {{ resource_group.stdout_lines[0] }} | grep path | wc -l
   register: iothub_count
+  when: iothub_count.stdout_lines[0] is not defined
 
 - debug:
     var: iothub_count.stdout_lines[0]
@@ -20,6 +22,7 @@
 - name: "Get IoT hub name"
   shell: az iot hub list | grep path | awk '{print $2}' | sed 's/[",]//g'
   register: iothub_name
+  when: iothub_name.stdout_lines[0] is not defined
 
 - debug:
     var: iothub_name.stdout_lines[0]
@@ -30,6 +33,7 @@
 - name: "Get iot hub connection endpoint"
   shell: az iot hub show --name {{ iothub_name.stdout_lines[0] }} | grep -m 1 endpoint | awk '{print $2}' | sed 's/[",]//g'
   register: iothub_endpoint
+  when: iothub_endpoint.stdout_lines[0] is not defined
 
 - debug:
     var: iothub_endpoint.stdout_lines[0]
@@ -37,6 +41,7 @@
 - name: "Get shared access key for service policy"
   shell: az iot hub policy show --name service --hub-name {{ iothub_name.stdout_lines[0] }} | grep primaryKey | awk '{print $2}' | sed 's/[",]//g'
   register: iothub_key
+  when: iothub_key.stdout_lines[0] is not defined
 
 - debug:
     var: iothub_key.stdout_lines[0]
@@ -44,9 +49,10 @@
 - name: "Get partition count"
   shell:  az iot hub show --name {{ iothub_name.stdout_lines[0] }} | grep partitionCount | awk '{print $2}' | sed 's/,//g'
   register: iothub_partition_count
+  when: iothub_partition_count.stdout_lines[0] is not defined
 
 - debug:
     var: iothub_partition_count.stdout_lines[0]
 
 - name: "Render and write out the connector conf file"
-  template: src=usr/local/kafka/config/connect-iothub-source.properties.j2 dest="/tmp"
+  template: src=usr/local/kafka/config/connect-iothub-source.properties.j2 dest=/tmp/connect-iothub-source.properties
