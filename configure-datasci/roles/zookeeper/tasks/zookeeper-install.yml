@@ -1,5 +1,5 @@
 ---
-- name: "Download and install Zookepper packages"
+- name: "Download and install Zookeeper packages"
   apt: name=zookeeper
 
 - name: "Install Zookeeper daemon"
@@ -12,7 +12,7 @@
 
 - name: "Wait for zookeeper to come up and open its server port"
   wait_for: port={{ zookeeper_server.port }} host={{ zookeeper_server.host_name }} connect_timeout={{ zookeeper_port_test_timeout_seconds }} timeout={{ zookeeper_port_test_timeout_seconds }}
-  ignore_errors: yes
+  ignore_errors: no
   register: healthcheck
   tags:
     - zookeeper-healthcheck

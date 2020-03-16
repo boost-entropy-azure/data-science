@@ -1,0 +1,6 @@
+---
+- include: azure-cli-install.yml
+  tags:
+    - azure-cli-install
+
+- include: query-iot-hub.yml
