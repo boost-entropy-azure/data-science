@@ -154,10 +154,12 @@ resource "azurerm_iothub" "datasci_iothub" {
 }
 
 module "ansible_provisioner" {
-    source    = "github.com/cloudposse/tf_ansible"
+    source    = "github.com/chesapeaketechnology/terraform-null-ansible"
 
-    arguments = [join("", ["--user=", var.admin_username])]
-    envs      = [for pip in azurerm_public_ip.datasci_ip : join(":", ["inventory=${pip.resource_group_name}", "${pip.tags.name}", "${pip.ip_address}"])]
+    rgroup    = azurerm_public_ip.datasci_ip.0.resource_group_name
+    inventory = [for pip in azurerm_public_ip.datasci_ip : join("", ["${pip.tags.name}:", "${pip.ip_address}"])]
+
+    arguments = [join("", ["--user=", var.admin_username, " -K "])]
     playbook  = "../configure-datasci/datasci_play.yml"
     dry_run   = false
 }

@@ -67,22 +67,24 @@ Common commands:
     ```
 1. Install pip, `sudo apt install python-pip`
 1. `pip install ansible[azure]`
+1. Disable host checking by uncommenting `host_key_checking = False` under `/etc/ansible/ansible.conf`
 
 ###### Provision a Virtual Machine
 1. `cd provision-datasci`
+1. Generate an SSH key pair: `ssh-keygen -C ""`
 1. `terraform init`
 1. `terraform apply datasci.tf -var-file=datasci_vars.tfvars`
-1. Generate an SSH key pair: `ssh-keygen -C ""`
 1. log into the azure portal and observe the resources created above
     1. to tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`. Eventually you should see the following
 1. The above script will create a set of Virtual Machines
 
 ###### Verify vm is setup correctly
-1. zookeeper: 
+1. ssh to the vm `ssh datasci_admin@datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net`
+1. check zookeeper: 
     1. `telnet localhost 2181`
     1. `ruok`
     1. should receive `imok` response
-1. kafka
+1. check kafka
     1. in first terminal, add message `/usr/local/kafka/bin/kafka-console-producer.sh --broker-list locahost:9092 --topic IoTHub` (or skip if you're sending messages from Android NS app)
     1. type in a message or two and close the producer console with Ctrl-D (or skip this step if you're sending messages from the Android NS app)
     1. in second terminal, start consumer: `/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic IoTHub --from-beginning  --partition 0`

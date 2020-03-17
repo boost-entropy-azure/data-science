@@ -1,26 +1,33 @@
 ---
 - hosts: localhost
-  gather_facts: True
+  gather_facts: yes
   check_mode: no
   tasks:
-    - name: "Extract host_group name from inventory variable"
-      shell: echo "{{ inventory }}" | sed 's/\(.*\):\(.*\):\(.*\)/\2/'
-      register: host_group
+    - name: "Parse host ip addresses from inventory list"
+      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | sed 's/\(.*\)://g'
+      register: hosts
 
-    - name: "Extract host name from inventory variable"
-      shell: echo "{{ inventory }}" | sed 's/\(.*\):\(.*\):\(.*\)/\3/'
-      register: host_name
+    - debug:
+        var: hosts
+
+    - name: "Parse host groups from inventory list"
+      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | sed 's/:\(.*\)//g'
+      register: group_list
+
+    - debug:
+        var: group_list
 
     - name: "Add public ip addresses to an dynamic inventory"
       add_host:
-        name: "{{ host_name.stdout_lines[0] }}"
-        groups: "{{ host_group.stdout_lines[0] }}"
+        name: "{{ item }} "
+        groups: "{{ group_list.stdout_lines[0] }}"
+      with_items: "{{ hosts.stdout_lines }}"
   roles:
       - role: "azure-cli"
       - role: "iothub-query"
 
 - hosts: all
-  gather_facts: False
+  gather_facts: yes
   check_mode: no
   become: True
   tasks:

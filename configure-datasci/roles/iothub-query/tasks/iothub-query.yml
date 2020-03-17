@@ -1,14 +1,6 @@
 ---
-- name: "Extract resource group name from inventory variable"
-  shell: echo "{{ inventory }}" | sed 's/\(.*\):\(.*\):\(.*\)/\1/'
-  register: resource_group
-  when: resource_group.stdout_lines[0] is not defined
-
-- debug:
-    var: resource_group.stdout_lines[0]
-
 - name: "Get the count of iot hubs"
-  shell: az iot hub list --resource-group {{ resource_group.stdout_lines[0] }} | grep path | wc -l
+  shell: az iot hub list --resource-group {{ rgroup }} | grep path | wc -l
   register: iothub_count
   when: iothub_count.stdout_lines[0] is not defined
 
