@@ -19,9 +19,11 @@
 
 - name: "Build connector jar"
   shell: cd /tmp/iot-hub-connector && sbt assembly
+  ignore_errors: yes
 
 - name: "Copy connector jar(s)"
   shell: find /tmp/iot-hub-connector/target/ -name "*.jar" | xargs -i cp -p {} /usr/local/kafka/libs/
+  ignore_errors: yes
 
 - name: "Copy connector config file"
   copy:
@@ -31,5 +33,6 @@
     group: root
     mode: 0644
   become: yes
+  ignore_errors: yes
 
 
