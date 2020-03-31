@@ -53,46 +53,6 @@ Common commands:
     ```
 4. `az account set --subscription="07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx"`, but use the actual ID from above
 
-###### Provision a Virtual Machine
-1. `cd provision-datasci`
-1. `terraform init`
-1. Generate an SSH key pair: `ssh-keygen -C ""`
-1. copy the public SSH key into [terraform script](provision-datasci/datasci.tf)
-1. `terraform plan -var-file=datasci_vars.tfvars  -out plan.tf`
-1. if all goes well, you can apply the plan by running `terraform apply plan.tf` and wait
-    ```
-    azurerm_virtual_machine.datasci_dev01: Creating...
-    azurerm_virtual_machine.datasci_dev01: Still creating... [10s elapsed]
-    azurerm_virtual_machine.datasci_dev01: Still creating... [20s elapsed]
-    azurerm_virtual_machine.datasci_dev01: Still creating... [30s elapsed]
-    azurerm_virtual_machine.datasci_dev01: Still creating... [40s elapsed]
-    azurerm_virtual_machine.datasci_dev01: Still creating... [50s elapsed]
-    azurerm_virtual_machine.datasci_dev01: Still creating... [1m0s elapsed]
-    azurerm_virtual_machine.datasci_dev01: Still creating... [1m10s elapsed]
-    azurerm_virtual_machine.datasci_dev01: Still creating... [1m20s elapsed]
-    azurerm_virtual_machine.datasci_dev01: Still creating... [1m30s elapsed]
-    azurerm_virtual_machine.datasci_dev01: Creation complete after 1m34s [id=/subscriptions/07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/development/providers/Microsoft.Compute/virtualMachines/datasci_dev01]
-    
-    Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
-    dino@twofatcheeks:~/sandbox/data-science$
-    ```
-1. log into the azure portal and observe the resources created above
-1. to tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`. Eventually you should see the following
-    ```
-    azurerm_resource_group.datasci_dev_group: Still destroying... [id=/subscriptions/07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/development, 2m0s elapsed]
-    azurerm_resource_group.datasci_dev_group: Still destroying... [id=/subscriptions/07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/development, 2m10s elapsed]
-    azurerm_resource_group.datasci_dev_group: Still destroying... [id=/subscriptions/07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/development, 2m20s elapsed]
-    azurerm_resource_group.datasci_dev_group: Still destroying... [id=/subscriptions/07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/development, 2m30s elapsed]
-    azurerm_resource_group.datasci_dev_group: Still destroying... [id=/subscriptions/07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/development, 2m40s elapsed]
-    azurerm_resource_group.datasci_dev_group: Destruction complete after 2m48s
-    
-    Destroy complete! Resources: 8 destroyed.
-    dino@twofatcheeks:~/sandbox/datasci$
-    ```
-1. The above script will create a set of Virtual Machines. We'll need the machine's IPs in order to deploy kafka to all 
-of them. To get the public IP from Azure, run
-    `az vm show --resource-group datasci_dev_group --name datasci_dev0 -d --query [publicIps] --o tsv`
-    
 #### Install Ansible
 1. `sudo apt-add-repository --yes --update ppa:ansible/ansible`
 1. `sudo apt install ansible`
@@ -105,28 +65,26 @@ of them. To get the public IP from Azure, run
          executable location = /usr/bin/ansible
          python version = 2.7.17 (default, Nov  7 2019, 10:07:09) [GCC 7.4.0]
     ```
-1. Install pip, `sudo apt install python-pip
+1. Install pip, `sudo apt install python-pip`
 1. `pip install ansible[azure]`
+1. Disable host checking by uncommenting `host_key_checking = False` under `/etc/ansible/ansible.conf`
 
-###### Run ansible-kafka playbook 
-1. `cd ../configure-datasci`
-1. `ansible-playbook -i inventory.ini datasci_play.yml`
+###### Provision a Virtual Machine
+1. `cd provision-datasci`
+1. Generate an SSH key pair: `ssh-keygen -C ""`
+1. `terraform init`
+1. `terraform apply datasci.tf -var-file=datasci_vars.tfvars`
+1. log into the azure portal and observe the resources created above
+    1. to tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`. Eventually you should see the following
+1. The above script will create a set of Virtual Machines
 
-    **NOTE:
-        If you destroyed the datasci environment and are rebuilding it, you have to remove the datasci node 
-        information from ~/.ssh/known_hosts in order to avoid 'WARNING: POSSIBLE DNS SPOOFING DETECTED!' warnings from SSH.
-        Also, it helps to manually connect to datasci-\* nodes with ssh so proper keys are exchanged with new machines.**
-1. The last application to get installed should be Jupyter Notebook.
-`
-1. Add device to the provisioned IoT Hub and copy its primary connection string to NS Android app.
-1. Build the NS app and send some records
-
-###### Verify 
-1. zookeeper: 
+###### Verify vm is setup correctly
+1. ssh to the vm `ssh datasci_admin@datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net`
+1. check zookeeper: 
     1. `telnet localhost 2181`
     1. `ruok`
     1. should receive `imok` response
-1. kafka
+1. check kafka
     1. in first terminal, add message `/usr/local/kafka/bin/kafka-console-producer.sh --broker-list locahost:9092 --topic IoTHub` (or skip if you're sending messages from Android NS app)
     1. type in a message or two and close the producer console with Ctrl-D (or skip this step if you're sending messages from the Android NS app)
     1. in second terminal, start consumer: `/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic IoTHub --from-beginning  --partition 0`

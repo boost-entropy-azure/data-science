@@ -1,6 +1,14 @@
 ---
+- name: "Check if Azure CLI is installed"
+  shell: az --version
+  ignore_errors: yes
+  register: azure_status
+
 - include: azure-cli-install.yml
+  when: azure_status.failed
   tags:
     - azure-cli-install
 
-- include: query-iot-hub.yml
+- include: azure-cli-conf.yml
+  tags:
+    - azure-cli-conf
