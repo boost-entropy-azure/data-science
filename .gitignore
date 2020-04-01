@@ -6,4 +6,4 @@ terraform.tfstate.backup
 .ipynb_*/*
 *.pyc
 __pychache__
-
+.vagrant/*
