@@ -55,6 +55,9 @@
       kafka_scala_serverion: 2.11 # Scala version override.
     }
     - role: "azure-connector"
-    - role: "spark"
+    - {
+      role: "spark",
+      spark_master_ip: "{{ groups['nodes'][0] }}"
+    }
     - role: "spark-cluster-admin"
     - role: "notebook"
