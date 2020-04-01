@@ -1,13 +1,48 @@
+# Data Science Infrastructure Deployment
+This repo can be used to deploy a data science infrastructure in Azure using Terraform and Ansible.
+
+Currently, this Terraform configuration deploys the following resources to Azure
+- A Resource Group
+- A Virtual Network
+- A Subnet
+- A Network Security Group
+- A storage account for boot diagnostics
+- An IoT Hub
+- A Mosquitto MQTT Broker in a Docker Container
+- A VM with Apache Spark, and Jupiter Notebook
+
 ## Set up
 
-#### Install Terraform
+### Development
+Any IDE or text editor can be used to work with the code in this repo, but it is recommended to use Visual Studio Code
+1. [Install VS Code](https://code.visualstudio.com/)
+1. Install the following two Terraform Extensions for VS Code
+    1. [Azure Terraform](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureterraform)
+    1. [Terraform](https://marketplace.visualstudio.com/items?itemName=mauve.terraform)
 
+
+### Create an SSH Key Pair
+An SSH key pair is needed to provision any VMs with SSH access.  When creating a cluster using this terraform configuration, any VMs will have their [authorized_keys](https://www.ssh.com/ssh/authorized_keys) file updated to include your public key so that you can SSH into the server.
+
+If you already have created a default SSH key, then you can skip this step.
+
+#### Create a new SSH key pair
+Detailed instructions can be found [here](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html)
+1. `ssh-keygen -C ""`
+
+### Install Terraform
+
+#### Linux
 1. `sudo apt install unzip`
-2. download the binary from terraform.io/downloads.html
-3. `unzip terraform_0.12.20_linux_amd64.zip`
-4. `sudo mv terraform /usr/local/bin`
+1. download the binary from terraform.io/downloads.html
+1. `unzip terraform_0.12.20_linux_amd64.zip`
+1. `sudo mv terraform /usr/local/bin`
 
-###### Test terraform
+#### macOS
+1. [Install brew](https://brew.sh/)
+1. `brew install terraform`
+
+##### Test terraform
 
 ```
 dino@twofatcheeks:~$ terraform
@@ -24,15 +59,19 @@ Common commands:
     console            Interactive console for Terraform interpolations
 ```
 
-#### Install Azure CLI
+### Install Azure CLI
 
-###### Download and Install
-`curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash`
+#### Linux
+1. `curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash`
 
-###### Try it
+#### macOS
+[Detailed instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos?view=azure-cli-latest)
+1. `brew update && brew install azure-cli`
+
+#### Try it
 1. `az cloud set --name AzureUSGovernment`
-2. `az login`
-3. You'll see output similar to this  
+1. `az login`
+1. You'll see output similar to this  
     ```
     [
       {
@@ -51,9 +90,11 @@ Common commands:
       }
     ]
     ```
-4. `az account set --subscription="07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx"`, but use the actual ID from above
+1. `az account set --subscription="07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx"`, but use the actual ID from above
 
-#### Install Ansible
+### Install Ansible
+
+#### Linux
 1. `sudo apt-add-repository --yes --update ppa:ansible/ansible`
 1. `sudo apt install ansible`
 1. To verify, run `ansible --version`. You should see output similar to this:
@@ -69,16 +110,21 @@ Common commands:
 1. `pip install ansible[azure]`
 1. Disable host checking by uncommenting `host_key_checking = False` under `/etc/ansible/ansible.conf`
 
-###### Provision a Virtual Machine
+#### macOS
+1. `brew install ansible`
+1. `pip3 install 'ansible[azure]'`
+1. To verifiy, run `ansible --version`
+1. Disable host checking by uncommenting `host_key_checking = False` under `/usr/local/etc/ansible/ansible.conf`
+
+## Run the Terraform Deployment
 1. `cd provision-datasci`
-1. Generate an SSH key pair: `ssh-keygen -C ""`
 1. `terraform init`
 1. `terraform apply datasci.tf -var-file=datasci_vars.tfvars`
 1. log into the azure portal and observe the resources created above
     1. to tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`. Eventually you should see the following
 1. The above script will create a set of Virtual Machines
 
-###### Verify vm is setup correctly
+### Verify vm is setup correctly
 1. ssh to the vm `ssh datasci_admin@datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net`
 1. check zookeeper: 
     1. `telnet localhost 2181`
@@ -89,7 +135,7 @@ Common commands:
     1. type in a message or two and close the producer console with Ctrl-D (or skip this step if you're sending messages from the Android NS app)
     1. in second terminal, start consumer: `/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic IoTHub --from-beginning  --partition 0`
     
-######## To open a Jupyter notebook on one of the nodes
+#### To open a Jupyter notebook on one of the nodes
  1. Note the output printed by ansible from the above command. It should look similar to this.
     ```
     TASK [notebook : debug] ********************************************************

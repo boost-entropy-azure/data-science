@@ -8,6 +8,11 @@ variable "location" {
   description = "Region to provision resources in"
 }
 
+variable "cluster_name" {
+  type = string
+  description = "Name to use for the data science culster being created"
+}
+
 variable "environment" {
   type        = string
   description = "Current Environment"
