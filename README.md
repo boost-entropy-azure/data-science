@@ -9,11 +9,29 @@ Currently, this Terraform configuration deploys the following resources to Azure
 - A storage account for boot diagnostics
 - An IoT Hub
 - A Mosquitto MQTT Broker in a Docker Container
-- A VM with Apache Spark, and Jupiter Notebook
+- A VM with Apache Spark, and Jupyter Notebook
 
 ## Set up
 
-### Development
+### (Optional) Setup a development VM
+If running on Windows, it is easiest to setup a Linux VM to do all the development and deployment.  Use the steps below to create a VM.
+
+If running on macOS, this step can be skipped.
+
+1. Clone this repo
+1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+1. [Install vagrant](https://www.vagrantup.com/downloads.html)
+1. `vagrant plugin install vagrant-vbguest`
+1. `vagrant plugin install vagrant-disksize`
+1. `vagrant up` from  bash/Powershell to create and boot the VM
+    1. Note: this may take a long time to complete (> 1h). If desktop environment isn't needed, comment out these lines in the Vagrantfile script and save a lot of time
+        1. `config.vm.provision "shell", inline: "sudo apt-get --assume-yes install ubuntu-desktop"` and 
+        1. `config.vm.provision :shell, path: "bootstrap.sh"`
+    1. Restart with `vagrant reload --provision` in case of failures (will require at least a few reloads)
+1. login to the VM, `username=vagrant, pass=vagrant`
+
+
+### Code Editing
 Any IDE or text editor can be used to work with the code in this repo, but it is recommended to use Visual Studio Code
 1. [Install VS Code](https://code.visualstudio.com/)
 1. Install the following two Terraform Extensions for VS Code
@@ -30,6 +48,7 @@ If you already have created a default SSH key, then you can skip this step.
 Detailed instructions can be found [here](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html)
 1. `ssh-keygen -C ""`
 
+
 ### Install Terraform
 
 #### Linux
@@ -42,7 +61,7 @@ Detailed instructions can be found [here](https://confluence.atlassian.com/bitbu
 1. [Install brew](https://brew.sh/)
 1. `brew install terraform`
 
-##### Test terraform
+##### Test Terraform
 
 ```
 dino@twofatcheeks:~$ terraform
@@ -58,6 +77,7 @@ Common commands:
     apply              Builds or changes infrastructure
     console            Interactive console for Terraform interpolations
 ```
+
 
 ### Install Azure CLI
 
@@ -92,6 +112,7 @@ Common commands:
     ```
 1. `az account set --subscription="07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx"`, but use the actual ID from above
 
+
 ### Install Ansible
 
 #### Linux
@@ -116,26 +137,27 @@ Common commands:
 1. To verifiy, run `ansible --version`
 1. Disable host checking by uncommenting `host_key_checking = False` under `/usr/local/etc/ansible/ansible.conf`
 
+
 ## Run the Terraform Deployment
 1. `cd provision-datasci`
 1. `terraform init`
 1. `terraform apply datasci.tf -var-file=datasci_vars.tfvars`
-1. log into the azure portal and observe the resources created above
-    1. to tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`. Eventually you should see the following
-1. The above script will create a set of Virtual Machines
+1. Log into the azure portal and observe the resources created
 
-### Verify vm is setup correctly
-1. ssh to the vm `ssh datasci_admin@datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net`
-1. check zookeeper: 
+### Verify VM(s) Setup
+1. SSH to the Azure vm (skip this step if checking the local vm)
+    1. `ssh datasci_admin@datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net`
+1. Check Zookeeper: 
     1. `telnet localhost 2181`
     1. `ruok`
     1. should receive `imok` response
-1. check kafka
+1. Check Kafka
     1. in first terminal, add message `/usr/local/kafka/bin/kafka-console-producer.sh --broker-list locahost:9092 --topic IoTHub` (or skip if you're sending messages from Android NS app)
     1. type in a message or two and close the producer console with Ctrl-D (or skip this step if you're sending messages from the Android NS app)
     1. in second terminal, start consumer: `/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic IoTHub --from-beginning  --partition 0`
-    
-#### To open a Jupyter notebook on one of the nodes
+
+
+### To open a Jupyter notebook on one of the nodes
  1. Note the output printed by ansible from the above command. It should look similar to this.
     ```
     TASK [notebook : debug] ********************************************************
@@ -147,8 +169,12 @@ Common commands:
             "[I 21:45:23.471 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).", 
             "[C 21:45:23.474 NotebookApp] ", 
     ```
-1. Setup ssh port forwarding for port 8888 (which is the default port used by Jupyter notebook server)
+1. Setup ssh port forwarding for port 8888 when working with the Azure vm (which is the default port used by Jupyter notebook server)
     ```
     ssh -N -f -L localhost:8888:localhost:8888 datasci_admin@datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net
    ```
 1. Open the url from step 1 (i.e http://localhost:8888/?token=c153e52cb3c6ad4a5368df00cd8fe4f6116c35f48152fd08") in a browser on localhost   
+
+
+## (Optional) Tear down the Azure Deployment
+1. To tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`.

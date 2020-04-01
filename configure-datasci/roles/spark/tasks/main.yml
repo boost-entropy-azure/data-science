@@ -38,7 +38,7 @@
   args:
       chdir: "{{ install_dir}}/{{ spark_installation_dir }}"
   ignore_errors: yes
-  when: inventory_hostname in groups['nodes'][0]
+  when: inventory_hostname in groups['all']
 
 - debug:
      msg: "Downloading Spark from: {{ spark_download }}"
