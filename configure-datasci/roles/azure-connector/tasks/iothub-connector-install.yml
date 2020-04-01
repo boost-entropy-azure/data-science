@@ -25,7 +25,7 @@
 
 - name: "Copy connector config file"
   copy:
-    src: /tmp/connect-iothub-source.properties.j2
+    src: /tmp/connect-iothub-source.properties
     dest: /etc/kafka/connect-iothub-source.properties
     owner: root
     group: root

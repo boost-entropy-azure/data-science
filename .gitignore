@@ -1,6 +1,7 @@
 .idea/*
 terraform.tfstate
 terraform.tfstate.backup
+*.tfstate.lock.info
 */.terraform/*
 .ipynb_*/*
 *.pyc

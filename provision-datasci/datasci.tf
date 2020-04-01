@@ -25,8 +25,7 @@ resource "azurerm_subnet" "datasci_subnet" {
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "datasci_nsg" {
-    count               = var.node_count
-    name                = join("_", ["datasci", var.environment, "NSG${count.index}"])
+    name                = join("_", ["datasci", var.environment])
     location            = azurerm_resource_group.datasci_group.location
     resource_group_name = azurerm_resource_group.datasci_group.name
 
@@ -49,7 +48,7 @@ resource "azurerm_network_interface" "datasci_nic" {
     name                      = join("_", ["datasci", var.environment, "NIC${count.index}"])
     location                  = azurerm_resource_group.datasci_group.location
     resource_group_name       = azurerm_resource_group.datasci_group.name
-    network_security_group_id = element(concat(azurerm_network_security_group.datasci_nsg.*.id, list("")), count.index)
+    network_security_group_id = azurerm_network_security_group.datasci_nsg.id
 
     ip_configuration {
         name                          = "datasci_nicConfiguration"
@@ -67,6 +66,10 @@ resource "azurerm_public_ip" "datasci_ip" {
     resource_group_name          = azurerm_resource_group.datasci_group.name
     allocation_method            = "Static"
     domain_name_label            = join("", ["datasci-", var.environment, count.index])
+
+    tags = {
+        name        = "nodes"
+    }
 }
 
 # Generate random text for a unique storage account name
@@ -113,13 +116,13 @@ resource "azurerm_virtual_machine" "datasci_node" {
 
     os_profile {
         computer_name  = join("", ["datasci", var.environment, count.index])
-        admin_username = "datasci_admin"
+        admin_username = var.admin_username
     }
 
     os_profile_linux_config {
         disable_password_authentication = true
         ssh_keys {
-            path     = "/home/datasci_admin/.ssh/authorized_keys"
+            path     = join("", ["/home/", var.admin_username, "/.ssh/authorized_keys"])
             key_data = file("~/.ssh/id_rsa.pub")
         }
     }
@@ -128,7 +131,6 @@ resource "azurerm_virtual_machine" "datasci_node" {
         enabled = "true"
         storage_uri = azurerm_storage_account.datasci_storage.primary_blob_endpoint
     }
-
 }
 
 # Create IoT hub
@@ -138,9 +140,8 @@ resource "azurerm_iothub" "datasci_iothub" {
     location                    = azurerm_resource_group.datasci_group.location
 
     sku {
-        name = "B1"
+        name     = "B1"
         capacity = "1"
-        tier = "Basic"
     }
 
     route {
@@ -150,4 +151,15 @@ resource "azurerm_iothub" "datasci_iothub" {
         endpoint_names = ["events"]
         enabled        = true
     }
+}
+
+module "ansible_provisioner" {
+    source    = "github.com/chesapeaketechnology/terraform-null-ansible"
+
+    rgroup    = azurerm_public_ip.datasci_ip.0.resource_group_name
+    inventory = [for pip in azurerm_public_ip.datasci_ip : join("", ["${pip.tags.name}:", "${pip.ip_address}"])]
+
+    arguments = [join("", ["--user=", var.admin_username, " -K "])]
+    playbook  = "../configure-datasci/datasci_play.yml"
+    dry_run   = false
 }

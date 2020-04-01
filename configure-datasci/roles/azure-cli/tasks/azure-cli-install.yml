@@ -4,9 +4,3 @@
 
 - name: "Add iot hub extension"
   shell: az extension add --name azure-iot
-
-- name: "Change clouds"
-  shell: az cloud set --name AzureUSGovernment
-
-- name: "Login to Azure"
-  shell: az login
