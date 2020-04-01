@@ -11,7 +11,11 @@ Currently, this Terraform configuration deploys the following resources to Azure
 - A Mosquitto MQTT Broker in a Docker Container
 - A VM with Apache Spark, and Jupyter Notebook
 
-## Set up
+## Table of Contents
+* [Initial Setup](#initial-setup)
+* [Run the Terraform Deployment](#run-the-terraform-deployment)
+
+## Initial Setup
 
 ### (Optional) Setup a development VM
 If running on Windows, it is easiest to setup a Linux VM to do all the development and deployment.  Use the steps below to create a VM.
