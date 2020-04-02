@@ -8,6 +8,7 @@ Currently, this Terraform configuration deploys the following resources to Azure
 - A Network Security Group
 - A storage account for boot diagnostics
 - An IoT Hub
+- An Event Hub
 - A Mosquitto MQTT Broker in a Docker Container
 - A VM with Apache Spark, and Jupyter Notebook
 
@@ -17,7 +18,7 @@ Currently, this Terraform configuration deploys the following resources to Azure
 
 ## Initial Setup
 
-### (Optional) Setup a development VM
+### (Optional) Setup a Development VM
 If running on Windows, it is easiest to setup a Linux VM to do all the development and deployment.  Use the steps below to create a VM.
 
 If running on macOS, this step can be skipped.

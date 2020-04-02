@@ -1,5 +1,5 @@
 provider "azurerm" {
-  version         = "=1.44.0"
+  version = "=1.44.0"
 }
 
 # Create a resource group that all the Azure resources will live in
@@ -151,6 +151,24 @@ resource "azurerm_iothub" "datasci_iothub" {
     endpoint_names = ["events"]
     enabled        = true
   }
+}
+
+# Create Azure Event Hubs Namespace
+resource "azurerm_eventhub_namespace" "datasci_event_hubs_namespace" {
+  name                = join("-", [var.cluster_name, var.environment, "event-hub-namespace"])
+  location            = azurerm_resource_group.datasci_group.location
+  resource_group_name = azurerm_resource_group.datasci_group.name
+  sku                 = "Standard"
+  capacity            = 1
+}
+
+# Create Azure Event Hubs
+resource "azurerm_eventhub" "datasci_event_hubs" {
+  name                = join("-", [var.cluster_name, var.environment, "event-hubs"])
+  namespace_name      = azurerm_eventhub_namespace.datasci_event_hubs_namespace.name
+  resource_group_name = azurerm_resource_group.datasci_group.name
+  partition_count     = 2
+  message_retention   = 1
 }
 
 # Create Mosquitto MQTT Broker
