@@ -29,3 +29,6 @@ mkdir /home/vagrant/sandbox
 cd /home/vagrant/sandbox
 git clone https://github.com/chesapeaketechnology/data-science.git
 sudo chown -R vagrant /home/vagrant/sandbox
+
+# install kafka-python for testing
+sudo pip3 install kafka-python
