@@ -1,7 +1,7 @@
 .idea/*
-terraform.tfstate
 terraform.tfstate.backup
 */.terraform/*
+terraform.tfstate
 *.tfstate.lock.info
 .vagrant/*
-
+.ipynb_checkpoints/

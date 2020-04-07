@@ -1,4 +1,0 @@
----
-- include: iothub-query.yml
-  tags:
-    - query-iot-hub
