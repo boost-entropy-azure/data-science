@@ -3,5 +3,9 @@ terraform.tfstate.backup
 */.terraform/*
 terraform.tfstate
 *.tfstate.lock.info
+*/.terraform/*
+.ipynb_*/*
+*.pyc
+__pychache__
 .vagrant/*
 .ipynb_checkpoints/
