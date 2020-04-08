@@ -9,6 +9,7 @@ Currently, this Terraform configuration deploys the following resources to Azure
 - A storage account for boot diagnostics
 - An IoT Hub
 - An Event Hub
+- An Azure data lake storage container
 - A Mosquitto MQTT Broker in a Docker Container
 - A VM with Apache Spark, and Jupyter Notebook
 
@@ -16,12 +17,18 @@ Currently, this Terraform configuration deploys the following resources to Azure
 * [Initial Setup](#initial-setup)
 * [Run the Terraform Deployment](#run-the-terraform-deployment)
 
+### Code Editing
+Any IDE or text editor can be used to work with the code in this repo, but it is recommended to use Visual Studio Code
+1. [Install VS Code](https://code.visualstudio.com/)
+1. Install the following two Terraform Extensions for VS Code
+    1. [Azure Terraform](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureterraform)
+    1. [Terraform](https://marketplace.visualstudio.com/items?itemName=mauve.terraform)
+
 ## Initial Setup
-
-### (Optional) Setup a Development VM
-If running on Windows, it is easiest to setup a Linux VM to do all the development and deployment.  Use the steps below to create a VM.
-
-If running on macOS, this step can be skipped.
+### Setup a Development environment 
+If running on Windows, it is recommended to setup a Linux VM to do all the development and deployment from. The development
+environment provides a local (i.e without Azure) environment in which unit and integration testing is available.  Use the steps 
+below to create a Ubuntu VM with Vagrant.
 
 1. Clone this repo
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
@@ -36,23 +43,20 @@ If running on macOS, this step can be skipped.
 1. login to the VM, `username=vagrant, pass=vagrant`
 
 
-### Code Editing
-Any IDE or text editor can be used to work with the code in this repo, but it is recommended to use Visual Studio Code
-1. [Install VS Code](https://code.visualstudio.com/)
-1. Install the following two Terraform Extensions for VS Code
-    1. [Azure Terraform](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureterraform)
-    1. [Terraform](https://marketplace.visualstudio.com/items?itemName=mauve.terraform)
-
+### (Optional) Manual setup
+If running on macOS or Linux natively, the step of creating a dedicated VM can be skipped. However, it will be necessary to setup
+the development and testing environment manually on your host machine. 
 
 ### Create an SSH Key Pair
-An SSH key pair is needed to provision any VMs with SSH access.  When creating a cluster using this terraform configuration, any VMs will have their [authorized_keys](https://www.ssh.com/ssh/authorized_keys) file updated to include your public key so that you can SSH into the server.
+An SSH key pair is needed to provision any machine with SSH access.  When creating a cluster using this terraform configuration, 
+any VMs will have their [authorized_keys](https://www.ssh.com/ssh/authorized_keys) file updated to include your public key 
+so that you can SSH into the server.
 
-If you already have created a default SSH key, then you can skip this step.
+If you already have created a default SSH key, then you can skip creating a new SSH key pair.
 
 #### Create a new SSH key pair
 Detailed instructions can be found [here](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html)
 1. `ssh-keygen -C ""`
-
 
 ### Install Terraform
 
@@ -139,7 +143,7 @@ Common commands:
 #### macOS
 1. `brew install ansible`
 1. `pip3 install 'ansible[azure]'`
-1. To verifiy, run `ansible --version`
+1. To verify, run `ansible --version`
 1. Disable host checking by uncommenting `host_key_checking = False` under `/usr/local/etc/ansible/ansible.conf`
 
 
@@ -149,9 +153,7 @@ Common commands:
 1. `terraform apply datasci.tf -var-file=datasci_vars.tfvars`
 1. Log into the azure portal and observe the resources created
 
-### Verify VM(s) Setup
-1. SSH to the Azure vm (skip this step if checking the local vm)
-    1. `ssh datasci_admin@datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net`
+### Verify local data-science VM(s) Setup
 1. Check Zookeeper: 
     1. `telnet localhost 2181`
     1. `ruok`
