@@ -6,11 +6,6 @@
 - name: "Upgrade pip3"
   shell: pip3 install --upgrade pip
 
-- name: "Install setuptools"
-  pip:
-    name: setuptools
-    executable: pip3
-
 - name: "Install pip2"
   apt:
     name: python-pip
@@ -18,12 +13,3 @@
 
 - name: "Upgrade pip2"
   shell: pip install --upgrade pip
-
-- name: "Install setuptools"
-  pip:
-    name: setuptools
-    executable: pip
-
-- name: "Install psutil"
-  pip:
-    name: psutil

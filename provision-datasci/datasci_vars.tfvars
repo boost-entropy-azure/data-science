@@ -1,5 +1,12 @@
+location       = "usgovarizona"
+environment    = "dev"
+cluster_name   = "datasci"
+node_count     = 1
 admin_username = "datasci_admin"
-location = "usgovarizona"
-cluster_name = "datasci"
-environment = "dev"
-node_count = 1
+
+default_tags   = {
+  Department  = "R&D"
+  PoC         = "LiveStream"
+  Environment = "DEV"
+}
+

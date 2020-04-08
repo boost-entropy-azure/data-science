@@ -2,7 +2,7 @@
 zookeeper_hosts: ['localhost']
 kafka_zookeeper_port: 2181
 
-kafka_hosts: # <-- must be overridden further up the chain
+kafka_hosts: ['localhost']
 # e.g. [ 'srvr1', 'srvr2' ]
 
 kafka_version: "2.4.0"
