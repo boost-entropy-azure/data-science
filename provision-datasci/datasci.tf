@@ -7,6 +7,8 @@ provider "azurerm" {
 resource "azurerm_resource_group" "datasci_group" {
   name     = join("-", [var.cluster_name, var.environment, "group"])
   location = var.location
+
+  tags     = var.default_tags
 }
 
 resource "azurerm_virtual_network" "datasci_net" {
@@ -14,6 +16,8 @@ resource "azurerm_virtual_network" "datasci_net" {
   resource_group_name = azurerm_resource_group.datasci_group.name
   location            = azurerm_resource_group.datasci_group.location
   address_space       = ["10.0.0.0/16"]
+
+  tags                = var.default_tags
 }
 
 # Create subnet
@@ -31,6 +35,8 @@ resource "azurerm_network_security_group" "datasci_nsg" {
   name                = join("-", [var.cluster_name, var.environment])
   location            = azurerm_resource_group.datasci_group.location
   resource_group_name = azurerm_resource_group.datasci_group.name
+
+  tags                = var.default_tags
 
   security_rule {
     name                       = "SSH"
@@ -51,6 +57,8 @@ resource "azurerm_network_interface" "datasci_nic" {
   name                      = join("-", [var.cluster_name, var.environment, "NIC${count.index}"])
   location                  = azurerm_resource_group.datasci_group.location
   resource_group_name       = azurerm_resource_group.datasci_group.name
+
+  tags                      = var.default_tags
 
   ip_configuration {
     name                          = "datasci_nicConfiguration"
@@ -74,9 +82,10 @@ resource "azurerm_public_ip" "datasci_ip" {
   allocation_method   = "Static"
   domain_name_label   = join("", [var.cluster_name, "-", var.environment, count.index])
 
-  tags = {
-    name = "nodes"
-  }
+  tags = merge(
+    var.default_tags,
+    map("name", "nodes")
+  )
 }
 
 # Generate random text for a unique storage account name
@@ -96,6 +105,8 @@ resource "azurerm_storage_account" "datasci_boot_storage" {
   location                 = azurerm_resource_group.datasci_group.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  tags                     = var.default_tags
 }
 
 # Create virtual machine
@@ -106,6 +117,8 @@ resource "azurerm_virtual_machine" "datasci_node" {
   resource_group_name   = azurerm_resource_group.datasci_group.name
   network_interface_ids = [element(azurerm_network_interface.datasci_nic.*.id, count.index)]
   vm_size               = "Standard_DS1_v2"
+
+  tags                  = var.default_tags
 
   storage_os_disk {
     name              = join("", [var.cluster_name, "_", var.environment, "disk${count.index}"])
@@ -150,6 +163,8 @@ resource azurerm_storage_account "datasci_lake_storage" {
   account_tier             = "Standard"
   is_hns_enabled           = true
 
+  tags                     = var.default_tags
+
   network_rules {
     default_action             = "Deny"
     ip_rules                   = ["127.0.0.1"]
@@ -191,6 +206,8 @@ resource "azurerm_eventhub_namespace" "datasci_event_hubs_namespace" {
   resource_group_name = azurerm_resource_group.datasci_group.name
   sku                 = "Standard"
   capacity            = 1
+
+  tags                = var.default_tags
 }
 
 # Create Azure Event Hubs
@@ -232,6 +249,8 @@ resource "azurerm_iothub" "datasci_iothub" {
   resource_group_name = azurerm_resource_group.datasci_group.name
   location            = azurerm_resource_group.datasci_group.location
 
+  tags                = var.default_tags
+
   //noinspection MissingProperty
   sku {
     name     = "B1"
@@ -261,6 +280,8 @@ resource "azurerm_container_group" "datasci_mqtt" {
   ip_address_type     = "public"
   dns_name_label      = join("-", [var.cluster_name, var.environment, "mqtt"])
   os_type             = "Linux"
+  
+  tags                = var.default_tags
 
   container {
     name   = "mqtt"
@@ -287,7 +308,6 @@ module "ansible_provisioner" {
   inventory  = [for pip in azurerm_public_ip.datasci_ip : join("", ["${pip.tags.name}:", pip.ip_address])]
   ip         = [for pip in azurerm_public_ip.datasci_ip : pip.ip_address]
   user       = var.admin_username
-  iothub_id  = azurerm_iothub.datasci_iothub.id
 
   arguments  = [join("", ["--user=", var.admin_username])]
   playbook   = "../configure-datasci/datasci_play.yml"
