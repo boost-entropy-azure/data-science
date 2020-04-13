@@ -9,3 +9,6 @@ terraform.tfstate
 __pychache__
 .vagrant/*
 .ipynb_checkpoints/
+
+# Prevent custom config files with secret keys from being committed
+config/*

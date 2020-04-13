@@ -8,7 +8,7 @@ resource "azurerm_resource_group" "datasci_group" {
   name     = join("-", [var.cluster_name, var.environment, "group"])
   location = var.location
 
-  tags     = var.default_tags
+  tags = var.default_tags
 }
 
 resource "azurerm_virtual_network" "datasci_net" {
@@ -17,7 +17,7 @@ resource "azurerm_virtual_network" "datasci_net" {
   location            = azurerm_resource_group.datasci_group.location
   address_space       = ["10.0.0.0/16"]
 
-  tags                = var.default_tags
+  tags = var.default_tags
 }
 
 # Create subnet
@@ -36,7 +36,7 @@ resource "azurerm_network_security_group" "datasci_nsg" {
   location            = azurerm_resource_group.datasci_group.location
   resource_group_name = azurerm_resource_group.datasci_group.name
 
-  tags                = var.default_tags
+  tags = var.default_tags
 
   security_rule {
     name                       = "SSH"
@@ -53,12 +53,12 @@ resource "azurerm_network_security_group" "datasci_nsg" {
 
 # Create network interface
 resource "azurerm_network_interface" "datasci_nic" {
-  count                     = var.node_count
-  name                      = join("-", [var.cluster_name, var.environment, "NIC${count.index}"])
-  location                  = azurerm_resource_group.datasci_group.location
-  resource_group_name       = azurerm_resource_group.datasci_group.name
+  count               = var.node_count
+  name                = join("-", [var.cluster_name, var.environment, "NIC${count.index}"])
+  location            = azurerm_resource_group.datasci_group.location
+  resource_group_name = azurerm_resource_group.datasci_group.name
 
-  tags                      = var.default_tags
+  tags = var.default_tags
 
   ip_configuration {
     name                          = "datasci_nicConfiguration"
@@ -106,7 +106,7 @@ resource "azurerm_storage_account" "datasci_boot_storage" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags                     = var.default_tags
+  tags = var.default_tags
 }
 
 # Create virtual machine
@@ -118,7 +118,7 @@ resource "azurerm_virtual_machine" "datasci_node" {
   network_interface_ids = [element(azurerm_network_interface.datasci_nic.*.id, count.index)]
   vm_size               = "Standard_DS1_v2"
 
-  tags                  = var.default_tags
+  tags = var.default_tags
 
   storage_os_disk {
     name              = join("", [var.cluster_name, "_", var.environment, "disk${count.index}"])
@@ -163,7 +163,7 @@ resource azurerm_storage_account "datasci_lake_storage" {
   account_tier             = "Standard"
   is_hns_enabled           = true
 
-  tags                     = var.default_tags
+  tags = var.default_tags
 
   network_rules {
     default_action             = "Deny"
@@ -196,24 +196,24 @@ resource "azurerm_template_deployment" "datasci_container" {
     storageAccountName = azurerm_storage_account.datasci_lake_storage.name
   }
 
-  template_body        = file("${path.module}/datasci-container.json")
+  template_body = file("${path.module}/datasci-container.json")
 }
 
 # Create Azure Event Hubs Namespace
-resource "azurerm_eventhub_namespace" "datasci_event_hubs_namespace" {
+resource "azurerm_eventhub_namespace" "datasci" {
   name                = join("-", [var.cluster_name, var.environment, "event-hub-namespace"])
   location            = azurerm_resource_group.datasci_group.location
   resource_group_name = azurerm_resource_group.datasci_group.name
   sku                 = "Standard"
   capacity            = 1
 
-  tags                = var.default_tags
+  tags = var.default_tags
 }
 
 # Create Azure Event Hubs
 resource "azurerm_eventhub" "datasci_event_hubs" {
-  name                = join("-", [var.cluster_name, var.environment, "event-hubs"])
-  namespace_name      = azurerm_eventhub_namespace.datasci_event_hubs_namespace.name
+  name                = join("-", [var.cluster_name, var.environment, "event-hub"])
+  namespace_name      = azurerm_eventhub_namespace.datasci.name
   resource_group_name = azurerm_resource_group.datasci_group.name
   partition_count     = 2
   message_retention   = 1
@@ -221,21 +221,21 @@ resource "azurerm_eventhub" "datasci_event_hubs" {
   capture_description {
     enabled             = true
     encoding            = "Avro"
-    interval_in_seconds = 300        # 5 min
-    size_limit_in_bytes = 314572800  # 300 MB
-    
+    interval_in_seconds = 300       # 5 min
+    size_limit_in_bytes = 314572800 # 300 MB
+
     destination {
       name                = "EventHubArchive.AzureBlockBlob"
       archive_name_format = "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
       blob_container_name = azurerm_template_deployment.datasci_container.name
-      storage_account_id  = azurerm_storage_account.datasci_lake_storage.id  
+      storage_account_id  = azurerm_storage_account.datasci_lake_storage.id
     }
   }
 }
 
 resource "azurerm_eventhub_authorization_rule" "auth_rule" {
   resource_group_name = azurerm_resource_group.datasci_group.name
-  namespace_name      = azurerm_eventhub_namespace.datasci_event_hubs_namespace.name
+  namespace_name      = azurerm_eventhub_namespace.datasci.name
   eventhub_name       = azurerm_eventhub.datasci_event_hubs.name
   name                = join("-", [var.cluster_name, var.environment, "auth-rule"])
   send                = true
@@ -249,7 +249,7 @@ resource "azurerm_iothub" "datasci_iothub" {
   resource_group_name = azurerm_resource_group.datasci_group.name
   location            = azurerm_resource_group.datasci_group.location
 
-  tags                = var.default_tags
+  tags = var.default_tags
 
   //noinspection MissingProperty
   sku {
@@ -259,8 +259,8 @@ resource "azurerm_iothub" "datasci_iothub" {
 
   endpoint {
     connection_string = azurerm_eventhub_authorization_rule.auth_rule.primary_connection_string
-    name = "datasci-iothub-eventhubs-endpoint"
-    type = "AzureIotHub.EventHub"
+    name              = "datasci-iothub-eventhubs-endpoint"
+    type              = "AzureIotHub.EventHub"
   }
 
   route {
@@ -272,17 +272,70 @@ resource "azurerm_iothub" "datasci_iothub" {
   }
 }
 
-# Create Mosquitto MQTT Broker
+# Create an Azure Storage Account
+resource "azurerm_storage_account" "datasci" {
+  name                     = join("", [var.cluster_name, var.environment, "storageacct"])
+  resource_group_name      = azurerm_resource_group.datasci_group.name
+  location                 = azurerm_resource_group.datasci_group.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  tags = var.default_tags
+}
+
+# Create an Azure File Share for the Connector Config
+resource "azurerm_storage_share" "connector_config" {
+  name                 = join("-", [var.cluster_name, var.environment, "connector-config-file-share"])
+  storage_account_name = azurerm_storage_account.datasci.name
+  quota                = 1
+}
+
+# Create an Azure File Share for the Connector Logs
+resource "azurerm_storage_share" "connector_logs" {
+  name                 = join("-", [var.cluster_name, var.environment, "connector-logs-file-share"])
+  storage_account_name = azurerm_storage_account.datasci.name
+  quota                = 2
+}
+
+# Read the MQTT Connector Config Template file, and update some of the values
+locals {
+  mqtt_connector_config = jsondecode(file("${path.module}/../template/mqtt-connector-template.conf"))
+  mqtt_container_dns_name_label = join("-", [var.cluster_name, var.environment, "mqtt"])
+}
+
+locals {
+  local.mqtt_connector_config.connector-config.mqtt-server = "tcp://${local.mqtt_container_dns_name_label}.${var.location}.azurecontainer.console.azure.us:1883"
+  local.mqtt_connector_config.connector-config.mqtt-topics = var.mqtt_topics
+  local.mqtt_connector_config.connector-config.mqtt-username = "datasci"
+  local.mqtt_connector_config.connector-config.mqtt-password = ""
+  local.mqtt_connector_config.connector-config.azure-event-hubs-connection-string = azurerm_eventhub_namespace.datasci.default_primary_connection_string
+}
+
+# Create the MQTT Connector Config File
+resource "local_file" "mqtt_connector_config" {
+  content  = jsonencode(locals.mqtt_connector_config)
+  filename = "${path.module}/../config/mqtt-connector.conf"
+}
+
+# Upload the Connector Config File to the Azure File Share
+resource "null_resource" "upload-config" {
+  provisioner "local-exec" {
+    command = "${path.module}/../scripts/upload-connector-config.sh ${azurerm_storage_share.connector_config.name} ${azurerm_storage_account.datasci.name} '${azurerm_storage_account.datasci.primary_access_key}'"
+  }
+}
+
+# Create a Container Group
 resource "azurerm_container_group" "datasci_mqtt" {
   name                = join("-", [var.cluster_name, var.environment, "mqtt"])
   resource_group_name = azurerm_resource_group.datasci_group.name
   location            = azurerm_resource_group.datasci_group.location
   ip_address_type     = "public"
-  dns_name_label      = join("-", [var.cluster_name, var.environment, "mqtt"])
+  dns_name_label      = local.mqtt_container_dns_name_label
   os_type             = "Linux"
-  
-  tags                = var.default_tags
 
+  tags = var.default_tags
+
+  # MQTT Broker
   container {
     name   = "mqtt"
     image  = "eclipse-mosquitto"
@@ -296,6 +349,34 @@ resource "azurerm_container_group" "datasci_mqtt" {
     ports {
       port     = 9001
       protocol = "TCP"
+    }
+  }
+
+  # MQTT to Event Hub Connector
+  container {
+    name   = "connector"
+    image  = "chesapeaketechnology/mqtt-azure-event-hub-connector:0.0.1"
+    cpu    = "1.0"
+    memory = "1.5"
+
+    volume {
+      name       = "config"
+      mount_path = "/mqtt-azure-connector/config"
+      read_only  = "true"
+      share_name = azurerm_storage_share.connector_config.name
+
+      storage_account_name = azurerm_storage_account.datasci.name
+      storage_account_key  = azurerm_storage_account.datasci.primary_access_key
+    }
+
+    volume {
+      name       = "log"
+      mount_path = "/mqtt-azure-connector/log"
+      read_only  = "false"
+      share_name = azurerm_storage_share.connector_logs.name
+
+      storage_account_name = azurerm_storage_account.datasci.name
+      storage_account_key  = azurerm_storage_account.datasci.primary_access_key
     }
   }
 }
