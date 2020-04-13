@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  gather_facts: yes
+  check_mode: no
+  tasks:
+    - name: "Render and write out mqtt connector config"
+      template:
+        src: mqtt-connector.conf.j2
+        dest: /tmp/mqtt-connector.conf
+
+    - name: "Upload the connector config"
+      shell: az storage file upload --share-name {{ mqtt_connector_name }} --account-name {{ mqtt_storage_acct }} --account-key {{ mqtt_access_key }} --source /tmp/mqtt-connector.conf

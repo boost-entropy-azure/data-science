@@ -34,6 +34,6 @@ variable "default_tags" {
 }
 
 variable "mqtt_topics" {
-  type        = list(string)
+  type        = string
   description = "The list of MQTT Topics to that should be pulled from the MQTT Broker and pushed into Azure Event Hubs"
 }
