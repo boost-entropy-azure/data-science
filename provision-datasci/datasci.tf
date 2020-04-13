@@ -308,9 +308,9 @@ locals {
 module "mqtt-conf"  {
   source = "./modules/mqtt-conf-ansible"
   arguments = [
-    "mqtt_connector_name='${azurerm_storage_share.connector_config.name}'",
-    "mqtt_storage_acct='${azurerm_storage_account.datasci.name}'",
-    "mqtt_access_key='${azurerm_storage_account.datasci.primary_access_key}'",
+    "mqtt_config_share_name='${azurerm_storage_share.connector_config.name}'",
+    "storage_account_name='${azurerm_storage_account.datasci.name}'",
+    "storage_account_key='${azurerm_storage_account.datasci.primary_access_key}'",
     "mqtt_server='${local.mqtt-server}'",
     "mqtt_topics='${var.mqtt_topics}'",
     "mqtt_username='${local.mqtt-username}'",

@@ -9,4 +9,4 @@
         dest: /tmp/mqtt-connector.conf
 
     - name: "Upload the connector config"
-      shell: az storage file upload --share-name {{ mqtt_connector_name }} --account-name {{ mqtt_storage_acct }} --account-key {{ mqtt_access_key }} --source /tmp/mqtt-connector.conf
+      shell: az storage file upload --share-name {{ mqtt_config_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source /tmp/mqtt-connector.conf
