@@ -162,7 +162,9 @@ Common commands:
     1. in first terminal, add message `/usr/local/kafka/bin/kafka-console-producer.sh --broker-list locahost:9092 --topic IoTHub` (or skip if you're sending messages from Android NS app)
     1. type in a message or two and close the producer console with Ctrl-D (or skip this step if you're sending messages from the Android NS app)
     1. in second terminal, start consumer: `/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic IoTHub --from-beginning  --partition 0`
-
+1. Check hdfs
+    1. `ssh hadoop@datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net`
+    1. `hadoop fs -ls abfs://datasci-dev-container@datascidevlakestorage.dfs.core.usgovcloudapi.net/`
 
 ### To open a Jupyter notebook on one of the nodes
  1. Note the output printed by ansible from the above command. It should look similar to this.
