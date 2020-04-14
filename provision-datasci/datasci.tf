@@ -297,32 +297,30 @@ resource "azurerm_storage_share" "connector_logs" {
   quota                = 2
 }
 
-# Read the MQTT Connector Config Template file, and update some of the values
 locals {
-  mqtt_connector_config = jsondecode(file("${path.module}/../template/mqtt-connector-template.conf"))
   mqtt_container_dns_name_label = join("-", [var.cluster_name, var.environment, "mqtt"])
+  mqtt-server = "tcp://${local.mqtt_container_dns_name_label}.${var.location}.azurecontainer.console.azure.us:1883"
+  mqtt-username = "datasci"
+  mqtt-password = "pass"
+  azure-event-hubs-connection-string = azurerm_eventhub_namespace.datasci.default_primary_connection_string
 }
 
-locals {
-  local.mqtt_connector_config.connector-config.mqtt-server = "tcp://${local.mqtt_container_dns_name_label}.${var.location}.azurecontainer.console.azure.us:1883"
-  local.mqtt_connector_config.connector-config.mqtt-topics = var.mqtt_topics
-  local.mqtt_connector_config.connector-config.mqtt-username = "datasci"
-  local.mqtt_connector_config.connector-config.mqtt-password = ""
-  local.mqtt_connector_config.connector-config.azure-event-hubs-connection-string = azurerm_eventhub_namespace.datasci.default_primary_connection_string
+module "mqtt-conf"  {
+  source = "./modules/mqtt-conf-ansible"
+  arguments = [
+    "mqtt_config_share_name='${azurerm_storage_share.connector_config.name}'",
+    "storage_account_name='${azurerm_storage_account.datasci.name}'",
+    "storage_account_key='${azurerm_storage_account.datasci.primary_access_key}'",
+    "mqtt_server='${local.mqtt-server}'",
+    "mqtt_topics='${var.mqtt_topics}'",
+    "mqtt_username='${local.mqtt-username}'",
+    "mqtt_password='${local.mqtt-password}'",
+    "mqtt_eventhubs_connection='${local.azure-event-hubs-connection-string}'",
+    "mqtt_eventhubs_batch_size=10",
+    "mqtt_scheduled_interval=500"
+  ]
 }
 
-# Create the MQTT Connector Config File
-resource "local_file" "mqtt_connector_config" {
-  content  = jsonencode(locals.mqtt_connector_config)
-  filename = "${path.module}/../config/mqtt-connector.conf"
-}
-
-# Upload the Connector Config File to the Azure File Share
-resource "null_resource" "upload-config" {
-  provisioner "local-exec" {
-    command = "${path.module}/../scripts/upload-connector-config.sh ${azurerm_storage_share.connector_config.name} ${azurerm_storage_account.datasci.name} '${azurerm_storage_account.datasci.primary_access_key}'"
-  }
-}
 
 # Create a Container Group
 resource "azurerm_container_group" "datasci_mqtt" {
