@@ -1,0 +1,6 @@
+---
+- include: hadoop_install.yml
+
+- include: hadoop_conf.yml
+
+

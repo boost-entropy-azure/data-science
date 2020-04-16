@@ -1,15 +1,4 @@
-- name: "Install pip3"
-  apt:
-    name: python3-pip
-    state: latest
 
-- name: "Upgrade pip3"
-  shell: pip3 install --upgrade pip
-
-- name: "Install pip2"
-  apt:
-    name: python-pip
-    state: latest
-
-- name: "Upgrade pip2"
-  shell: pip install --upgrade pip
+- include: java.yml
+- include: pip.yml
+- include: azure_datalake.yml
