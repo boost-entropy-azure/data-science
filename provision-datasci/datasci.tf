@@ -89,7 +89,7 @@ resource "azurerm_public_ip" "datasci_ip" {
 }
 
 # Generate random text for a unique storage account name
-resource "random_id" "datasci_randomId" {
+resource "random_id" "datasci_randomStorageId" {
   keepers = {
     # Generate a new ID only when a new resource group is defined
     resource_group = azurerm_resource_group.datasci_group.name
@@ -100,7 +100,7 @@ resource "random_id" "datasci_randomId" {
 
 # Create storage account for boot diagnostics
 resource "azurerm_storage_account" "datasci_boot_storage" {
-  name                     = "diag${random_id.datasci_randomId.hex}"
+  name                     = "diag${random_id.datasci_randomStorageId.hex}"
   resource_group_name      = azurerm_resource_group.datasci_group.name
   location                 = azurerm_resource_group.datasci_group.location
   account_tier             = "Standard"
@@ -128,9 +128,9 @@ resource "azurerm_virtual_machine" "datasci_node" {
   }
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04.0-LTS"
+    publisher = "OpenLogic"
+    offer     = "CentOS-CI"
+    sku       = "7-CI"
     version   = "latest"
   }
 

@@ -1,13 +1,18 @@
 - name: "Install pip3"
-  apt:
+  package:
     name: python3-pip
     state: latest
 
 - name: "Upgrade pip3"
   shell: pip3 install --upgrade pip
 
+- name: "Add EPEL repo for CentOS"
+  package:
+      name: epel-release
+  when: ansible_os_family == 'RedHat'
+
 - name: "Install pip2"
-  apt:
+  package:
     name: python-pip
     state: latest
 

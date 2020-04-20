@@ -1,4 +1,11 @@
 ---
+# Load a variable file based on the OS type, or a default if not found.
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "../vars/{{ ansible_os_family | lower }}.yml"
+    - "../vars/default.yml"
+  when: openjdk_package_name is not defined
+
 - name: "Check if Java is installed"
   shell: command -v java
   register: check_java
@@ -7,6 +14,8 @@
   check_mode: False
 
 - name: "Install OpenJDK"
-  apt: name=openjdk-8-jre-headless state=present
+  package:
+    name: "{{ openjdk_package_name }}"
+    state: present
   become: true
   when: check_java.rc != 0
