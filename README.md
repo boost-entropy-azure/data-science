@@ -165,7 +165,6 @@ Common commands:
     1. type in a message or two and close the producer console with Ctrl-D (or skip this step if you're sending messages from the Android NS app)
     1. in second terminal, start consumer: `/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic IoTHub --from-beginning  --partition 0`
 
-
 ### To open a Jupyter notebook on one of the nodes
  1. Note the output printed by ansible from the above command. It should look similar to this.
     ```
@@ -180,10 +179,18 @@ Common commands:
     ```
 1. Setup ssh port forwarding for port 8888 when working with the Azure vm (which is the default port used by Jupyter notebook server)
     ```
-    ssh -N -f -L localhost:8888:localhost:8888 datasci_admin@datasci-dev0.usgovarizona.cloudapp.usgovcloudapi.net
+    ssh -N -f -L localhost:8888:localhost:8888 datasci_admin@<vm-name>.<govcloudlocation>.cloudapp.usgovcloudapi.net
    ```
 1. Open the url from step 1 (i.e http://localhost:8888/?token=c153e52cb3c6ad4a5368df00cd8fe4f6116c35f48152fd08") in a browser on localhost   
 
+### Check the setup of the Azure VM
+1. Check hdfs
+    1. `ssh hadoop@<vm-name>.<govcloud-location>.cloudapp.usgovcloudapi.net` but replacing
+        1. `<vm-name>` --> Virtual Machine name (eg. datasci-dev0) 
+        1. `<govcloud-location>` --> the US Gov cloud name (eg. usgovarizona)
+    1. `hadoop fs -ls abfs://<datalake-container>@<datalake-storage-name>.dfs.core.usgovcloudapi.net/` but replacing
+        1. `<datalake-container` --> container name (eg. datasci-dev-container)
+        1. `<datalake-storage-name>` --> datalake storage name (eg. datascidevlakestorage)
 
 ## (Optional) Tear down the Azure Deployment
 1. To tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`.

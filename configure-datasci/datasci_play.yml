@@ -56,6 +56,7 @@
   become: true
   roles:
     - role: "common"
+    - role: "hadoop"
     - {
       role: "spark",
       spark_master_ip: "{{ groups['nodes'][0] }}"
