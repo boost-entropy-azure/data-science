@@ -11,4 +11,4 @@ __pychache__
 .ipynb_checkpoints/
 
 # Prevent custom config files with secret keys from being committed
-config/*
+pwfile.txt

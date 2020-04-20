@@ -34,6 +34,11 @@ variable "default_tags" {
 }
 
 variable "mqtt_topics" {
-  type        = string
+  type        = list(string)
   description = "The list of MQTT Topics to that should be pulled from the MQTT Broker and pushed into Azure Event Hubs"
+}
+
+variable "mqtt_password" {
+  type        = string
+  description = "The password that is use to authenticate with the MQTT Broker"
 }

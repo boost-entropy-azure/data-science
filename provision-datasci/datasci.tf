@@ -210,9 +210,11 @@ resource "azurerm_eventhub_namespace" "datasci" {
   tags = var.default_tags
 }
 
-# Create Azure Event Hubs
-resource "azurerm_eventhub" "datasci_event_hubs" {
-  name                = join("-", [var.cluster_name, var.environment, "event-hub"])
+# Create an Azure Event Hub for each MQTT Topic defined
+resource "azurerm_eventhub" "datasci_event_hub" {
+  for_each = toset(var.mqtt_topics)
+
+  name                = each.key
   namespace_name      = azurerm_eventhub_namespace.datasci.name
   resource_group_name = azurerm_resource_group.datasci_group.name
   partition_count     = 2
@@ -223,6 +225,7 @@ resource "azurerm_eventhub" "datasci_event_hubs" {
     encoding            = "Avro"
     interval_in_seconds = 300       # 5 min
     size_limit_in_bytes = 314572800 # 300 MB
+    skip_empty_archives = true
 
     destination {
       name                = "EventHubArchive.AzureBlockBlob"
@@ -234,9 +237,11 @@ resource "azurerm_eventhub" "datasci_event_hubs" {
 }
 
 resource "azurerm_eventhub_authorization_rule" "auth_rule" {
+  for_each = toset(var.mqtt_topics)
+
   resource_group_name = azurerm_resource_group.datasci_group.name
   namespace_name      = azurerm_eventhub_namespace.datasci.name
-  eventhub_name       = azurerm_eventhub.datasci_event_hubs.name
+  eventhub_name       = azurerm_eventhub.datasci_event_hub[each.key].name
   name                = join("-", [var.cluster_name, var.environment, "auth-rule"])
   send                = true
   listen              = true
@@ -298,21 +303,21 @@ resource "azurerm_storage_share" "connector_logs" {
 }
 
 locals {
-  mqtt_container_dns_name_label = join("-", [var.cluster_name, var.environment, "mqtt"])
-  mqtt-server = "tcp://${local.mqtt_container_dns_name_label}.${var.location}.azurecontainer.console.azure.us:1883"
-  mqtt-username = "datasci"
-  mqtt-password = "pass"
+  mqtt_container_dns_name_label      = join("-", [var.cluster_name, var.environment, "mqtt"])
+  mqtt-server                        = "tcp://${local.mqtt_container_dns_name_label}.${var.location}.azurecontainer.console.azure.us:1883"
+  mqtt-username                      = var.admin_username
+  mqtt-password                      = var.mqtt_password
   azure-event-hubs-connection-string = azurerm_eventhub_namespace.datasci.default_primary_connection_string
 }
 
-module "mqtt-conf"  {
-  source = "./modules/mqtt-conf-ansible"
+module "mqtt-connector-conf" {
+  source = "./modules/mqtt-connector-config-ansible"
   arguments = [
     "mqtt_config_share_name='${azurerm_storage_share.connector_config.name}'",
     "storage_account_name='${azurerm_storage_account.datasci.name}'",
     "storage_account_key='${azurerm_storage_account.datasci.primary_access_key}'",
     "mqtt_server='${local.mqtt-server}'",
-    "mqtt_topics='${var.mqtt_topics}'",
+    "mqtt_topics='${join("\",\"", var.mqtt_topics)}'",
     "mqtt_username='${local.mqtt-username}'",
     "mqtt_password='${local.mqtt-password}'",
     "mqtt_eventhubs_connection='${local.azure-event-hubs-connection-string}'",
@@ -321,6 +326,43 @@ module "mqtt-conf"  {
   ]
 }
 
+# Create an Azure File Share for the MQTT Broker
+resource "azurerm_storage_share" "mqtt_broker" {
+  name                 = join("-", [var.cluster_name, var.environment, "mqtt-broker-file-share"])
+  storage_account_name = azurerm_storage_account.datasci.name
+  quota                = 10
+}
+
+# Create the "config" Directory in the MQTT Broker File Share
+resource "azurerm_storage_share_directory" "broker_config" {
+  name                 = "config"
+  share_name           = azurerm_storage_share.mqtt_broker.name
+  storage_account_name = azurerm_storage_account.datasci.name
+}
+
+# Upload the MQTT Broker config file
+module "mqtt-broker-conf" {
+  source = "./modules/mqtt-broker-config-ansible"
+  arguments = [
+    "mqtt_broker_share_name='${azurerm_storage_share.mqtt_broker.name}'",
+    "storage_account_name='${azurerm_storage_account.datasci.name}'",
+    "storage_account_key='${azurerm_storage_account.datasci.primary_access_key}'",
+    "file_to_upload=${abspath("${path.module}/config/mosquitto.conf")}",
+    "remote_path=config/mosquitto.conf"
+  ]
+}
+
+# Upload a primer pwfile just to allow the broker to start... it will be replaced later
+module "mqtt-broker-pwfile" {
+  source = "./modules/mqtt-broker-config-ansible"
+  arguments = [
+    "mqtt_broker_share_name='${azurerm_storage_share.mqtt_broker.name}'",
+    "storage_account_name='${azurerm_storage_account.datasci.name}'",
+    "storage_account_key='${azurerm_storage_account.datasci.primary_access_key}'",
+    "file_to_upload=${abspath("${path.module}/config/pwfile.txt")}",
+    "remote_path=config/pwfile.txt"
+  ]
+}
 
 # Create a Container Group
 resource "azurerm_container_group" "datasci_mqtt" {
@@ -339,6 +381,7 @@ resource "azurerm_container_group" "datasci_mqtt" {
     image  = "eclipse-mosquitto"
     cpu    = "1.0"
     memory = "1.5"
+    #commands = ["mosquitto_passwd", "-b", "/mosquitto/config/pwfile.txt", var.admin_username, local.mqtt-password]
 
     ports {
       port     = 1883
@@ -347,6 +390,16 @@ resource "azurerm_container_group" "datasci_mqtt" {
     ports {
       port     = 9001
       protocol = "TCP"
+    }
+
+    volume {
+      name       = "mqtt-broker"
+      mount_path = "/mosquitto"
+      read_only  = "false"
+      share_name = azurerm_storage_share.mqtt_broker.name
+
+      storage_account_name = azurerm_storage_account.datasci.name
+      storage_account_key  = azurerm_storage_account.datasci.primary_access_key
     }
   }
 
