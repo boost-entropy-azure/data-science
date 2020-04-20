@@ -211,7 +211,7 @@ resource "azurerm_eventhub_namespace" "datasci" {
 }
 
 # Create an Azure Event Hub for each MQTT Topic defined
-resource "azurerm_eventhub" "datasci_event_hub" {
+resource "azurerm_eventhub" "mqtt_event_hub" {
   for_each = toset(var.mqtt_topics)
 
   name                = each.key
@@ -236,12 +236,35 @@ resource "azurerm_eventhub" "datasci_event_hub" {
   }
 }
 
-resource "azurerm_eventhub_authorization_rule" "auth_rule" {
-  for_each = toset(var.mqtt_topics)
+# Create an Azure Event Hub for the IoT Hub traffic
+resource "azurerm_eventhub" "iot_event_hub" {
+  name                = join("-", [var.cluster_name, var.environment, "iot-messages"])
+  namespace_name      = azurerm_eventhub_namespace.datasci.name
+  resource_group_name = azurerm_resource_group.datasci_group.name
+  partition_count     = 2
+  message_retention   = 1
 
+  capture_description {
+    enabled             = true
+    encoding            = "Avro"
+    interval_in_seconds = 300       # 5 min
+    size_limit_in_bytes = 314572800 # 300 MB
+    skip_empty_archives = true
+
+    destination {
+      name                = "EventHubArchive.AzureBlockBlob"
+      archive_name_format = "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
+      blob_container_name = azurerm_template_deployment.datasci_container.name
+      storage_account_id  = azurerm_storage_account.datasci_lake_storage.id
+    }
+  }
+}
+
+# Add a rule so the traffic can flow from IoT Hub to an Event Hub.
+resource "azurerm_eventhub_authorization_rule" "auth_rule" {
   resource_group_name = azurerm_resource_group.datasci_group.name
   namespace_name      = azurerm_eventhub_namespace.datasci.name
-  eventhub_name       = azurerm_eventhub.datasci_event_hub[each.key].name
+  eventhub_name       = azurerm_eventhub.iot_event_hub.name
   name                = join("-", [var.cluster_name, var.environment, "auth-rule"])
   send                = true
   listen              = true
