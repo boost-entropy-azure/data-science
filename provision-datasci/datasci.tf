@@ -153,6 +153,10 @@ resource "azurerm_virtual_machine" "datasci_node" {
   }
 }
 
+data "http" "myip" {
+  url = "http://ipecho.net/plain"
+}
+
 # Create data lake storage account
 resource azurerm_storage_account "datasci_lake_storage" {
   resource_group_name      = azurerm_resource_group.datasci_group.name
@@ -167,7 +171,7 @@ resource azurerm_storage_account "datasci_lake_storage" {
 
   network_rules {
     default_action             = "Deny"
-    ip_rules                   = ["127.0.0.1"]
+    ip_rules                   = ["127.0.0.1", "${chomp(data.http.myip.body)}"]
     virtual_network_subnet_ids = [azurerm_subnet.datasci_subnet.id]
   }
 }
