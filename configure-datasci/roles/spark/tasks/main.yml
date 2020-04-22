@@ -9,10 +9,10 @@
   set_fact: spark_installed=True
 
 - name: set spark installation path fact
-  set_fact: spark_installation_dir=spark-{{ spark.version }}-bin-hadoop{{ spark.hadoop_version }}
+  set_fact: spark_installation_dir=spark-{{ spark.version }}-bin-{{ spark.hadoop_version }}
 
 - name: set spark archive fact
-  set_fact: spark_archive=spark-{{ spark.version }}-bin-hadoop{{ spark.hadoop_version }}.tgz
+  set_fact: spark_archive=spark-{{ spark.version }}-bin-{{ spark.hadoop_version }}.tgz
 
 - name: set spark download location fact
   set_fact: spark_download={{ spark.download_location }}/spark-{{ spark.version }}/{{ spark_archive }}
@@ -57,6 +57,16 @@
 
 - name: set spark-env.sh
   template: src="spark-env-sh.j2" dest="{{ install_dir }}/{{ spark_installation_dir }}/conf/spark-env.sh"
+
+- name: Update java_home for CentOS
+  set_fact: java_home="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.242.b08-0.el7_7.x86_64/jre"
+  when: ansible_os_family == 'RedHat'
+
+- name: Export JAVA_HOME within spark env
+  lineinfile:
+    dest: "{{ install_dir }}/{{ spark_installation_dir }}/conf/spark-env.sh"
+    regexp: "^export JAVA_HOME="
+    line: "export JAVA_HOME={{ java_home }}"
 
 - name: set spark-defaults.conf
   template: src="spark-defaults-conf.j2" dest="{{ install_dir}}/{{ spark_installation_dir }}/conf/spark-defaults.conf"

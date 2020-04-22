@@ -34,7 +34,7 @@ azure_client_secret: !vault |
 # Use this selector to use a mirror for a "current" version or an "archived" one
 hadoop_mirror_selector: "current"
 hadoop_mirror:
-  current: https://apache.claz.org/hadoop/common
+  current: http://www.gtlib.gatech.edu/pub/apache/hadoop/common/
   archive: http://archive.apache.org/dist/hadoop/common
 hadoop_url: "{{ hadoop_mirror[hadoop_mirror_selector] }}/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz"
 hadoop_bin_tmp: "/tmp/hadoop-{{ hadoop_version }}.tar.gz"
