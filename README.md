@@ -8,9 +8,11 @@ Currently, this Terraform configuration deploys the following resources to Azure
 - A Network Security Group
 - A storage account for boot diagnostics
 - An IoT Hub
-- An Event Hub
+- An Event Hubs Namespace, and an Event Hub instance per specified MQTT topic
 - An Azure data lake storage container
+- An Azure File Share to store files for the docker containers
 - A Mosquitto MQTT Broker in a Docker Container
+- A MQTT to Event Hubs Connector in a Docker Container
 - A VM with Apache Spark, and Jupyter Notebook
 
 ## Table of Contents
