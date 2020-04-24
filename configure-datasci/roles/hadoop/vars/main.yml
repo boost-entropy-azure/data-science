@@ -3,6 +3,7 @@ hadoop_user: hadoop
 hadoop_group: hadoop
 hadoop_version: 2.10.0
 hadoop_home: "/usr/local/hadoop"
+java_home: "/usr/lib/jvm/java-8-openjdk-amd64"
 
 azure_tenant_id: !vault |
   $ANSIBLE_VAULT;1.1;AES256
