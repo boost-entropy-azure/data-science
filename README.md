@@ -27,7 +27,18 @@ Any IDE or text editor can be used to work with the code in this repo, but it is
     1. [Terraform](https://marketplace.visualstudio.com/items?itemName=mauve.terraform)
 
 ## Initial Setup
-### Setup a Development environment 
+There are two Vagrant scripts provided in this project. 
+1. `localdev/Vagrantfile` will deploy a Desktop Ubuntu VM with many IDEs
+installed and configured (VS Code, PyCharm, IntelliJ, etc) as well as all the packages needed to actively develop, build and test
+the data-science project. Installing all the packages (especially the Ubuntu Desktop) takes a long time. If you will not be developing
+new features for the project an admin VM may be a better option. 
+See [this section](#to-setup-a-development-environment) for details.
+1.  `localadmin/Vagrantfile` will deploy a Ubuntu VM meant for administering the data-science project. As such, it will not
+include a Desktop environment or any of the IDEs. The admin VM is meant for purely allowing an administrator to create a Linux VM and
+deploy the project to Azure cloud and connect to the VMs in the cloud. 
+See [this section](#to-setup-an-administrator-environment) for details.
+
+### To setup a Development environment 
 If running on Windows, it is recommended to setup a Linux VM to do all the development and deployment from. The development
 environment provides a local (i.e without Azure) environment in which unit and integration testing is available.  Use the steps 
 below to create a Ubuntu VM with Vagrant.
@@ -37,17 +48,25 @@ below to create a Ubuntu VM with Vagrant.
 1. [Install vagrant](https://www.vagrantup.com/downloads.html)
 1. `vagrant plugin install vagrant-vbguest`
 1. `vagrant plugin install vagrant-disksize`
+1. `cd data-scicence/localdev`
 1. `vagrant up` from  bash/Powershell to create and boot the VM
-    1. Note: this may take a long time to complete (> 1h). If desktop environment isn't needed, comment out these lines in the Vagrantfile script and save a lot of time
-        1. `config.vm.provision "shell", inline: "sudo apt-get --assume-yes install ubuntu-desktop"` and 
-        1. `config.vm.provision :shell, path: "bootstrap.sh"`
+    1. Note: this may take a long time to complete (> 1h). 
     1. Restart with `vagrant reload --provision` in case of failures (will require at least a few reloads)
 1. login to the VM, `username=vagrant, pass=vagrant`
 
+### To Setup an Administrator environment
+1. Clone this repo
+1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+1. [Install vagrant](https://www.vagrantup.com/downloads.html)
+1. `vagrant plugin install vagrant-vbguest`
+1. `vagrant plugin install vagrant-disksize`
+1. `cd data-scicence/localadmin`
+1. `vagrant up` from  bash/Powershell to create and boot the VM
+1. `vagrant ssh` to login to the VM, `username=vagrant, pass=vagrant`
 
 ### (Optional) Manual setup
 If running on macOS or Linux natively, the step of creating a dedicated VM can be skipped. However, it will be necessary to setup
-the development and testing environment manually on your host machine. 
+the development and testing environment manually on your host machine if you're planning on developing the project.
 
 ### Create an SSH Key Pair
 An SSH key pair is needed to provision any machine with SSH access.  When creating a cluster using this terraform configuration, 
@@ -155,7 +174,7 @@ Common commands:
 1. `terraform apply datasci.tf -var-file=datasci_vars.tfvars`
 1. Log into the azure portal and observe the resources created
 
-### Verify local data-science VM(s) Setup
+### Verify localdev data-science VM(s) Setup
 1. Check Zookeeper: 
     1. `telnet localhost 2181`
     1. `ruok`

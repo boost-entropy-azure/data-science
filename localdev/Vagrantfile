@@ -75,7 +75,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: "sudo apt-get upgrade -y"
   config.vm.provision "shell", inline: "sudo apt-get --assume-yes install ubuntu-desktop"
 
-  # Setup datasci evelopment environment
+  # Setup datasci development environment
   config.vm.provision "ansible_local" do |ansible|
     ansible.playbook = "configure/localdev.yml"
     ansible.groups = {

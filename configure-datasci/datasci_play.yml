@@ -24,18 +24,6 @@
         groups: "{{ group_list.stdout_lines[0] }}"
       with_items: "{{ hosts.stdout_lines }}"
 
-  roles:
-      - role: "common"
-      - role: "azure-cli"
-      - role: "zookeeper"
-      - {
-        role: "kafka",
-        kafka_hosts: ['localhost'],
-        kafka_zookeeper_hosts: "{{ zookeeper_hosts | list }}",
-        kafka_version: 2.4.0,     # Kafka version override.
-        kafka_scala_serverion: 2.11 # Scala version override.
-      }
-
 - hosts: all
   gather_facts: yes
   check_mode: no
