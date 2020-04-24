@@ -147,17 +147,21 @@
     - {src: "yarn-site.xml", dest: "{{ hadoop_home }}/etc/hadoop/yarn-site.xml"}
     - {src: "mapred-site.xml", dest: "{{ hadoop_home }}/etc/hadoop/mapred-site.xml"}
 
+- name: Update java_home for CentOS
+  set_fact: java_home="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.242.b08-0.el7_7.x86_64/jre"
+  when: ansible_os_family == 'RedHat'
+
 - name: Export JAVA_HOME within hadoop env
   lineinfile:
     dest: "{{ hadoop_home }}/etc/hadoop/hadoop-env.sh"
-    regexp: "^export JAVA_HOME"
-    line: "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64"
+    regexp: "^export JAVA_HOME="
+    line: "export JAVA_HOME={{ java_home }}"
 
 - name: Add Azure libs to HADOOP_CLASSPATH
   lineinfile:
     dest: "{{ hadoop_home }}/etc/hadoop/hadoop-env.sh"
     regexp: "^export HADOOP_CLASSPATH="
-    line: "export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HADOOP_HOME/share/hadoop/tools/lib/*"
+    line: "export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:{{ hadoop_home }}/share/hadoop/tools/lib/*"
     state: present
 
 - name: Add Azure tools to hadoop-env.sh

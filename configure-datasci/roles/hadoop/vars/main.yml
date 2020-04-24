@@ -3,6 +3,7 @@ hadoop_user: hadoop
 hadoop_group: hadoop
 hadoop_version: 2.10.0
 hadoop_home: "/usr/local/hadoop"
+java_home: "/usr/lib/jvm/java-8-openjdk-amd64"
 
 azure_tenant_id: !vault |
   $ANSIBLE_VAULT;1.1;AES256
@@ -34,6 +35,7 @@ azure_client_secret: !vault |
 # Use this selector to use a mirror for a "current" version or an "archived" one
 hadoop_mirror_selector: "current"
 hadoop_mirror:
+<<<<<<< HEAD
   current: http://www.gtlib.gatech.edu/pub/apache/hadoop/common
   archive: http://archive.apache.org/dist/hadoop/common
 hadoop_url: "{{ hadoop_mirror[hadoop_mirror_selector] }}/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz"
