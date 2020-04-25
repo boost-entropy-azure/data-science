@@ -1,0 +1,65 @@
+- name: "Install snap package manager"
+  apt:
+    name: snap
+
+- name: "Install Intellij community"
+  snap:
+    name: intellij-idea-community
+    classic: yes
+
+- name: "Install pycharm"
+  snap:
+    name: pycharm-community
+    classic: yes
+
+- name: "Install Visual Studio Code"
+  snap:
+    name: code
+    classic: yes
+
+- name: "Install unzip"
+  apt:
+    name: unzip
+
+- name: "Define the terraform version"
+  set_fact: terraform_version=0.12.24
+
+- name: "Download Terraform binary"
+  get_url:
+    url: https://releases.hashicorp.com/terraform/0.12.24/terraform_{{ terraform_version }}_linux_amd64.zip
+    dest: /home/vagrant/
+
+- name: "Unzip Terraform"
+  shell: unzip /home/vagrant/terraform_{{ terraform_version }}_linux_amd64.zip
+
+- name: "Install Terraform"
+  shell: mv /home/vagrant/terraform /usr/local/bin
+
+- name: "Remove the zip"
+  shell: rm /home/vagrant/terraform_{{ terraform_version }}_linux_amd64.zip
+
+- name: "Install kafka-python"
+  pip:
+    name: kafka-python
+    executable: pip3
+
+- name: "Check if ssh keys exist"
+  stat:
+    path: /home/vagrant/.ssh/id_rsa
+  register: ssh_key
+
+- name: "Create a default ssh key pair"
+  shell: ssh-keygen -q -t rsa -N '' -f /home/vagrant/.ssh/id_rsa
+  when: not ssh_key.stat.exists
+
+- name: "Update ssh private key ownership and group"
+  file:
+    path: /home/vagrant/.ssh/id_rsa
+    owner: vagrant
+    group: vagrant
+
+- name: "Update ssh public key ownership and group"
+  file:
+    path: /home/vagrant/.ssh/id_rsa.pub
+    owner: vagrant
+    group: vagrant
