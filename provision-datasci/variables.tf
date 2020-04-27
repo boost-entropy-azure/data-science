@@ -42,3 +42,8 @@ variable "mqtt_password" {
   type        = string
   description = "The password that is use to authenticate with the MQTT Broker"
 }
+
+variable "mqtt_users" {
+  type        = list(string)
+  description = "The list of users that should be allowed connection to the MQTT Broker"
+}

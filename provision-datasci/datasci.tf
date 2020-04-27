@@ -367,29 +367,17 @@ resource "azurerm_storage_share_directory" "broker_config" {
   storage_account_name = azurerm_storage_account.datasci.name
 }
 
-# Upload the MQTT Broker config file
+# Upload the MQTT Broker config file and a pwfile.txt
 module "mqtt-broker-conf" {
   source = "./modules/mqtt-broker-config-ansible"
   arguments = [
     "mqtt_broker_share_name='${azurerm_storage_share.mqtt_broker.name}'",
     "storage_account_name='${azurerm_storage_account.datasci.name}'",
     "storage_account_key='${azurerm_storage_account.datasci.primary_access_key}'",
-    "file_to_upload=${abspath("${path.module}/config/mosquitto.conf")}",
-    "remote_path=config/mosquitto.conf"
-  ]
+    "mqtt_users=${join("\",\"", var.mqtt_users)}"
+    ]
 }
 
-# Upload a primer pwfile just to allow the broker to start... it will be replaced later
-module "mqtt-broker-pwfile" {
-  source = "./modules/mqtt-broker-config-ansible"
-  arguments = [
-    "mqtt_broker_share_name='${azurerm_storage_share.mqtt_broker.name}'",
-    "storage_account_name='${azurerm_storage_account.datasci.name}'",
-    "storage_account_key='${azurerm_storage_account.datasci.primary_access_key}'",
-    "file_to_upload=${abspath("${path.module}/config/pwfile.txt")}",
-    "remote_path=config/pwfile.txt"
-  ]
-}
 
 # Create a Container Group
 resource "azurerm_container_group" "datasci_mqtt" {

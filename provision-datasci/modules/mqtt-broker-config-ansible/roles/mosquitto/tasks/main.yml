@@ -1,0 +1,47 @@
+---
+- name: "Install mosquitto"
+  package:
+    name: mosquitto
+    state: present
+
+- name: "Set the list of MQTT authorized users"
+  set_fact: mosquitto_auth_users={{ mqtt_users }}
+
+- name: "Check if password file exists"
+  stat:
+    path: "{{ mosquitto.passwd_file }}"
+  register: passwd
+
+- name: "Create the password file if not already there"
+  file:
+    path: "{{ mosquitto.passwd_file }}"
+    mode: 0640
+    state: touch
+  when: not passwd.stat.exists
+
+- name: "Clean up the current password file"
+  command:
+    mosquitto_passwd -D "{{ mosquitto.passwd_file }}" "{{ item }}"
+  when:
+    - item.state | default("present") == "absent"
+  with_items: "{{ mosquitto_auth_users }}"
+  no_log: true
+
+- name: "Regen the passwords"
+  command:
+    mosquitto_passwd -b "{{ mosquitto.passwd_file }}" "{{ item }}" "{{ item }}"
+  when:
+    - item.state | default("present") == "present"
+  with_items: "{{ mosquitto_auth_users }}"
+  no_log: true
+
+- name: "Upload the Mosquitto paswd file"
+  shell: az storage file upload --share-name {{ mqtt_broker_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ mosquitto.passwd_file }} --path config/pwfile.txt
+
+- name: "Render and write out mosquitto broker config"
+  template:
+    src: mosquitto.conf.j2
+    dest: "{{ mosquitto.conf_file }}"
+
+- name: "Upload the Mosquitto MQTT Broker Config"
+  shell: az storage file upload --share-name {{ mqtt_broker_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ mosquitto.conf_file }} --path config/mosquitto.conf
