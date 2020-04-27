@@ -17,27 +17,6 @@
     name: code
     classic: yes
 
-- name: "Install unzip"
-  apt:
-    name: unzip
-
-- name: "Define the terraform version"
-  set_fact: terraform_version=0.12.24
-
-- name: "Download Terraform binary"
-  get_url:
-    url: https://releases.hashicorp.com/terraform/0.12.24/terraform_{{ terraform_version }}_linux_amd64.zip
-    dest: /home/vagrant/
-
-- name: "Unzip Terraform"
-  shell: unzip /home/vagrant/terraform_{{ terraform_version }}_linux_amd64.zip
-
-- name: "Install Terraform"
-  shell: mv /home/vagrant/terraform /usr/local/bin
-
-- name: "Remove the zip"
-  shell: rm /home/vagrant/terraform_{{ terraform_version }}_linux_amd64.zip
-
 - name: "Install kafka-python"
   pip:
     name: kafka-python
