@@ -5,7 +5,7 @@
     state: present
 
 - name: "Set the list of MQTT authorized users"
-  set_fact: mosquitto_auth_users={{ mqtt_users }}
+  set_fact: usernames={{ mqtt_users.split(',') }}
 
 - name: "Check if password file exists"
   stat:
@@ -24,19 +24,39 @@
     mosquitto_passwd -D "{{ mosquitto.passwd_file }}" "{{ item }}"
   when:
     - item.state | default("present") == "absent"
-  with_items: "{{ mosquitto_auth_users }}"
+  with_items: "{{ usernames }}"
   no_log: true
 
-- name: "Regen the passwords"
+- name: "Create new passwords"
+  set_fact:
+    words: "{{ words|default([]) + [lookup('password', '/dev/null length=8 chars=ascii_letters')] }}"
+  with_items: "{{ usernames }}"
+
+- name: "Regen the mosquitto passwords"
   command:
-    mosquitto_passwd -b "{{ mosquitto.passwd_file }}" "{{ item }}" "{{ item }}"
+    mosquitto_passwd -b "{{ mosquitto.passwd_file }}" "{{ item.0 }}" "{{ item.1 }}"
   when:
-    - item.state | default("present") == "present"
-  with_items: "{{ mosquitto_auth_users }}"
+    - item.state | default("present") == "absent"
+  with_together:
+    - "{{ usernames }}"
+    - "{{ words }}"
+  no_log: true
+
+- name: "Save usernames to fact file"
+  lineinfile:
+    path: "{{ mosquitto.fact_file }}"
+    line: "{{ item.0 }} {{ item.1 }}"
+    create: yes
+  with_together:
+    - "{{ usernames }}"
+    - "{{ words }}"
   no_log: true
 
 - name: "Upload the Mosquitto paswd file"
   shell: az storage file upload --share-name {{ mqtt_broker_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ mosquitto.passwd_file }} --path config/pwfile.txt
+
+- name: "Upload the Mosquitto fact file"
+  shell: az storage file upload --share-name {{ mqtt_broker_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ mosquitto.fact_file }} --path config/facts.txt
 
 - name: "Render and write out mosquitto broker config"
   template:
