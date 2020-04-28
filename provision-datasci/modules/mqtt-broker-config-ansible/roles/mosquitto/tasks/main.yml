@@ -35,8 +35,6 @@
 - name: "Regen the mosquitto passwords"
   command:
     mosquitto_passwd -b "{{ mosquitto.passwd_file }}" "{{ item.0 }}" "{{ item.1 }}"
-  when:
-    - item.state | default("present") == "absent"
   with_together:
     - "{{ usernames }}"
     - "{{ words }}"
@@ -65,3 +63,12 @@
 
 - name: "Upload the Mosquitto MQTT Broker Config"
   shell: az storage file upload --share-name {{ mqtt_broker_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ mosquitto.conf_file }} --path config/mosquitto.conf
+
+- name: "Remove generated files"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ mosquitto.fact_file }}"
+    - "{{ mosquitto.passwd_file }}"
+    - "{{ mosquitto.conf_file }}"

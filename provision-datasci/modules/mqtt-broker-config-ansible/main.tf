@@ -13,10 +13,10 @@ resource "null_resource" "provisioner" {
 
   triggers = {
     signature = data.archive_file.default.output_md5
-    command   = "ansible-playbook -e ${join(" -e ", compact(var.arguments))} ${path.module}/mqtt_broker_play.yml"
+    command   = "ansible-playbook -e ${join(" -e ", compact(var.arguments))} ${path.module}/mqtt_play.yml"
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -e ${join(" -e ", compact(var.arguments))} ${path.module}/mqtt_broker_play.yml"
+    command = "ansible-playbook -e ${join(" -e ", compact(var.arguments))} ${path.module}/mqtt_play.yml"
   }
 }
