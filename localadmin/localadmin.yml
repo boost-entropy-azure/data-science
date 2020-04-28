@@ -1,0 +1,8 @@
+---
+- name: "Configure admin machine with terraform"
+  hosts: all
+  gather_facts: yes
+  check_mode: no
+  become: True
+  roles:
+      - role: "terraform"

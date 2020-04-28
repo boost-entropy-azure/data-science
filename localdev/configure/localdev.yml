@@ -8,6 +8,7 @@
       - role: "configure-datasci/roles/common"
       - role: "configure-datasci/roles/azure-cli"
       - role: "dev-env"
+      - role: "terraform"
       - role: "configure-datasci/roles/zookeeper"
       - {
         role: "configure-datasci/roles/kafka",

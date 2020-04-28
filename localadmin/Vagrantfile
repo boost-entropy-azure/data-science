@@ -71,7 +71,11 @@ Vagrant.configure("2") do |config|
     vb.name = "datasci_local"
   end
 
-  # finish development desktop setup if you installed desktop Ubuntu above
+  # finish development desktop setup
   config.vm.provision :shell, path: "bootstrap.sh"
 
+  # Setup datasci admin environment
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "localadmin.yml"
+  end
 end
