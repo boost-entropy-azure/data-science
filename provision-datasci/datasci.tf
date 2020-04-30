@@ -32,7 +32,7 @@ resource "azurerm_subnet" "datasci_subnet" {
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "datasci_nsg" {
-  name                = join("-", [var.cluster_name, var.environment])
+  name                = join("-", [var.cluster_name, var.environment, "NSG"])
   location            = azurerm_resource_group.datasci_group.location
   resource_group_name = azurerm_resource_group.datasci_group.name
 
@@ -109,7 +109,7 @@ resource "azurerm_storage_account" "datasci_boot_storage" {
   tags = var.default_tags
 }
 
-# Create virtual machine
+# Create virtual machine nodes
 resource "azurerm_virtual_machine" "datasci_node" {
   count                 = var.node_count
   name                  = join("", [var.cluster_name, "-", var.environment, count.index])
@@ -157,6 +157,15 @@ data "http" "myip" {
   url = "http://ipecho.net/plain"
 }
 
+# Create a cerbot VM
+module "certbot_module" {
+  source = "./modules/certbot-module"
+  resource_group = azurerm_resource_group.datasci_group
+  parent_vnetwork_name = azurerm_virtual_network.datasci_net.name
+  environment = var.environment
+  default_tags = var.default_tags
+}
+
 # Create data lake storage account
 resource azurerm_storage_account "datasci_lake_storage" {
   resource_group_name      = azurerm_resource_group.datasci_group.name
@@ -171,7 +180,7 @@ resource azurerm_storage_account "datasci_lake_storage" {
 
   network_rules {
     default_action             = "Deny"
-    ip_rules                   = ["127.0.0.1", "${chomp(data.http.myip.body)}"]
+    ip_rules                   = ["127.0.0.1", chomp(data.http.myip.body)]
     virtual_network_subnet_ids = [azurerm_subnet.datasci_subnet.id]
   }
 }
@@ -396,7 +405,6 @@ resource "azurerm_container_group" "datasci_mqtt" {
     image  = "eclipse-mosquitto"
     cpu    = "1.0"
     memory = "1.5"
-    #commands = ["mosquitto_passwd", "-b", "/mosquitto/config/pwfile.txt", var.admin_username, local.mqtt-password]
 
     ports {
       port     = 1883
