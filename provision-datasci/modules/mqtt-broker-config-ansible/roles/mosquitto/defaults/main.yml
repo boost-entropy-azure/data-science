@@ -1,0 +1,5 @@
+mosquitto:
+  fact_file: "/tmp/facts.txt"
+  passwd_file: "/tmp/pwfile.txt"
+  conf_file: "/tmp/mosquitto.conf"
+  auth_users: []

@@ -2,6 +2,6 @@
 - hosts: localhost
   gather_facts: yes
   check_mode: no
-  tasks:
-    - name: "Upload the Mosquitto MQTT Broker Config"
-      shell: az storage file upload --share-name {{ mqtt_broker_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ file_to_upload }} --path {{ remote_path }}
+  become: yes
+  roles:
+    - role: "mosquitto"
