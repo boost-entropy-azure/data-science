@@ -8,32 +8,22 @@
       add_host:
         name: "{{ fqdn }}"
 
-- name: "Configure certbot node"
+- name: "Configure nginx node"
   hosts: "{{ fqdn }}"
-  remote_user: certbot_admin
+  remote_user: nginx_admin
   become: true
   vars:
     certbot_admin_email: dtufekcic@ctic-inc.com
     certbot_create_if_missing: true
-    certbot_auto_renew_user: certbot_admin
+    certbot_auto_renew_user: nginx_admin
     certbot_auto_renew_minute: "35"
     certbot_auto_renew_hour: "9"
     certbot_certs:
       - domains:
           - "{{ fqdn }}"
-    nginx_vhosts:
-      - listen: "443 ssl http2"
-        server_name: "{{ fqdn }}"
-        root: "/usr/share/nginx/html"
-        index: "index.html index.htm"
-        state: "present"
-        template: "{{ nginx_vhost_template }}"
-        filename: "certbot.conf"
-        extra_parameters: |
-          ssl_certificate     /etc/letsencrypt/live/{{ fqdn }}/fullchain.pem;
-          ssl_certificate_key /etc/letsencrypt/live/{{ fqdn }}/privkey.pem;
-          ssl_protocols       TLSv1.1 TLSv1.2;
-          ssl_ciphers         HIGH:!aNULL:!MD5;
+    nginx_conf_template: "{{ playbook_dir }}/templates/nginx.conf.j2"
+    nginx_vhosts: []
+
   pre_tasks:
     - name: "Update apt cache"
       apt: update_cache=true cache_valid_time=600
@@ -46,9 +36,28 @@
         state: present
       when: ansible_os_family == 'RedHat'
 
+    - name: "Install nginx-mod-stream"
+      yum:
+        name: nginx-mod-stream
+        state: present
+      when: ansible_os_family == 'RedHat'
+
     - name: "Install cron (Debian)"
       apt: name=cron state=present
       when: ansible_os_family == 'Debian'
+
+    - name: "Check if dhparam.pem exists"
+      stat:
+        path: /etc/ssl/certs/dhparam.pem
+      register: dhparam
+
+    - name: "Generate Diffie-Hellman parameter for DHE ciphersuites"
+      shell: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+      when: not dhparam.stat.exists
+
+    - name: "Unlock port 8883"
+      shell: semanage port -a -t http_port_t -p tcp 8883
+      ignore_errors: yes
 
   roles:
     - role: geerlingguy.certbot

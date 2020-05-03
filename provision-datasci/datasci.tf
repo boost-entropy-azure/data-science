@@ -22,7 +22,7 @@ resource "azurerm_virtual_network" "datasci_net" {
 
 # Create subnet
 resource "azurerm_subnet" "datasci_subnet" {
-  name                 = "dev_subnet_west"
+  name                 = join("-", [var.cluster_name, var.environment, "subnet"])
   resource_group_name  = azurerm_resource_group.datasci_group.name
   virtual_network_name = azurerm_virtual_network.datasci_net.name
   address_prefix       = "10.0.1.0/24"
@@ -157,13 +157,14 @@ data "http" "myip" {
   url = "http://ipecho.net/plain"
 }
 
-# Create a cerbot VM
-module "certbot_module" {
-  source = "./modules/certbot-module"
+# Create a reverse proxy node and configure NGINX to run on it
+module "reverse_proxy" {
+  source = "./modules/reverse-proxy-ansible"
   resource_group = azurerm_resource_group.datasci_group
   parent_vnetwork_name = azurerm_virtual_network.datasci_net.name
   environment = var.environment
   default_tags = var.default_tags
+  mqtt_ip_address = azurerm_container_group.datasci_mqtt.ip_address
 }
 
 # Create data lake storage account
@@ -387,14 +388,45 @@ module "mqtt-broker-conf" {
     ]
 }
 
+# Create subnet for use with containers
+resource "azurerm_subnet" "mqtt_subnet" {
+  name                 = "mqtt_broker_subnet"
+  resource_group_name  = azurerm_resource_group.datasci_group.name
+  virtual_network_name = azurerm_virtual_network.datasci_net.name
+  address_prefix       = "10.0.4.0/24"
+
+  delegation {
+    name = "mqtt_subnet_delegation"
+
+    service_delegation {
+      name = "Microsoft.ContainerInstance/containerGroups"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    }
+  }
+}
+
+resource "azurerm_network_profile" "datasci_net_profile" {
+  name                = join("-", [var.cluster_name, var.environment, "net-profile"])
+  location            = azurerm_resource_group.datasci_group.location
+  resource_group_name = azurerm_resource_group.datasci_group.name
+
+  container_network_interface {
+    name = "container_nic"
+
+    ip_configuration {
+      name = "cotntainer_ip_config"
+      subnet_id = azurerm_subnet.mqtt_subnet.id
+    }
+  }
+}
 
 # Create a Container Group
 resource "azurerm_container_group" "datasci_mqtt" {
   name                = join("-", [var.cluster_name, var.environment, "mqtt"])
   resource_group_name = azurerm_resource_group.datasci_group.name
   location            = azurerm_resource_group.datasci_group.location
-  ip_address_type     = "public"
-  dns_name_label      = local.mqtt_container_dns_name_label
+  ip_address_type     = "private"
+  network_profile_id = azurerm_network_profile.datasci_net_profile.id
   os_type             = "Linux"
 
   tags = var.default_tags

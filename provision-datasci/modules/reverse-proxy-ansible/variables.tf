@@ -1,13 +1,13 @@
 variable "cluster_name" {
   type        = string
   description = "Name to use for the module cluster"
-  default     = "certbot"
+  default     = "nginx"
 }
 
 variable "admin_username" {
   type        = string
   description = "Admin user"
-  default     = "certbot_admin"
+  default     = "nginx_admin"
 }
 
 variable "resource_group" {
@@ -27,4 +27,9 @@ variable "environment" {
 variable "default_tags" {
   type        = map(string)
   description = "Collection of default tags to apply to all resources"
+}
+
+variable "mqtt_ip_address" {
+  type = string
+  description = "IP address of the MQTT broker node"
 }

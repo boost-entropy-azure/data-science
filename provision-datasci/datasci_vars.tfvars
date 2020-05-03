@@ -7,7 +7,7 @@ mqtt_topics    = ["topic1", "topic2"]
 mqtt_password  = "replace_this_password"
 
 default_tags   = {
-  Department  = "R&D"
+  Department  = "Monkey"
   PoC         = "LiveStream"
   Environment = "DEV"
 }
