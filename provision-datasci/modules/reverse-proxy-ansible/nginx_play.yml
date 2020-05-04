@@ -55,9 +55,12 @@
       shell: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
       when: not dhparam.stat.exists
 
-    - name: "Unlock port 8883"
-      shell: semanage port -a -t http_port_t -p tcp 8883
+    - name: "Unlock ports 1883 and 8883"
+      shell: semanage port -a -t http_port_t -p tcp {{ item }}
       ignore_errors: yes
+      with_items:
+        - 1883
+        - 8883
 
   roles:
     - role: geerlingguy.certbot
