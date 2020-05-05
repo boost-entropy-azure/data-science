@@ -1,6 +1,11 @@
 variable "cluster_name" {
   type        = string
-  description = "Name to use for the module cluster"
+  description = "Name of the parent cluster"
+}
+
+variable "sub_cluster_name" {
+  type        = string
+  description = "Name to use for the module sub-cluster"
   default     = "nginx"
 }
 

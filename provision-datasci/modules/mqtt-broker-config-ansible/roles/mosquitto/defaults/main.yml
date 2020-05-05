@@ -2,4 +2,4 @@ mosquitto:
   fact_file: "/tmp/facts.txt"
   passwd_file: "/tmp/pwfile.txt"
   conf_file: "/tmp/mosquitto.conf"
-  auth_users: []
+  connector_conf_file: "/tmp/mqtt-connector.conf"

@@ -10,11 +10,11 @@ data "archive_file" "default" {
 
 # Create nginx public IP address
 resource "azurerm_public_ip" "nginx_ip" {
-  name                = join("-", [var.cluster_name, var.environment, "IP"])
+  name                = join("-", [var.cluster_name, var.environment, var.sub_cluster_name, "IP"])
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
   allocation_method   = "Static"
-  domain_name_label   = join("", ["nginx", "-", var.environment])
+  domain_name_label   = join("-", [var.cluster_name, var.environment, var.sub_cluster_name])
 
   tags = merge(
     var.default_tags,
@@ -24,7 +24,7 @@ resource "azurerm_public_ip" "nginx_ip" {
 
 # Create network interface
 resource "azurerm_network_interface" "nginx_nic" {
-  name                = join("-", [var.cluster_name, var.environment, "NIC"])
+  name                = join("-", [var.cluster_name, var.environment, var.sub_cluster_name, "NIC"])
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
 
@@ -40,7 +40,7 @@ resource "azurerm_network_interface" "nginx_nic" {
 
 # Create subnet
 resource "azurerm_subnet" "nginx_subnet" {
-  name                 = join("-", [var.cluster_name, var.environment, "subnet"])
+  name                 = join("-", [var.cluster_name, var.environment, var.sub_cluster_name, "subnet"])
   resource_group_name  = var.resource_group.name
   virtual_network_name = var.parent_vnetwork_name
   address_prefix       = "10.0.2.0/24"
@@ -48,7 +48,7 @@ resource "azurerm_subnet" "nginx_subnet" {
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "nginx_nsg" {
-  name                = join("-", [var.cluster_name, var.environment, "NSG"])
+  name                = join("-", [var.cluster_name, var.environment, var.sub_cluster_name, "NSG"])
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
 
@@ -119,7 +119,7 @@ resource "azurerm_storage_account" "nginx_boot_storage" {
 
 # Create nginx virtual machine
 resource "azurerm_virtual_machine" "nginx_node" {
-  name                  = join("-", [var.cluster_name, var.environment])
+  name                  = join("-", [var.cluster_name, var.environment, var.sub_cluster_name])
   location              = var.resource_group.location
   resource_group_name   = var.resource_group.name
   network_interface_ids = [azurerm_network_interface.nginx_nic.id]

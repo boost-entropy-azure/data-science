@@ -4,8 +4,13 @@
     name: mosquitto
     state: present
 
+- name: "Add admin to list of mqtt_users"
+  set_fact:
+    auth_users: "{{ mqtt_users }},{{ mqtt_admin }}"
+
 - name: "Set the list of MQTT authorized users"
-  set_fact: usernames={{ mqtt_users.split(',') }}
+  set_fact:
+    usernames: "{{ auth_users.split(',') }}"
 
 - name: "Check if password file exists"
   stat:
@@ -40,11 +45,19 @@
     - "{{ words }}"
   no_log: true
 
-- name: "Save usernames to fact file"
+- name: "Save usernames and generated passwords to fact file"
   lineinfile:
     path: "{{ mosquitto.fact_file }}"
     line: "{{ item.0 }} {{ item.1 }}"
     create: yes
+  with_together:
+    - "{{ usernames }}"
+    - "{{ words }}"
+  no_log: true
+
+- name: "Set connector password fact"
+  set_fact:
+    mqtt_password: "{{ (item.0 == mqtt_admin) | ternary(item.1, '') }}"
   with_together:
     - "{{ usernames }}"
     - "{{ words }}"
@@ -64,6 +77,14 @@
 - name: "Upload the Mosquitto MQTT Broker Config"
   shell: az storage file upload --share-name {{ mqtt_broker_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ mosquitto.conf_file }} --path config/mosquitto.conf
 
+- name: "Render and write out MQTT connector config"
+  template:
+    src: mqtt-connector.conf.j2
+    dest: "{{ mosquitto.connector_conf_file }}"
+
+- name: "Upload the connector config"
+  shell: az storage file upload --share-name {{ mqtt_config_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ mosquitto.connector_conf_file }}
+
 - name: "Remove generated files"
   file:
     path: "{{ item }}"
@@ -72,3 +93,4 @@
     - "{{ mosquitto.fact_file }}"
     - "{{ mosquitto.passwd_file }}"
     - "{{ mosquitto.conf_file }}"
+    - "{{ mosquitto.connector_conf_file }}"

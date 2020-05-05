@@ -159,12 +159,13 @@ data "http" "myip" {
 
 # Create a reverse proxy node and configure NGINX to run on it
 module "reverse_proxy" {
-  source = "./modules/reverse-proxy-ansible"
-  resource_group = azurerm_resource_group.datasci_group
+  source               = "./modules/reverse-proxy-ansible"
+  resource_group       = azurerm_resource_group.datasci_group
+  cluster_name         = var.cluster_name
   parent_vnetwork_name = azurerm_virtual_network.datasci_net.name
-  environment = var.environment
-  default_tags = var.default_tags
-  mqtt_ip_address = azurerm_container_group.datasci_mqtt.ip_address
+  environment          = var.environment
+  default_tags         = var.default_tags
+  mqtt_ip_address      = azurerm_container_group.datasci_mqtt.ip_address
 }
 
 # Create data lake storage account
@@ -341,26 +342,8 @@ resource "azurerm_storage_share" "connector_logs" {
 
 locals {
   mqtt_container_dns_name_label      = join("-", [var.cluster_name, var.environment, "mqtt"])
-  mqtt-server                        = "tcp://${local.mqtt_container_dns_name_label}.${var.location}.azurecontainer.console.azure.us:1883"
-  mqtt-username                      = var.admin_username
-  mqtt-password                      = var.mqtt_password
+  mqtt-server                        = "tcp://${azurerm_container_group.datasci_mqtt.ip_address}:1883"
   azure-event-hubs-connection-string = azurerm_eventhub_namespace.datasci.default_primary_connection_string
-}
-
-module "mqtt-connector-conf" {
-  source = "./modules/mqtt-connector-config-ansible"
-  arguments = [
-    "mqtt_config_share_name='${azurerm_storage_share.connector_config.name}'",
-    "storage_account_name='${azurerm_storage_account.datasci.name}'",
-    "storage_account_key='${azurerm_storage_account.datasci.primary_access_key}'",
-    "mqtt_server='${local.mqtt-server}'",
-    "mqtt_topics='${join("\",\"", var.mqtt_topics)}'",
-    "mqtt_username='${local.mqtt-username}'",
-    "mqtt_password='${local.mqtt-password}'",
-    "mqtt_eventhubs_connection='${local.azure-event-hubs-connection-string}'",
-    "mqtt_eventhubs_batch_size=10",
-    "mqtt_scheduled_interval=500"
-  ]
 }
 
 # Create an Azure File Share for the MQTT Broker
@@ -377,15 +360,22 @@ resource "azurerm_storage_share_directory" "broker_config" {
   storage_account_name = azurerm_storage_account.datasci.name
 }
 
-# Upload the MQTT Broker config file and a pwfile.txt
+# Upload the MQTT Broker and Connector config files
 module "mqtt-broker-conf" {
   source = "./modules/mqtt-broker-config-ansible"
   arguments = [
-    "mqtt_broker_share_name='${azurerm_storage_share.mqtt_broker.name}'",
     "storage_account_name='${azurerm_storage_account.datasci.name}'",
     "storage_account_key='${azurerm_storage_account.datasci.primary_access_key}'",
-    "mqtt_users=${join("\",\"", var.mqtt_users)}"
-    ]
+    "mqtt_broker_share_name='${azurerm_storage_share.mqtt_broker.name}'",
+    "mqtt_config_share_name='${azurerm_storage_share.connector_config.name}'",
+    "mqtt_admin=${var.admin_username}",
+    "mqtt_users=${join("\",\"", var.mqtt_users)}",
+    "mqtt_server='${local.mqtt-server}'",
+    "mqtt_topics='${join("\",\"", var.mqtt_topics)}'",
+    "mqtt_eventhubs_connection='${local.azure-event-hubs-connection-string}'",
+    "mqtt_eventhubs_batch_size=10",
+    "mqtt_scheduled_interval=500"
+  ]
 }
 
 # Create subnet for use with containers
