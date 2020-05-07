@@ -67,17 +67,12 @@
     creates: "{{ hadoop_home }}"
     removes: "{{ hadoop_home }}-{{ hadoop_version }}"
 
-- name: export env variable HADOOP_HOME
-  lineinfile:
-    dest: /home/hadoop/.bashrc
-    regexp: "HADOOP_HOME="
-    line: "export HADOOP_HOME={{ hadoop_home }}"
-
-- name: export hadoop PATH
-  lineinfile:
-    dest: /home/hadoop/.bashrc
-    regexp: "PATH="
-    line: "export PATH=$PATH:$HADOOP_HOME/bin"
+# Environment setup.
+- name: add hadoop profile to startup
+  template:
+    src: hadoop-profile.sh.j2
+    dest: /etc/profile.d/hadoop-profile.sh
+    mode: 0644
 
 - name: export env variable HADOOP_SSH_OPTS
   lineinfile:
@@ -148,7 +143,7 @@
     - {src: "mapred-site.xml", dest: "{{ hadoop_home }}/etc/hadoop/mapred-site.xml"}
 
 - name: Update java_home for CentOS
-  set_fact: java_home="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.242.b08-0.el7_7.x86_64/jre"
+  set_fact: java_home="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre"
   when: ansible_os_family == 'RedHat'
 
 - name: Export JAVA_HOME within hadoop env

@@ -14,8 +14,11 @@
 - name: "Make python3 kernel available"
   shell: python3 -m ipykernel install --user
 
+- include: config.yml
+
 - name: "Start the notebook server"
-  shell: nohup jupyter notebook --no-browser --allow-root &
+  shell: "nohup {{ jupyter_home }}/jupyter notebook --no-browser &"
   register: out
+  become_user: "{{ jupyter_user }}"
 
 - debug: var=out.stderr_lines
