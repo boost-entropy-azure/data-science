@@ -17,5 +17,4 @@
   package:
     name: "{{ openjdk_package_name }}"
     state: present
-  become: true
   when: check_java.rc != 0
