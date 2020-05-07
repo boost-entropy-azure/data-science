@@ -43,6 +43,7 @@
   remote_user: datasci_admin
   become: true
   roles:
+    - role: geerlingguy.java
     - role: "common"
     - role: "hadoop"
     - {
