@@ -21,6 +21,11 @@
       createhome: yes
       state: present
 
+- name: Add SSH authorized key
+  authorized_key:
+    user: "{{ jupyter_user }}"
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
   - name: "Setup Jupyter notebook directory"
     file:
       path: /data
@@ -64,11 +69,19 @@
     csr_path: "{{ jupyter_csr }}"
     provider: selfsigned
 
-- name: "Copy cert to jupyter_conf"
-  shell: "cp {{ jupyter_cert }} {{ jupyter_conf }}"
+- name: "Copy cert and key to jupyter_conf"
+  shell: "cp {{ item }} {{ jupyter_conf }}"
+  with_items:
+    - "{{ jupyter_cert }}"
+    - "{{ jupyter_key }}"
 
-- name: "Copy key to jupyter_conf"
-  shell: "cp {{ jupyter_key }} {{ jupyter_conf }}"
+- name: "Change ownership of copied cert and key"
+  file:
+    path: "{{ jupyter_conf }}"
+    state: directory
+    recurse: yes
+    owner: "{{ jupyter_user }}"
+    group: "{{ jupyter_user }}"
 
 - name: "Update jupyter config with cert"
   lineinfile:
