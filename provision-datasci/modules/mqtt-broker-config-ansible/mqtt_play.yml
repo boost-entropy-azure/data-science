@@ -2,6 +2,6 @@
 - hosts: localhost
   gather_facts: yes
   check_mode: no
-  become: yes
+  become: yes # Has to be NO for macOS
   roles:
     - role: "mosquitto"

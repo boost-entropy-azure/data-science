@@ -10,7 +10,7 @@ data "archive_file" "default" {
 
 # Create nginx public IP address
 resource "azurerm_public_ip" "nginx_ip" {
-  name                = join("-", [var.cluster_name, var.environment, var.sub_cluster_name, "IP"])
+  name                = join("-", ["pip", var.cluster_name, var.environment, var.sub_cluster_name])
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
   allocation_method   = "Static"
@@ -24,7 +24,7 @@ resource "azurerm_public_ip" "nginx_ip" {
 
 # Create network interface
 resource "azurerm_network_interface" "nginx_nic" {
-  name                = join("-", [var.cluster_name, var.environment, var.sub_cluster_name, "NIC"])
+  name                = join("-", ["nic", var.cluster_name, var.environment, var.sub_cluster_name])
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
 
@@ -40,7 +40,7 @@ resource "azurerm_network_interface" "nginx_nic" {
 
 # Create subnet
 resource "azurerm_subnet" "nginx_subnet" {
-  name                 = join("-", [var.cluster_name, var.environment, var.sub_cluster_name, "subnet"])
+  name                 = join("-", ["snet", var.cluster_name, var.environment, var.sub_cluster_name])
   resource_group_name  = var.resource_group.name
   virtual_network_name = var.parent_vnetwork_name
   address_prefix       = "10.0.2.0/24"
@@ -48,7 +48,7 @@ resource "azurerm_subnet" "nginx_subnet" {
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "nginx_nsg" {
-  name                = join("-", [var.cluster_name, var.environment, var.sub_cluster_name, "NSG"])
+  name                = join("-", ["nsg", var.cluster_name, var.environment, var.sub_cluster_name])
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
 
@@ -108,7 +108,7 @@ resource "random_id" "nginx_randomStorageId" {
 
 # Create storage account for boot diagnostics
 resource "azurerm_storage_account" "nginx_boot_storage" {
-  name                     = "diag${random_id.nginx_randomStorageId.hex}"
+  name                     = "stdiag${random_id.nginx_randomStorageId.hex}"
   resource_group_name      = var.resource_group.name
   location                 = var.resource_group.location
   account_tier             = "Standard"
@@ -119,7 +119,7 @@ resource "azurerm_storage_account" "nginx_boot_storage" {
 
 # Create nginx virtual machine
 resource "azurerm_virtual_machine" "nginx_node" {
-  name                  = join("-", [var.cluster_name, var.environment, var.sub_cluster_name])
+  name                  = join("-", ["vm", var.cluster_name, var.environment, var.sub_cluster_name])
   location              = var.resource_group.location
   resource_group_name   = var.resource_group.name
   network_interface_ids = [azurerm_network_interface.nginx_nic.id]
@@ -128,7 +128,7 @@ resource "azurerm_virtual_machine" "nginx_node" {
   tags = var.default_tags
 
   storage_os_disk {
-    name              = join("", ["nginx", "_", var.environment, "disk"])
+    name              = join("", ["disknginx", "_", var.environment])
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -184,7 +184,11 @@ resource "null_resource" "nginx-provisioner" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-galaxy install geerlingguy.nginx"
+    command = "ansible-galaxy install geerlingguy.certbot"
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-galaxy install geerlingguy.java"
   }
 
   provisioner "local-exec" {
