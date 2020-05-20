@@ -47,3 +47,8 @@ variable "mqtt_users" {
   type        = list(string)
   description = "The list of users that should be allowed connection to the MQTT Broker"
 }
+
+variable "ansible_pwfile" {
+  type        = string
+  description = "Path to file holding ansible vault password"
+}

@@ -7,6 +7,8 @@ mqtt_topics    = ["topic1", "topic2"]
 mqtt_password  = "replace_this_password"
 mqtt_users     = ["test1", "test2s"]
 
+ansible_pwfile = "~.vaultpw"
+
 default_tags   = {
   Department  = "Monkey"
   PoC         = "LiveStream"

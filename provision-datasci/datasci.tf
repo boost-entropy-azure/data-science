@@ -510,7 +510,7 @@ module "ansible_provisioner" {
   ip         = [for pip in azurerm_public_ip.datasci_ip : pip.ip_address]
   user       = var.admin_username
 
-  arguments  = [join("", ["--user=", var.admin_username])]
+  arguments  = [join("", ["--user=", var.admin_username]), "--vault-password-file ", var.ansible_pwfile]
   playbook   = "../configure-datasci/datasci_play.yml"
   dry_run    = false
 }
