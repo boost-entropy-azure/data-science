@@ -371,6 +371,20 @@ resource "azurerm_storage_share_directory" "broker_config" {
   storage_account_name = azurerm_storage_account.datasci.name
 }
 
+# Create the "data" Directory in the MQTT Broker File Share
+resource "azurerm_storage_share_directory" "broker_data" {
+  name                 = "data"
+  share_name           = azurerm_storage_share.mqtt_broker.name
+  storage_account_name = azurerm_storage_account.datasci.name
+}
+
+# Create the "log" Directory in the MQTT Broker File Share
+resource "azurerm_storage_share_directory" "broker_log" {
+  name                 = "log"
+  share_name           = azurerm_storage_share.mqtt_broker.name
+  storage_account_name = azurerm_storage_account.datasci.name
+}
+
 # Upload the MQTT Broker and Connector config files
 module "mqtt-broker-conf" {
   source = "./modules/mqtt-broker-config-ansible"
@@ -441,10 +455,6 @@ resource "azurerm_container_group" "datasci_mqtt" {
 
     ports {
       port     = 1883
-      protocol = "TCP"
-    }
-    ports {
-      port     = 9001
       protocol = "TCP"
     }
 
