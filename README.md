@@ -173,7 +173,11 @@ Common commands:
 ## Run the Terraform Deployment
 1. `cd provision-datasci`
 1. `terraform init`
+1. Update the Ansible vault password. The password is stored in Dashlane so request it from the repo owners and then simply copy it to `~/.vaultpw` file on your dev machine.
 1. `terraform apply datasci.tf -var-file=datasci_vars.tfvars`
+    1. There are two variables whose defaults may need to be overridden, `mqtt_topics` and `mqtt_users`
+        1. `-var="mqtt_topics"='["LTE_MESSAGE", "UMTS_MESSAGE", "CDMA_MESSAGE", "GSM_MESSAGE]'`
+        1. `-var="mqtt_users='["dino","christian"]'`
 1. Log into the azure portal and observe the resources created
 
 ### Verify localdev data-science VM(s) Setup
