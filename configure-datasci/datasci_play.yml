@@ -2,11 +2,12 @@
 - hosts: localhost
   gather_facts: yes
   check_mode: no
-  become: True
+  become: false
   tasks:
     - name: "Parse host ip addresses from inventory list"
       shell: echo "{{ inventory }}" | sed 's/,/\n/g' | sed 's/\(.*\)://g'
       register: hosts
+      changed_when: false
 
     - debug:
         var: hosts
@@ -14,15 +15,17 @@
     - name: "Parse host groups from inventory list"
       shell: echo "{{ inventory }}" | sed 's/,/\n/g' | sed 's/:\(.*\)//g'
       register: group_list
+      changed_when: false
 
     - debug:
         var: group_list
 
     - name: "Add public ip addresses to dynamic inventory"
       add_host:
-        name: "{{ item }} "
+        name: "{{ item }}"
         groups: "{{ group_list.stdout_lines[0] }}"
       with_items: "{{ hosts.stdout_lines }}"
+      changed_when: false
 
 - hosts: all
   gather_facts: yes
@@ -42,6 +45,8 @@
   hosts: all
   remote_user: datasci_admin
   become: true
+  pre_tasks:
+    - include_vars: securevars.yml
   roles:
     - role: geerlingguy.java
     - role: "common"

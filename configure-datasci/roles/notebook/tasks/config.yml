@@ -21,10 +21,10 @@
       createhome: yes
       state: present
 
-- name: Add SSH authorized key
-  authorized_key:
-    user: "{{ jupyter_user }}"
-    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  - name: Add SSH authorized key
+    authorized_key:
+      user: "{{ jupyter_user }}"
+      key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
   - name: "Setup Jupyter notebook directory"
     file:

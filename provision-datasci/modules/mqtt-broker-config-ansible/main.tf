@@ -8,7 +8,7 @@ data "archive_file" "default" {
   output_path = "${path.module}/${random_id.default.hex}.zip"
 }
 
-resource "null_resource" "provisioner" {
+resource "null_resource" "mqtt-provisioner" {
   depends_on = ["data.archive_file.default"]
 
   triggers = {

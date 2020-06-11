@@ -1,18 +1,31 @@
+//terraform {
+//    backend "azurerm" {
+//      storage_account_name = "ststaticcore"
+//      container_name       = "terrasform-state"
+//      key                  = "dev-datasci.tfstate"
+//
+//      # Cannot assign to a variable must be retrieved from an environmental variable
+//      # sas_token = var.backend_sas
+//
+//  }
+//}
+
 provider "azurerm" {
-  version = "=2.4.0"
+  version = "=2.0.0"
   features {}
+  disable_terraform_partner_id = true
 }
 
 # Create a resource group that all the Azure resources will live in
 resource "azurerm_resource_group" "datasci_group" {
-  name     = join("-", [var.cluster_name, var.environment, "group"])
+  name     = join("-", ["rg", var.cluster_name, var.environment])
   location = var.location
 
   tags = var.default_tags
 }
 
 resource "azurerm_virtual_network" "datasci_net" {
-  name                = join("-", [var.cluster_name, var.environment, "net"])
+  name                = join("-", ["vnet", var.cluster_name, var.environment])
   resource_group_name = azurerm_resource_group.datasci_group.name
   location            = azurerm_resource_group.datasci_group.location
   address_space       = ["10.0.0.0/16"]
@@ -22,7 +35,7 @@ resource "azurerm_virtual_network" "datasci_net" {
 
 # Create subnet
 resource "azurerm_subnet" "datasci_subnet" {
-  name                 = join("-", [var.cluster_name, var.environment, "subnet"])
+  name                 = join("-", ["snet", var.cluster_name, var.environment])
   resource_group_name  = azurerm_resource_group.datasci_group.name
   virtual_network_name = azurerm_virtual_network.datasci_net.name
   address_prefix       = "10.0.1.0/24"
@@ -32,7 +45,7 @@ resource "azurerm_subnet" "datasci_subnet" {
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "datasci_nsg" {
-  name                = join("-", [var.cluster_name, var.environment, "NSG"])
+  name                = join("-", ["nsg", var.cluster_name, var.environment])
   location            = azurerm_resource_group.datasci_group.location
   resource_group_name = azurerm_resource_group.datasci_group.name
 
@@ -65,7 +78,7 @@ resource "azurerm_network_security_group" "datasci_nsg" {
 # Create network interface
 resource "azurerm_network_interface" "datasci_nic" {
   count               = var.node_count
-  name                = join("-", [var.cluster_name, var.environment, "NIC${count.index}"])
+  name                = join("-", ["nic", var.cluster_name, var.environment, count.index])
   location            = azurerm_resource_group.datasci_group.location
   resource_group_name = azurerm_resource_group.datasci_group.name
 
@@ -87,7 +100,7 @@ resource "azurerm_subnet_network_security_group_association" "datasci_subnet_nsg
 # Create public IPs
 resource "azurerm_public_ip" "datasci_ip" {
   count               = var.node_count
-  name                = join("-", [var.cluster_name, var.environment, "IP${count.index}"])
+  name                = join("-", ["pip", var.cluster_name, var.environment, count.index])
   location            = azurerm_resource_group.datasci_group.location
   resource_group_name = azurerm_resource_group.datasci_group.name
   allocation_method   = "Static"
@@ -111,7 +124,7 @@ resource "random_id" "datasci_randomStorageId" {
 
 # Create storage account for boot diagnostics
 resource "azurerm_storage_account" "datasci_boot_storage" {
-  name                     = "diag${random_id.datasci_randomStorageId.hex}"
+  name                     = "stdiag${random_id.datasci_randomStorageId.hex}"
   resource_group_name      = azurerm_resource_group.datasci_group.name
   location                 = azurerm_resource_group.datasci_group.location
   account_tier             = "Standard"
@@ -123,7 +136,7 @@ resource "azurerm_storage_account" "datasci_boot_storage" {
 # Create virtual machine nodes
 resource "azurerm_virtual_machine" "datasci_node" {
   count                 = var.node_count
-  name                  = join("", [var.cluster_name, "-", var.environment, count.index])
+  name                  = join("", ["vm", var.cluster_name, "-", var.environment, count.index])
   location              = azurerm_resource_group.datasci_group.location
   resource_group_name   = azurerm_resource_group.datasci_group.name
   network_interface_ids = [element(azurerm_network_interface.datasci_nic.*.id, count.index)]
@@ -132,7 +145,7 @@ resource "azurerm_virtual_machine" "datasci_node" {
   tags = var.default_tags
 
   storage_os_disk {
-    name              = join("", [var.cluster_name, "_", var.environment, "disk${count.index}"])
+    name              = join("", ["disk", var.cluster_name, "_", var.environment, count.index])
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -328,7 +341,7 @@ resource "azurerm_iothub" "datasci_iothub" {
 
 # Create an Azure Storage Account
 resource "azurerm_storage_account" "datasci" {
-  name                     = join("", [var.cluster_name, var.environment, "storageacct"])
+  name                     = join("", ["st", var.cluster_name, var.environment])
   resource_group_name      = azurerm_resource_group.datasci_group.name
   location                 = azurerm_resource_group.datasci_group.location
   account_tier             = "Standard"
@@ -507,7 +520,7 @@ module "ansible_provisioner" {
   ip         = [for pip in azurerm_public_ip.datasci_ip : pip.ip_address]
   user       = var.admin_username
 
-  arguments  = [join("", ["--user=", var.admin_username]), "--ask-vault-pass"]
+  arguments  = [join("", ["--user=", var.admin_username]), "--vault-password-file ", var.ansible_pwfile]
   playbook   = "../configure-datasci/datasci_play.yml"
   dry_run    = false
 }

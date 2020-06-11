@@ -5,6 +5,9 @@ node_count     = 1
 admin_username = "datasci_admin"
 mqtt_topics    = ["topic1", "topic2"]
 mqtt_password  = "replace_this_password"
+mqtt_users     = ["test1", "test2s"]
+
+ansible_pwfile = "~.vaultpw"
 
 default_tags   = {
   Department  = "Monkey"

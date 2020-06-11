@@ -9,6 +9,12 @@ terraform.tfstate
 __pychache__
 .vagrant/*
 .ipynb_checkpoints/
+# Dont commit the archives that get generated
+*.zip
+# Dont commit the .env file for zsh
+*.env
+# Dont commit the secure variables
+securevars.yml
 
 # Prevent custom config files with secret keys from being committed
-pwfile.txt
+pwfile.txt  
