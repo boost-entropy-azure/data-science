@@ -72,10 +72,18 @@
     line: "export JAVA_HOME={{ java_home }}"
 
 - name: set spark-defaults.conf
-  template: src="spark-defaults-conf.j2" dest="{{ install_dir}}/{{ spark_installation_dir }}/conf/spark-defaults.conf"
+  template: src="spark-defaults-conf.j2" dest="{{ install_dir }}/{{ spark_installation_dir }}/conf/spark-defaults.conf"
 
 - name: set slaves
-  template: src="slaves.j2" dest="{{ install_dir}}/{{ spark_installation_dir }}/conf/slaves"
+  template: src="slaves.j2" dest="{{ install_dir }}/{{ spark_installation_dir }}/conf/slaves"
+
+- name: "Setup JDBC driver for PosgreSQL"
+  maven_artifact:
+    repository_url: https://repo1.maven.org/maven2/
+    group_id: org.postgresql
+    artifact_id: postgresql
+    dest: "{{ install_dir }}/{{ spark_installation_dir }}/jars/"
+    mode: 0644
 
 # Environment setup.
 - name: add spark profile to startup
@@ -83,3 +91,4 @@
     src: spark-profile.sh.j2
     dest: /etc/profile.d/spark-profile.sh
     mode: 0644
+

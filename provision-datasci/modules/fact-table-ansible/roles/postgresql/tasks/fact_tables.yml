@@ -1,0 +1,50 @@
+---
+- name: "Create cellids table"
+  postgresql_table: 
+    db: "{{ postgresql_databases.0.name }}"
+    name: cellids
+    owner: "{{ postgresql_users.0.name }}"
+    login_user: "{{ postgresql_users.0.name }}"
+    login_password: "{{ postgresql_users.0.password }}"
+    columns: 
+    - mcc smallint
+    - mnc smallint
+    - tac int
+    - ci int
+    - earfcn smallint
+    - pci smallint
+    - sector_id char(16)
+    - primary key (mcc, mnc, tac)
+
+- name: "Create observed_cellids table"
+  postgresql_table: 
+    db: "{{ postgresql_databases.0.name }}"
+    name: observed_cellids
+    owner: "{{ postgresql_users.0.name }}"
+    login_user: "{{ postgresql_users.0.name }}"
+    login_password: "{{ postgresql_users.0.password }}"
+    columns: 
+    - mcc smallint
+    - mnc smallint
+    - tac int
+    - ci int
+    - earfcn smallint
+    - pci smallint
+    - sector_id char(16)
+
+- name: "Create trigger"
+  postgresql_query:
+    db:  "{{ postgresql_databases.0.name }}"
+    login_user: "{{ postgresql_users.0.name }}"
+    login_password: "{{ postgresql_users.0.password }}"
+    query: |
+      CREATE OR REPLACE FUNCTION update_cellids()
+      RETURNS TRIGGER AS
+      $BODY$
+      BEGIN
+      INSERT INTO cellids (mcc, mnc, tac, ci, earfcn, pci, sector_id) VALUES (NEW.mnc, NEW.mnc, NEW.tac, NEW.ci, NEW.earfcn, NEW.pci, NEW.sector_id) ON CONFLICT ON CONSTRAINT cellids_pkey DO NOTHING;
+      DELETE FROM observed_cellids WHERE (NEW.mcc = mcc AND NEW.mnc = mnc AND NEW.ci = ci);
+      RETURN NEW;
+      END;
+      $BODY$
+      LANGUAGE plpgsql;

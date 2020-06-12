@@ -1,0 +1,33 @@
+---
+# Variable configuration.
+- include_tasks: variables.yml
+
+# Setup/install tasks.
+- include_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: initialize.yml
+- include_tasks: configure.yml
+
+- name: Ensure PostgreSQL is started and enabled on boot.
+  service:
+    name: "{{ postgresql_daemon }}"
+    state: "{{ postgresql_service_state }}"
+    enabled: "{{ postgresql_service_enabled }}"
+
+# Configure PostgreSQL.
+- import_tasks: users.yml
+- import_tasks: databases.yml
+
+# Setup fact tables
+- import_tasks: fact_tables.yml
+
+- name: "Save username and generated password to fact file"
+  lineinfile:
+    path: "{{ conf_files.secrets_file }}" 
+    line: "{{ postgresql_databases.0.name }}\n{{ item.name }} {{ item.password }}"
+    create: yes
+  with_items:
+    - "{{ postgresql_users }}"
+  no_log: true
+

@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  gather_facts: yes
+  check_mode: no
+  become: True
+  tasks:
+    - name: "Add node names to dynamic inventory"
+      add_host:
+        name: "{{ item }}"
+      with_items:
+        - "{{ nodes }}"
+
+- name: "Configure node"
+  hosts: all
+  remote_user: "{{ admin_username }}"
+  become: true
+  roles:
+    - role: "postgresql"
+        

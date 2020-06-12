@@ -100,7 +100,7 @@ resource "azurerm_subnet_network_security_group_association" "datasci_subnet_nsg
 # Create public IPs
 resource "azurerm_public_ip" "datasci_ip" {
   count               = var.node_count
-  name                = join("-", ["pip", var.cluster_name, var.environment, count.index])
+  name                = join("", ["pip-", var.cluster_name, "-", var.environment, count.index])
   location            = azurerm_resource_group.datasci_group.location
   resource_group_name = azurerm_resource_group.datasci_group.name
   allocation_method   = "Static"
@@ -136,7 +136,7 @@ resource "azurerm_storage_account" "datasci_boot_storage" {
 # Create virtual machine nodes
 resource "azurerm_virtual_machine" "datasci_node" {
   count                 = var.node_count
-  name                  = join("", ["vm", var.cluster_name, "-", var.environment, count.index])
+  name                  = join("", ["vm-", var.cluster_name, "-", var.environment, count.index])
   location              = azurerm_resource_group.datasci_group.location
   resource_group_name   = azurerm_resource_group.datasci_group.name
   network_interface_ids = [element(azurerm_network_interface.datasci_nic.*.id, count.index)]
@@ -190,6 +190,16 @@ module "reverse_proxy" {
   environment          = var.environment
   default_tags         = var.default_tags
   mqtt_ip_address      = azurerm_container_group.datasci_mqtt.ip_address
+}
+
+# Create a fact node and configure PostgreSQL to run on it
+module "fact-table" {
+  source              = "./modules/fact-table-ansible"
+  resource_group       = azurerm_resource_group.datasci_group
+  parent_vnetwork_name = azurerm_virtual_network.datasci_net.name
+  parent_subnet_id     = azurerm_subnet.datasci_subnet.id
+  environment          = var.environment
+  default_tags         = var.default_tags
 }
 
 # Create data lake storage account
