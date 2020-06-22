@@ -9,6 +9,16 @@
     version: 2.4.5 # ToDo - set spark version in a global config or move this to the spark role
     executable: pip3
 
+- name: install Uber's H3
+  pip:
+    name: h3
+    executable: pip3
+
+- name: Install folium
+  pip:
+    name: folium
+    executable: pip3
+
 - name: "Install python3 kernel"
   shell: python3 -m pip install ipykernel
 
