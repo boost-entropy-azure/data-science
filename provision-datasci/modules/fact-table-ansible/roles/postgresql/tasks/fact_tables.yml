@@ -11,7 +11,7 @@
     - mnc smallint
     - tac int
     - ci int
-    - earfcn smallint
+    - earfcn int
     - pci smallint
     - sector_id char(16)
     - primary key (mcc, mnc, tac)
@@ -28,7 +28,7 @@
     - mnc smallint
     - tac int
     - ci int
-    - earfcn smallint
+    - earfcn int
     - pci smallint
     - sector_id char(16)
 
