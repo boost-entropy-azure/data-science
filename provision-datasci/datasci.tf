@@ -248,76 +248,40 @@ resource "azurerm_template_deployment" "datasci_container" {
   template_body = file("${path.module}/datasci-container.json")
 }
 
-# Create Azure Event Hubs Namespace
-resource "azurerm_eventhub_namespace" "datasci" {
-  name                = join("-", [var.cluster_name, var.environment, "event-hub-namespace"])
-  location            = azurerm_resource_group.datasci_group.location
-  resource_group_name = azurerm_resource_group.datasci_group.name
-  sku                 = "Standard"
-  capacity            = 1
-
-  tags = var.default_tags
+module "mqtt_eventhubs" {
+  source             = "./modules/eventhubs"
+  namespace_name     = "mqtt-eventhubs"
+  resource_group     = azurerm_resource_group.datasci_group.name
+  location           = azurerm_resource_group.datasci_group.location
+  topics             = toset(var.mqtt_topics)
+  datalake_container = azurerm_template_deployment.datasci_container.name
+  storage_account_id = azurerm_storage_account.datasci_lake_storage.id
+  default_tags       = var.default_tags
 }
 
-# Create an Azure Event Hub for each MQTT Topic defined
-resource "azurerm_eventhub" "mqtt_event_hub" {
-  for_each = toset(var.mqtt_topics)
-
-  name                = each.key
-  namespace_name      = azurerm_eventhub_namespace.datasci.name
-  resource_group_name = azurerm_resource_group.datasci_group.name
-  partition_count     = 2
-  message_retention   = 1
-
-  capture_description {
-    enabled             = true
-    encoding            = "Avro"
-    interval_in_seconds = 300       # 5 min
-    size_limit_in_bytes = 314572800 # 300 MB
-    skip_empty_archives = true
-
-    destination {
-      name                = "EventHubArchive.AzureBlockBlob"
-      archive_name_format = "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
-      blob_container_name = azurerm_template_deployment.datasci_container.name
-      storage_account_id  = azurerm_storage_account.datasci_lake_storage.id
-    }
-  }
+module "iot_eventhub" {
+  source             = "./modules/eventhubs"
+  namespace_name     = "iot-eventhubs"
+  resource_group     = azurerm_resource_group.datasci_group.name
+  location           = azurerm_resource_group.datasci_group.location
+  topics             = toset(list("iot_message"))
+  datalake_container = azurerm_template_deployment.datasci_container.name
+  storage_account_id = azurerm_storage_account.datasci_lake_storage.id
+  send               = true
+  listen             = true
+  manage             = true
+  default_tags       = var.default_tags
 }
 
-# Create an Azure Event Hub for the IoT Hub traffic
-resource "azurerm_eventhub" "iot_event_hub" {
-  name                = join("-", [var.cluster_name, var.environment, "iot-messages"])
-  namespace_name      = azurerm_eventhub_namespace.datasci.name
-  resource_group_name = azurerm_resource_group.datasci_group.name
-  partition_count     = 2
-  message_retention   = 1
-
-  capture_description {
-    enabled             = true
-    encoding            = "Avro"
-    interval_in_seconds = 300       # 5 min
-    size_limit_in_bytes = 314572800 # 300 MB
-    skip_empty_archives = true
-
-    destination {
-      name                = "EventHubArchive.AzureBlockBlob"
-      archive_name_format = "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
-      blob_container_name = azurerm_template_deployment.datasci_container.name
-      storage_account_id  = azurerm_storage_account.datasci_lake_storage.id
-    }
-  }
-}
-
-# Add a rule so the traffic can flow from IoT Hub to an Event Hub.
-resource "azurerm_eventhub_authorization_rule" "auth_rule" {
-  resource_group_name = azurerm_resource_group.datasci_group.name
-  namespace_name      = azurerm_eventhub_namespace.datasci.name
-  eventhub_name       = azurerm_eventhub.iot_event_hub.name
-  name                = join("-", [var.cluster_name, var.environment, "auth-rule"])
-  send                = true
-  listen              = true
-  manage              = true
+module "alert_eventhubs" {
+  source             = "./modules/eventhubs"
+  namespace_name     = "alert-eventhubs"
+  resource_group     = azurerm_resource_group.datasci_group.name
+  location           = azurerm_resource_group.datasci_group.location
+  topics             = toset(list("alert_message"))
+  datalake_container = azurerm_template_deployment.datasci_container.name
+  storage_account_id = azurerm_storage_account.datasci_lake_storage.id
+  default_tags       = var.default_tags
 }
 
 # Create IoT hub
@@ -335,8 +299,8 @@ resource "azurerm_iothub" "datasci_iothub" {
   }
 
   endpoint {
-    connection_string = azurerm_eventhub_authorization_rule.auth_rule.primary_connection_string
-    name              = "datasci-iothub-eventhubs-endpoint"
+    connection_string = module.iot_eventhub.eventhub_connection_string
+    name              = join("-", [var.cluster_name, "iothub-eventhubs-endpoint"])
     type              = "AzureIotHub.EventHub"
   }
 
@@ -344,7 +308,7 @@ resource "azurerm_iothub" "datasci_iothub" {
     name           = "IotHub2EventHubs"
     source         = "DeviceMessages"
     condition      = "true"
-    endpoint_names = ["datasci-iothub-eventhubs-endpoint"]
+    endpoint_names = [join("-", [var.cluster_name, "iothub-eventhubs-endpoint"])]
     enabled        = true
   }
 }
@@ -377,7 +341,8 @@ resource "azurerm_storage_share" "connector_logs" {
 locals {
   mqtt_container_dns_name_label      = join("-", [var.cluster_name, var.environment, "mqtt"])
   mqtt-server                        = "tcp://${azurerm_container_group.datasci_mqtt.ip_address}:1883"
-  azure-event-hubs-connection-string = azurerm_eventhub_namespace.datasci.default_primary_connection_string
+  azure-event-hubs-connection-string =  module.mqtt_eventhubs.namespace_connection_string
+  
 }
 
 # Create an Azure File Share for the MQTT Broker
