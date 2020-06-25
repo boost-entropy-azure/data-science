@@ -281,6 +281,7 @@ module "alert_eventhubs" {
   topics             = toset(list("alert_message"))
   datalake_container = azurerm_template_deployment.datasci_container.name
   storage_account_id = azurerm_storage_account.datasci_lake_storage.id
+  send               = true
   default_tags       = var.default_tags
 }
 
