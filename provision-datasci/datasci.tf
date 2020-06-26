@@ -198,6 +198,7 @@ module "fact-table" {
   resource_group       = azurerm_resource_group.datasci_group
   parent_vnetwork_name = azurerm_virtual_network.datasci_net.name
   parent_subnet_id     = azurerm_subnet.datasci_subnet.id
+  sub_cluster_name     = join("-", [var.cluster_name, var.environment, "fact"])
   environment          = var.environment
   default_tags         = var.default_tags
 }
@@ -250,7 +251,7 @@ resource "azurerm_template_deployment" "datasci_container" {
 
 module "mqtt_eventhubs" {
   source             = "./modules/eventhubs"
-  namespace_name     = "mqtt-eventhubs"
+  namespace_name     = join("-", [var.cluster_name, var.environment, "mqtt-eventhubs"])
   resource_group     = azurerm_resource_group.datasci_group.name
   location           = azurerm_resource_group.datasci_group.location
   topics             = toset(var.mqtt_topics)
@@ -259,23 +260,9 @@ module "mqtt_eventhubs" {
   default_tags       = var.default_tags
 }
 
-module "iot_eventhub" {
-  source             = "./modules/eventhubs"
-  namespace_name     = "iot-eventhubs"
-  resource_group     = azurerm_resource_group.datasci_group.name
-  location           = azurerm_resource_group.datasci_group.location
-  topics             = toset(list("iot_message"))
-  datalake_container = azurerm_template_deployment.datasci_container.name
-  storage_account_id = azurerm_storage_account.datasci_lake_storage.id
-  send               = true
-  listen             = true
-  manage             = true
-  default_tags       = var.default_tags
-}
-
 module "alert_eventhubs" {
   source             = "./modules/eventhubs"
-  namespace_name     = "alert-eventhubs"
+  namespace_name     = join("-", [var.cluster_name, var.environment, "alert-eventhubs"])
   resource_group     = azurerm_resource_group.datasci_group.name
   location           = azurerm_resource_group.datasci_group.location
   topics             = toset(list("alert_message"))
@@ -283,6 +270,51 @@ module "alert_eventhubs" {
   storage_account_id = azurerm_storage_account.datasci_lake_storage.id
   send               = true
   default_tags       = var.default_tags
+}
+
+# Create Azure Event Hubs Namespace for IOThub
+resource "azurerm_eventhub_namespace" "iot_eventhubs" {
+  name                = join("-", [var.cluster_name, var.environment, "iothub-namespace"])
+  resource_group_name = azurerm_resource_group.datasci_group.name
+  location            = azurerm_resource_group.datasci_group.location
+  sku                 = "Standard"
+  capacity            = 1
+  tags                = var.default_tags
+}
+
+# Create an Azure Event Hub for the IoT Hub traffic
+resource "azurerm_eventhub" "iot_eventhub" {
+  name                = "iot_message"
+  namespace_name      = azurerm_eventhub_namespace.iot_eventhubs.name
+  resource_group_name = azurerm_resource_group.datasci_group.name
+  partition_count     = 2
+  message_retention   = 1
+
+  capture_description {
+    enabled             = true
+    encoding            = "Avro"
+    interval_in_seconds = 300       # 5 min
+    size_limit_in_bytes = 314572800 # 300 MB
+    skip_empty_archives = true
+
+    destination {
+      name                = "EventHubArchive.AzureBlockBlob"
+      archive_name_format = "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
+      blob_container_name = azurerm_template_deployment.datasci_container.name
+      storage_account_id  = azurerm_storage_account.datasci_lake_storage.id
+    }
+  }
+}
+
+# Add a rule so the traffic can flow from IoT Hub to Event Hub.
+resource "azurerm_eventhub_authorization_rule" "auth_rule" {
+  resource_group_name = azurerm_resource_group.datasci_group.name
+  namespace_name      = azurerm_eventhub_namespace.iot_eventhubs.name
+  eventhub_name       = azurerm_eventhub.iot_eventhub.name
+  name                = join("-", [var.cluster_name, var.environment, "auth-rule"])
+  send                = true
+  listen              = true
+  manage              = true
 }
 
 # Create IoT hub
@@ -300,7 +332,7 @@ resource "azurerm_iothub" "datasci_iothub" {
   }
 
   endpoint {
-    connection_string = module.iot_eventhub.eventhub_connection_string
+    connection_string = azurerm_eventhub_authorization_rule.auth_rule.primary_connection_string
     name              = join("-", [var.cluster_name, "iothub-eventhubs-endpoint"])
     type              = "AzureIotHub.EventHub"
   }

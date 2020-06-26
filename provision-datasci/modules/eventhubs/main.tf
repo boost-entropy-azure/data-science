@@ -47,11 +47,6 @@ resource "azurerm_eventhub_authorization_rule" "eventhub_auth_rule" {
   manage              = var.manage
 }
 
-output "eventhub_connection_string" {
-    description = "Connection string to the first eventhub instance created within this namespace"
-    value    = azurerm_eventhub_authorization_rule.eventhub_auth_rule[tolist(var.topics)[0]].primary_connection_string
-}
-
 output "namespace_connection_string" {
     description = "Connection string to the eventhub namespace"
     value    = azurerm_eventhub_namespace.eventhubs.default_primary_connection_string
