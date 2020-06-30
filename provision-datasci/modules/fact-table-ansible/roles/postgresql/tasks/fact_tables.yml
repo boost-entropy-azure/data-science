@@ -14,7 +14,7 @@
     - earfcn int
     - pci smallint
     - sector_id char(16)
-    - primary key (mcc, mnc, tac)
+    - primary key (mcc, mnc, ci)
 
 - name: "Create observed_cellids table"
   postgresql_table: 
@@ -32,7 +32,7 @@
     - pci smallint
     - sector_id char(16)
 
-- name: "Create trigger"
+- name: "Create procedure for updating cellids"
   postgresql_query:
     db:  "{{ postgresql_databases.0.name }}"
     login_user: "{{ postgresql_users.0.name }}"
@@ -42,9 +42,20 @@
       RETURNS TRIGGER AS
       $BODY$
       BEGIN
-      INSERT INTO cellids (mcc, mnc, tac, ci, earfcn, pci, sector_id) VALUES (NEW.mnc, NEW.mnc, NEW.tac, NEW.ci, NEW.earfcn, NEW.pci, NEW.sector_id) ON CONFLICT ON CONSTRAINT cellids_pkey DO NOTHING;
+      INSERT INTO cellids (mcc, mnc, tac, ci, earfcn, pci, sector_id) VALUES (NEW.mcc, NEW.mnc, NEW.tac, NEW.ci, NEW.earfcn, NEW.pci, NEW.sector_id) ON CONFLICT ON CONSTRAINT cellids_pkey DO NOTHING;
       DELETE FROM observed_cellids WHERE (NEW.mcc = mcc AND NEW.mnc = mnc AND NEW.ci = ci);
       RETURN NEW;
       END;
       $BODY$
       LANGUAGE plpgsql;
+
+- name: "Create trigger"
+  postgresql_query:
+    db:  "{{ postgresql_databases.0.name }}"
+    login_user: "{{ postgresql_users.0.name }}"
+    login_password: "{{ postgresql_users.0.password }}"
+    query: |
+      DROP TRIGGER IF EXISTS new_cellids ON observed_cellids;
+      CREATE TRIGGER new_cellids
+      AFTER INSERT ON observed_cellids
+      FOR EACH ROW EXECUTE PROCEDURE update_cellids();      

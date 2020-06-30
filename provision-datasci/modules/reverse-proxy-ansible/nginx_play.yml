@@ -10,12 +10,12 @@
 
 - name: "Configure nginx node"
   hosts: "{{ fqdn }}"
-  remote_user: nginx_admin
+  remote_user: "{{ admin_username }}"
   become: true
   vars:
-    certbot_admin_email: dtufekcic@ctic-inc.com
+    certbot_admin_email: "{{ admin_email }}"
     certbot_create_if_missing: true
-    certbot_auto_renew_user: nginx_admin
+    certbot_auto_renew_user: "{{ admin_username }}"
     certbot_auto_renew_minute: "35"
     certbot_auto_renew_hour: "9"
     certbot_certs:

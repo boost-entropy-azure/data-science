@@ -15,6 +15,12 @@ variable "admin_username" {
   default     = "nginx_admin"
 }
 
+variable "admin_email" {
+  type        = string
+  description = "Admin user's email address"
+  default     = "devops@ctic-inc.com"
+}
+
 variable "resource_group" {
   description = "Resource group to provision within"
 }

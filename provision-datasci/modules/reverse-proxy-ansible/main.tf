@@ -165,7 +165,7 @@ resource "null_resource" "nginx-provisioner" {
 
   triggers = {
     signature = data.archive_file.default.output_md5
-    command = "ansible-playbook -e mqtt_broker=${var.mqtt_ip_address} -e fqdn=${azurerm_public_ip.nginx_ip.fqdn} ${path.module}/nginx_play.yml"
+    command = "ansible-playbook -e mqtt_ip_address=${var.mqtt_ip_address} -e fqdn=${azurerm_public_ip.nginx_ip.fqdn} -e admin_username=${var.admin_username} -e admin_email=${var.admin_email} ${path.module}/nginx_play.yml"
   }
 
   connection {
@@ -192,6 +192,6 @@ resource "null_resource" "nginx-provisioner" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -e mqtt_ip_address=${var.mqtt_ip_address} -e fqdn=${azurerm_public_ip.nginx_ip.fqdn} ${path.module}/nginx_play.yml"
+    command = "ansible-playbook -e mqtt_ip_address=${var.mqtt_ip_address} -e fqdn=${azurerm_public_ip.nginx_ip.fqdn} -e admin_username=${var.admin_username} -e admin_email=${var.admin_email} ${path.module}/nginx_play.yml"
   }
 }
