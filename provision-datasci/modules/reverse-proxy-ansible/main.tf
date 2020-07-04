@@ -161,7 +161,7 @@ resource "azurerm_virtual_machine" "nginx_node" {
 }
 
 resource "null_resource" "nginx-provisioner" {
-  depends_on = ["data.archive_file.default"]
+  depends_on = [data.archive_file.default]
 
   triggers = {
     signature = data.archive_file.default.output_md5

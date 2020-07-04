@@ -106,7 +106,7 @@ resource "azurerm_virtual_machine" "fact_node" {
 }
 
 resource "null_resource" "fact-provisioner" {
-  depends_on = ["data.archive_file.default"]
+  depends_on = [data.archive_file.default]
 
   triggers = {
     signature = data.archive_file.default.output_md5

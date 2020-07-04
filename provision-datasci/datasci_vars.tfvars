@@ -1,11 +1,8 @@
 location       = "usgovarizona"
 environment    = "dev"
 cluster_name   = "datasci"
-node_count     = 1
+node_count     = 3
 admin_username = "datasci_admin"
-mqtt_topics    = ["topic1", "topic2"]
-mqtt_password  = "replace_this_password"
-mqtt_users     = ["test1", "test2s"]
 
 ansible_pwfile = "~/.vaultpw"
 

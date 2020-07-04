@@ -9,7 +9,7 @@ data "archive_file" "default" {
 }
 
 resource "null_resource" "mqtt-provisioner" {
-  depends_on = ["data.archive_file.default"]
+  depends_on = [data.archive_file.default]
 
   triggers = {
     signature = data.archive_file.default.output_md5

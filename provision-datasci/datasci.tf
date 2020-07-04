@@ -82,7 +82,7 @@ resource "azurerm_network_security_group" "datasci_nsg" {
       access                     = "Allow"
       protocol                   = "Tcp"
       source_port_range          = "*"
-      destination_port_range     = "4040"
+      destination_port_range     = "8088"
       source_address_prefix      = "*"
       destination_address_prefix = "*"
     }
@@ -91,7 +91,7 @@ resource "azurerm_network_security_group" "datasci_nsg" {
 # Create network interface
 resource "azurerm_network_interface" "datasci_nic" {
   count               = var.node_count
-  name                = join("-", ["nic", var.cluster_name, var.environment, count.index])
+  name                = join("", ["nic-", var.cluster_name, "-", var.environment, count.index])
   location            = azurerm_resource_group.datasci_group.location
   resource_group_name = azurerm_resource_group.datasci_group.name
 
@@ -387,8 +387,7 @@ resource "azurerm_storage_share" "connector_logs" {
 locals {
   mqtt_container_dns_name_label      = join("-", [var.cluster_name, var.environment, "mqtt"])
   mqtt-server                        = "tcp://${azurerm_container_group.datasci_mqtt.ip_address}:1883"
-  azure-event-hubs-connection-string =  module.mqtt_eventhubs.namespace_connection_string
-  
+  azure-event-hubs-connection-string =  module.mqtt_eventhubs.namespace_connection_string  
 }
 
 # Create an Azure File Share for the MQTT Broker
@@ -522,16 +521,20 @@ resource "azurerm_container_group" "datasci_mqtt" {
   }
 }
 
-# Invoke Ansible provisioner to finish setting up created VMs
-module "ansible_provisioner" {
-  source = "github.com/chesapeaketechnology/terraform-null-ansible"
+locals {
+  inventory  = zipmap(
+    [for pip in azurerm_public_ip.datasci_ip: join("", ["${pip.tags.name}:", pip.ip_address])],
+    [for nic in azurerm_network_interface.datasci_nic: nic.ip_configuration[0].private_ip_address]
+  )
+}
 
-  rgroup     = azurerm_resource_group.datasci_group.name
-  inventory  = [for pip in azurerm_public_ip.datasci_ip : join("", ["${pip.tags.name}:", pip.ip_address])]
-  ip         = [for pip in azurerm_public_ip.datasci_ip : pip.ip_address]
+# Invoke Ansible provisioner to finish setting up created data node VMs
+module "data-node" {
+  source = "./modules/data-node-ansible"
+
+  inventory  = [for k,v in "${local.inventory}": join(":", [k, v])]
   user       = var.admin_username
 
   arguments  = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
   playbook   = "../configure-datasci/datasci_play.yml"
-  dry_run    = false
 }

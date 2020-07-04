@@ -90,7 +90,7 @@
     regexp: "{{ item }}"
     line: "{{ item }}"
     state: present
-  with_items: "{{ groups['nodes'] }}"
+  with_items: "{{ private_ips }}"
 
 - name: remove localhost from hosts
   lineinfile:

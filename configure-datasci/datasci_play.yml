@@ -4,8 +4,8 @@
   check_mode: no
   become: false
   tasks:
-    - name: "Parse host ip addresses from inventory list"
-      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | sed 's/\(.*\)://g'
+    - name: "Parse host public ip addresses from inventory list"
+      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | awk -F ":" '{print $2}'
       register: hosts
       changed_when: false
 
@@ -20,10 +20,16 @@
     - debug:
         var: group_list
 
+    - name: "Parse host private ip addresses from inventory"
+      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | sed 's/\(.*\)://g'
+      register: pip_list
+      changed_when: false
+
     - name: "Add public ip addresses to dynamic inventory"
       add_host:
         name: "{{ item }}"
         groups: "{{ group_list.stdout_lines[0] }}"
+        private_ips: "{{ pip_list.stdout_lines }}"
       with_items: "{{ hosts.stdout_lines }}"
       changed_when: false
 
