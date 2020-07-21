@@ -13,12 +13,12 @@ resource "null_resource" "provisioner" {
 
   triggers = {
     signature = data.archive_file.default.output_md5
-    command   = "ansible-playbook ${join(" ", compact(var.arguments))} -e inventory=${join(",", compact(var.inventory))} ${length(compact(var.envs)) > 0 ? "-e" : ""} ${join(" -e ", compact(var.envs))} ${var.playbook}"
+    command   = "ansible-playbook ${join(" ", compact(var.arguments))} ${length(compact(var.envs)) > 0 ? "-e" : ""} ${join(" -e ", compact(var.envs))} ${var.playbook}"
   }
 
   connection {
     user        = var.user
-    host        = split(":", var.inventory[0])[1]  # TODO: Wait for all datanodes instead of the first one
+    host        = split(":", var.envs[1])[1]  # TODO: Wait for all datanodes instead of the first one
     type        = "ssh"
     timeout     = "10m"
   }
@@ -28,7 +28,7 @@ resource "null_resource" "provisioner" {
   }
 
   provisioner "local-exec" {
-    command   = "ansible-playbook ${join(" ", compact(var.arguments))} -e inventory=${join(",", compact(var.inventory))} ${length(compact(var.envs)) > 0 ? "-e" : ""} ${join(" -e ", compact(var.envs))} ${var.playbook}"
+    command   = "ansible-playbook ${join(" ", compact(var.arguments))} ${length(compact(var.envs)) > 0 ? "-e" : ""} ${join(" -e ", compact(var.envs))} ${var.playbook}"
   }
 
   lifecycle {

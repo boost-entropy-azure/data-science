@@ -81,8 +81,8 @@ resource "azurerm_virtual_machine" "fact_node" {
 
   storage_image_reference {
     publisher = "OpenLogic"
-    offer     = "CentOS-CI"
-    sku       = "7-CI"
+    offer     = "CentOS"
+    sku       = "7.7"
     version   = "latest"
   }
 

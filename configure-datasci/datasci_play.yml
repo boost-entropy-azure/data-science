@@ -4,6 +4,14 @@
   check_mode: no
   become: false
   tasks:
+    - name: "Parse host groups from inventory list"
+      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | awk -F ":" '{print $1}'
+      register: group_list
+      changed_when: false
+
+    - debug:
+        var: group_list
+
     - name: "Parse host public ip addresses from inventory list"
       shell: echo "{{ inventory }}" | sed 's/,/\n/g' | awk -F ":" '{print $2}'
       register: hosts
@@ -12,24 +20,29 @@
     - debug:
         var: hosts
 
-    - name: "Parse host groups from inventory list"
-      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | sed 's/:\(.*\)//g'
-      register: group_list
+    - name: "Parse host FQDN from inventory"
+      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | awk -F ":" '{print $3}'
+      register: fqdn_list
       changed_when: false
 
     - debug:
-        var: group_list
+        var: fqdn_list
 
     - name: "Parse host private ip addresses from inventory"
-      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | sed 's/\(.*\)://g'
+      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | awk -F ":" '{print $4}'
       register: pip_list
       changed_when: false
+
+    - debug:
+        var: pip_list
+
 
     - name: "Add public ip addresses to dynamic inventory"
       add_host:
         name: "{{ item }}"
         groups: "{{ group_list.stdout_lines[0] }}"
         private_ips: "{{ pip_list.stdout_lines }}"
+        fqdns: "{{ fqdn_list.stdout_lines }}"
       with_items: "{{ hosts.stdout_lines }}"
       changed_when: false
 
@@ -55,11 +68,27 @@
     - include_vars: securevars.yml
   roles:
     - role: geerlingguy.java
+      java_packages:
+        - java-1.8.0-openjdk
+        - java-1.8.0-openjdk-devel
     - role: "common"
     - role: "hadoop"
     - {
       role: "spark",
-      spark_master_ip: "{{ groups['nodes'][0] }}"
+      spark_master_ip: "{{ private_ips[0] }}"
     }
     - role: "spark-cluster-admin"
     - role: "notebook"
+
+- name: "Start hadoop on one of the nodes"
+  hosts: "{{ groups['nodes'][0] }}"
+  remote_user: hadoop
+  tasks:      
+    - name: "Format namenode"
+      shell: hadoop namenode -format
+
+    - name: "Start hdfs"
+      shell: start-dfs.sh
+
+    - name: "Start Yarn"
+      shell: start-yarn.sh

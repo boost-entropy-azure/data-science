@@ -10,11 +10,6 @@ variable "envs" {
   description = "Environment variables"
 }
 
-variable "inventory" {
-  default = ""
-  description = "List of group:ip_address:private_ip of hosts in play"
-}
-
 variable "user" {
   default = ""
   description = "User name for the datasci node"

@@ -87,10 +87,12 @@
 - name: Build hosts file
   lineinfile:
     dest: /etc/hosts
-    regexp: "{{ item }}"
-    line: "{{ item }}"
+    regexp: "{{ item.0 }}"
+    line: "{{ item.0 }} {{ item.1 }}"
     state: present
-  with_items: "{{ private_ips }}"
+  with_together: 
+    - "{{ private_ips }}"
+    - "{{ fqdns }}"
 
 - name: remove localhost from hosts
   lineinfile:

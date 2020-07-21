@@ -74,18 +74,6 @@ resource "azurerm_network_security_group" "datasci_nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-
-  security_rule {
-      name                       = "SPARK"
-      priority                   = 102
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "8088"
-      source_address_prefix      = "*"
-      destination_address_prefix = "*"
-    }
 }
 
 # Create network interface
@@ -166,8 +154,8 @@ resource "azurerm_virtual_machine" "datasci_node" {
 
   storage_image_reference {
     publisher = "OpenLogic"
-    offer     = "CentOS-CI"
-    sku       = "7-CI"
+    offer     = "CentOS"
+    sku       = "7.7"
     version   = "latest"
   }
 
@@ -522,19 +510,20 @@ resource "azurerm_container_group" "datasci_mqtt" {
 }
 
 locals {
-  inventory  = zipmap(
-    [for pip in azurerm_public_ip.datasci_ip: join("", ["${pip.tags.name}:", pip.ip_address])],
+  inventory_map = zipmap(
+    [for pip in azurerm_public_ip.datasci_ip: join(":", ["${pip.tags.name}", pip.ip_address, pip.fqdn])],
     [for nic in azurerm_network_interface.datasci_nic: nic.ip_configuration[0].private_ip_address]
   )
+  inventory = join(",", [for k, v in "${local.inventory_map}": join(":", [k, v])])
 }
 
 # Invoke Ansible provisioner to finish setting up created data node VMs
-module "data-node" {
-  source = "./modules/data-node-ansible"
-
-  inventory  = [for k,v in "${local.inventory}": join(":", [k, v])]
-  user       = var.admin_username
-
-  arguments  = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
-  playbook   = "../configure-datasci/datasci_play.yml"
+module "worker-node" {
+  source         = "./modules/worker-node-ansible"
+  user           = var.admin_username
+  envs           = [
+    join("=", ["inventory", "${local.inventory}"])
+  ]
+  arguments      = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
+  playbook       = "../configure-datasci/datasci_play.yml"
 }

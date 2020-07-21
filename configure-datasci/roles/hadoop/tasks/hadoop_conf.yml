@@ -4,11 +4,11 @@
     src: slaves
     dest: /usr/local/hadoop/etc/hadoop/slaves
     owner: "{{ hadoop_user }}"
-    group: "{{ hadoop_group}}"
+    group: "{{ hadoop_group }}"
 
 - name: Prepare known_hosts entries
   shell: ssh-keyscan -t rsa "{{ item }}"
-  with_items: "{{ groups['nodes'] }}"
+  with_items: "{{ fqdns }}"
   register: keyscans
 
 - name: Prepare known_hosts

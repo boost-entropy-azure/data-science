@@ -16,4 +16,6 @@ spark:
   user_shell: "/bin/false"    # the spark user's default shell
 
   env_extras: {}
-  defaults_extras: {}
+  defaults_extras: 
+    "spark.yarn.stagingDir": "hdfs://{{ private_ips[0] }}:54310/"
+
