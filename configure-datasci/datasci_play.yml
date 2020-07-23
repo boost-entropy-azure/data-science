@@ -36,7 +36,6 @@
     - debug:
         var: pip_list
 
-
     - name: "Add public ip addresses to dynamic inventory"
       add_host:
         name: "{{ item }}"
@@ -79,13 +78,14 @@
     }
     - role: "spark-cluster-admin"
     - role: "notebook"
+    - role: "consul"
 
 - name: "Start hadoop on one of the nodes"
   hosts: "{{ groups['nodes'][0] }}"
   remote_user: hadoop
   tasks:      
     - name: "Format namenode"
-      shell: hadoop namenode -format
+      shell: hadoop namenode -format -force -nonInteractive
 
     - name: "Start hdfs"
       shell: start-dfs.sh

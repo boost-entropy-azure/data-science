@@ -1,0 +1,38 @@
+---
+# tasks file for consul-server
+- name: get consul zip
+  get_url:
+    dest: "/etc/{{ consul_zip_file }}"
+    url: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_zip_file }}"
+
+- name: place unzipped consul on path
+  unarchive:
+    src: "/etc/{{ consul_zip_file }}"
+    dest: "{{ consul_install_dir }}"
+    remote_src: yes
+
+- name: ensure directories for data and config exists
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ consul_config_dir }}"
+    - "{{ consul_data_dir }}"
+
+- name: Get hostname
+  shell: hostname
+  register: node_name
+
+- name: Copy consul configuration file
+  template: 
+    dest: "{{ consul_config_dir }}/config.json"
+    src: consul.config.j2
+  notify: restart consul
+
+- name: ensure consul service file exists
+  template:
+    dest: /etc/systemd/system/consul.service
+    src: consul.service.j2
+    force: yes
+    mode: 0644
+  notify: restart consul

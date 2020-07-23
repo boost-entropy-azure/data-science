@@ -522,6 +522,7 @@ module "worker-node" {
   source         = "./modules/worker-node-ansible"
   user           = var.admin_username
   envs           = [
+    join("=", ["", ""]),
     join("=", ["inventory", "${local.inventory}"])
   ]
   arguments      = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
