@@ -1,11 +1,27 @@
 ---
+- block:
+  - name: "Get DB name from Consul"
+    consul_kv:
+      key: postgresql/db/name
+    register: postgresql_db_name
+
+  - name: "Get postgresql admin user name from Consul"
+    consul_kv:
+      key: postgresql/user/name
+    register: postgresql_user_name
+
+  - name: "Get admin user password from Consul"
+    consul_kv:
+      key: postgresql/user/password
+    register: postgresql_user_password
+
 - name: "Create cellids table"
   postgresql_table: 
-    db: "{{ postgresql_databases.0.name }}"
+    db: "{{ postgresql_db_name.data['Value'] }}"
     name: cellids
-    owner: "{{ postgresql_users.0.name }}"
-    login_user: "{{ postgresql_users.0.name }}"
-    login_password: "{{ postgresql_users.0.password }}"
+    owner: "{{ postgresql_user_name.data['Value'] }}"
+    login_user: "{{ postgresql_user_name.data['Value'] }}"
+    login_password: "{{ postgresql_user_password.data['Value'] }}"
     columns: 
     - mcc smallint
     - mnc smallint
@@ -18,11 +34,11 @@
 
 - name: "Create observed_cellids table"
   postgresql_table: 
-    db: "{{ postgresql_databases.0.name }}"
+    db: "{{ postgresql_db_name.data['Value'] }}"
     name: observed_cellids
-    owner: "{{ postgresql_users.0.name }}"
-    login_user: "{{ postgresql_users.0.name }}"
-    login_password: "{{ postgresql_users.0.password }}"
+    owner: "{{ postgresql_user_name.data['Value'] }}"
+    login_user: "{{ postgresql_user_name.data['Value'] }}"
+    login_password: "{{ postgresql_user_password.data['Value'] }}"
     columns: 
     - mcc smallint
     - mnc smallint
@@ -34,9 +50,9 @@
 
 - name: "Create procedure for updating cellids"
   postgresql_query:
-    db:  "{{ postgresql_databases.0.name }}"
-    login_user: "{{ postgresql_users.0.name }}"
-    login_password: "{{ postgresql_users.0.password }}"
+    db:  "{{ postgresql_db_name.data['Value'] }}"
+    login_user: "{{ postgresql_user_name.data['Value'] }}"
+    login_password: "{{ postgresql_user_password.data['Value'] }}"
     query: |
       CREATE OR REPLACE FUNCTION update_cellids()
       RETURNS TRIGGER AS
@@ -51,9 +67,9 @@
 
 - name: "Create trigger"
   postgresql_query:
-    db:  "{{ postgresql_databases.0.name }}"
-    login_user: "{{ postgresql_users.0.name }}"
-    login_password: "{{ postgresql_users.0.password }}"
+    db: "{{ postgresql_db_name.data['Value'] }}"
+    login_user: "{{ postgresql_user_name.data['Value'] }}"
+    login_password: "{{ postgresql_user_password.data['Value'] }}"
     query: |
       DROP TRIGGER IF EXISTS new_cellids ON observed_cellids;
       CREATE TRIGGER new_cellids

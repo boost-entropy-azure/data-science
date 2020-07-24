@@ -40,6 +40,7 @@
       add_host:
         name: "{{ item }}"
         groups: "{{ group_list.stdout_lines[0] }}"
+        public_ips: "{{ hosts.stdout_lines }}"
         private_ips: "{{ pip_list.stdout_lines }}"
         fqdns: "{{ fqdn_list.stdout_lines }}"
       with_items: "{{ hosts.stdout_lines }}"
@@ -59,7 +60,7 @@
       args:
         creates: /usr/bin/python
 
-- name: "Configure VM nodes"
+- name: "Configure worker VM nodes"
   hosts: all
   remote_user: datasci_admin
   become: true
@@ -78,7 +79,10 @@
     }
     - role: "spark-cluster-admin"
     - role: "notebook"
-    - role: "consul"
+    - {
+      role: "consul",
+      is_leader: "{{ inventory_hostname == public_ips[0] }}"
+    }
 
 - name: "Start hadoop on one of the nodes"
   hosts: "{{ groups['nodes'][0] }}"

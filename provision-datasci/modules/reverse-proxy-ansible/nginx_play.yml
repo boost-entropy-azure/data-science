@@ -46,6 +46,18 @@
       apt: name=cron state=present
       when: ansible_os_family == 'Debian'
 
+    - name: "Install pip2"
+      package:
+        name: python-pip
+        state: latest
+
+    - name: "Upgrade pip2"
+      shell: pip install --upgrade pip
+
+    - name: "Install python-consul module"
+      pip:
+        name: python-consul
+
     - name: "Check if dhparam.pem exists"
       stat:
         path: /etc/ssl/certs/dhparam.pem
@@ -65,3 +77,48 @@
   roles:
     - role: geerlingguy.certbot
     - role: geerlingguy.nginx
+      roles:
+    - {
+      role: "../../../configure-datasci/roles/consul",
+      private_ips: ["{{ consul_server }}"],
+      is_server: false
+    }
+
+  post_tasks:
+    - block:
+      - name: "Check if reverseproxy address exists in Consul"
+        consul_kv:
+          key: reverseproxy/fqdn
+        register: reverseproxy_fqdn
+
+      - name: "Store reverseproxy address"
+        consul_kv:
+          key: reverseproxy/fqdn
+          value: "{{ fqdn }}"
+        when: reverseproxy_fqdn.data is none
+
+    - block:
+      - name: "Check if reverseproxy admin username exists in Consul"
+        consul_kv:
+          key: reverseproxy/admin_user/name
+        register: reverseproxy_username
+
+      - name: "Store reverseproxy admin username"
+        consul_kv:
+          key: reverseproxy/admin_user/name
+          value: "{{ admin_username }}"
+        when: reverseproxy_username.data is none
+
+    - block:
+      - name: "Check if reverseproxy admin email exists in Consul"
+        consul_kv:
+          key: reverseproxy/admin_user/email
+        register: reverseproxy_email
+
+      - name: "Store reverseproxy admin email"
+        consul_kv:
+          key: reverseproxy/admin_user/email
+          value: "{{ admin_email }}"
+        when: reverseproxy_email.data is none
+        
+

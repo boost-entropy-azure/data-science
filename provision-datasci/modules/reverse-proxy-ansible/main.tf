@@ -160,12 +160,22 @@ resource "azurerm_virtual_machine" "nginx_node" {
   }
 }
 
+locals {
+  envs = [
+    join("=", ["fqdn", azurerm_public_ip.nginx_ip.fqdn]),
+    join("=", ["admin_username", var.admin_username]),
+    join("=", ["admin_email", var.admin_email]),
+    join("=", ["mqtt_ip_address", var.mqtt_ip_address]),
+    join("=", ["consul_server", var.consul_server])
+  ]
+}
+
 resource "null_resource" "nginx-provisioner" {
   depends_on = [data.archive_file.default]
 
   triggers = {
     signature = data.archive_file.default.output_md5
-    command = "ansible-playbook -e mqtt_ip_address=${var.mqtt_ip_address} -e fqdn=${azurerm_public_ip.nginx_ip.fqdn} -e admin_username=${var.admin_username} -e admin_email=${var.admin_email} ${path.module}/nginx_play.yml"
+    command = "ansible-playbook ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))} ${path.module}/nginx_play.yml"
   }
 
   connection {
@@ -192,6 +202,6 @@ resource "null_resource" "nginx-provisioner" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -e mqtt_ip_address=${var.mqtt_ip_address} -e fqdn=${azurerm_public_ip.nginx_ip.fqdn} -e admin_username=${var.admin_username} -e admin_email=${var.admin_email} ${path.module}/nginx_play.yml"
+    command = "ansible-playbook ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))} ${path.module}/nginx_play.yml"
   }
 }

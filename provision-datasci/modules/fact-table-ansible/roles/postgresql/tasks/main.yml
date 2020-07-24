@@ -2,6 +2,9 @@
 # Variable configuration.
 - include_tasks: variables.yml
 
+# Save postresql facts to Consul KV
+- import_tasks: consul_facts.yml
+
 # Setup/install tasks.
 - include_tasks: setup-RedHat.yml
   when: ansible_os_family == 'RedHat'
@@ -21,13 +24,4 @@
 
 # Setup fact tables
 - import_tasks: fact_tables.yml
-
-- name: "Save username and generated password to fact file"
-  lineinfile:
-    path: "{{ conf_files.secrets_file }}" 
-    line: "{{ postgresql_databases.0.name }}\n{{ item.name }} {{ item.password }}"
-    create: yes
-  with_items:
-    - "{{ postgresql_users }}"
-  no_log: true
 

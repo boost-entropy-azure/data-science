@@ -3,12 +3,19 @@
     "addresses": {
         "http": "{{ ansible_facts['all_ipv4_addresses'] | last }} 127.0.0.1"
     },
+{% if is_server == True %}
     "server": true,
+{% else %}
+    "server": false,
+{% endif %}
     "advertise_addr": "{{ ansible_facts['all_ipv4_addresses'] | last }}",
     "client_addr": "127.0.0.1 {{ ansible_facts['all_ipv4_addresses'] | last }}",
     "connect": {
         "enabled": true
     },
+{% if is_leader == True %}
+    "bootstrap": true,
+{% endif %}
     "data_dir": "{{ consul_data_dir }}",
     "retry_join": [ "{{ private_ips | last }}"]
 }

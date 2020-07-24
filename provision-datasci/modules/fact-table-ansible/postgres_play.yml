@@ -2,7 +2,7 @@
 - hosts: localhost
   gather_facts: yes
   check_mode: no
-  become: True
+  become: true
   tasks:
     - name: "Add node names to dynamic inventory"
       add_host:
@@ -15,5 +15,10 @@
   remote_user: "{{ admin_username }}"
   become: true
   roles:
+    - {
+      role: "../../../configure-datasci/roles/consul",
+      private_ips: ["{{ consul_server }}"],
+      is_server: false
+    }
     - role: "postgresql"
         

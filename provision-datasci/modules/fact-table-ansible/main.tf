@@ -105,12 +105,22 @@ resource "azurerm_virtual_machine" "fact_node" {
   }
 }
 
+locals {
+  node_list       = join(",", [for pip in azurerm_public_ip.fact_ip: pip.fqdn])
+  private_ip_list = join(",", [for nic in azurerm_network_interface.fact_nic: nic.ip_configuration[0].private_ip_address])
+  envs            = [
+    join("=", ["admin_username", var.admin_username]),
+    join("=", ["nodes", "${local.node_list}"]),
+    join("=", ["consul_server", var.consul_server])
+  ]
+}
+
 resource "null_resource" "fact-provisioner" {
   depends_on = [data.archive_file.default]
 
   triggers = {
     signature = data.archive_file.default.output_md5
-    command = "ansible-playbook -e admin_username=${var.admin_username} -e nodes=${join(",", compact([for pip in azurerm_public_ip.fact_ip : pip.fqdn]))} ${path.module}/postgres_play.yml"
+    command = "ansible-playbook ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))} ${path.module}/postgres_play.yml"
   }
 
   connection {
@@ -125,6 +135,6 @@ resource "null_resource" "fact-provisioner" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -e admin_username=${var.admin_username} -e nodes=${join(",", compact([for pip in azurerm_public_ip.fact_ip : pip.fqdn]))} ${path.module}/postgres_play.yml"
+    command = "ansible-playbook ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))} ${path.module}/postgres_play.yml"
   }
 }

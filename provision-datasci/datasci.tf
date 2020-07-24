@@ -188,6 +188,7 @@ module "reverse_proxy" {
   resource_group       = azurerm_resource_group.datasci_group
   cluster_name         = var.cluster_name
   parent_vnetwork_name = azurerm_virtual_network.datasci_net.name
+  consul_server        = azurerm_network_interface.datasci_nic[0].ip_configuration[0].private_ip_address
   environment          = var.environment
   default_tags         = var.default_tags
   mqtt_ip_address      = azurerm_container_group.datasci_mqtt.ip_address
@@ -200,6 +201,7 @@ module "fact-table" {
   parent_vnetwork_name = azurerm_virtual_network.datasci_net.name
   parent_subnet_id     = azurerm_subnet.datasci_subnet.id
   sub_cluster_name     = join("-", [var.cluster_name, var.environment, "fact"])
+  consul_server        = azurerm_network_interface.datasci_nic[0].ip_configuration[0].private_ip_address
   environment          = var.environment
   default_tags         = var.default_tags
 }

@@ -104,7 +104,7 @@
   file:
     path: "/home/{{ hadoop_user }}/tmp"
     state: directory
-    owner: "{{ hadoop_user}}"
+    owner: "{{ hadoop_user }}"
     group: "{{ hadoop_group }}"
     mode: 0750
 
@@ -112,7 +112,7 @@
   file:
     path: "/home/{{ hadoop_user }}/hadoop-data/hdfs/namenode"
     state: directory
-    owner: "{{ hadoop_user}}"
+    owner: "{{ hadoop_user }}"
     group: "{{ hadoop_group }}"
     mode: 0750
 
@@ -120,7 +120,7 @@
   file:
     path: "/home/{{ hadoop_user }}/hadoop-data/hdfs/datanode"
     state: directory
-    owner: "{{ hadoop_user}}"
+    owner: "{{ hadoop_user }}"
     group: "{{ hadoop_group }}"
     mode: 0750
 
@@ -136,7 +136,7 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: "{{ hadoop_user}}"
+    owner: "{{ hadoop_user }}"
     group: "{{ hadoop_group }}"
   with_items:
     - {src: "core-site.xml", dest: "{{ hadoop_home }}/etc/hadoop/core-site.xml"}

@@ -40,7 +40,7 @@ variable "default_tags" {
   description = "Collection of default tags to apply to all resources"
 }
 
-variable "nodes" {
-  default     = ""
-  description = "List of hosts in play"
+variable "consul_server" {
+  type        = string
+  description = "IP address of a Consul server to join" 
 }

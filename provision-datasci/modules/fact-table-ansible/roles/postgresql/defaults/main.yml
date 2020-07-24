@@ -57,7 +57,7 @@ postgresql_databases:
 # Users to ensure exist.
 postgresql_users:
   - name: "{{ admin_username }}"
-    password: "{{ lookup('password', '/tmp/postgres_pass length=8 chars=ascii_letters') }}"
+    password: "{{ admin_password }}"
 # - name: jdoe #required; the rest are optional
 #   password: # defaults to not set
 #   encrypted: # defaults to not set
@@ -73,6 +73,3 @@ postgresql_users:
 
 # Whether to output user data when managing users.
 postgres_users_no_log: true
-
-conf_files:
-  secrets_file: /tmp/facts.txt
