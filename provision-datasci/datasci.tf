@@ -374,6 +374,13 @@ resource "azurerm_storage_share" "connector_logs" {
   quota                = 2
 }
 
+# Create an Azure File Share for the Consul config Log
+resource "azurerm_storage_share" "consul_config" {
+  name                 = join("-", [var.cluster_name, var.environment, "consul-config-file-share"])
+  storage_account_name = azurerm_storage_account.datasci.name
+  quota                = 1
+}
+
 locals {
   mqtt_container_dns_name_label      = join("-", [var.cluster_name, var.environment, "mqtt"])
   mqtt-server                        = "tcp://${azurerm_container_group.datasci_mqtt.ip_address}:1883"
@@ -402,13 +409,16 @@ module "mqtt-broker-conf" {
     "storage_account_key='${azurerm_storage_account.datasci.primary_access_key}'",
     "mqtt_broker_share_name='${azurerm_storage_share.mqtt_broker.name}'",
     "mqtt_config_share_name='${azurerm_storage_share.connector_config.name}'",
+    "consul_config_share_name='${azurerm_storage_share.consul_config.name}'",
     "mqtt_admin=${var.admin_username}",
     "mqtt_users=${join("\",\"", var.mqtt_users)}",
     "mqtt_server='${local.mqtt-server}'",
     "mqtt_topics='${join("\",\"", var.mqtt_topics)}'",
     "mqtt_eventhubs_connection='${local.azure-event-hubs-connection-string}'",
     "mqtt_eventhubs_batch_size=10",
-    "mqtt_scheduled_interval=500"
+    "mqtt_scheduled_interval=500",
+    "consul_server='${azurerm_network_interface.datasci_nic[0].ip_configuration[0].private_ip_address}'",
+    "container_address='${azurerm_container_group.datasci_mqtt.ip_address}'"
   ]
 }
 
@@ -458,7 +468,8 @@ resource "azurerm_container_group" "datasci_mqtt" {
   # MQTT Broker
   container {
     name   = "mqtt"
-    image  = "eclipse-mosquitto"
+    # image  = "eclipse-mosquitto"
+    image  = "dtufekcic/mqtt-consul:0.1"
     cpu    = "1.0"
     memory = "1.5"
 
@@ -480,13 +491,18 @@ resource "azurerm_container_group" "datasci_mqtt" {
       storage_account_name = azurerm_storage_account.datasci.name
       storage_account_key  = azurerm_storage_account.datasci.primary_access_key
     }
+
+    environment_variables = {
+      "USERS"="${join(",", concat(var.mqtt_users, list(var.admin_username)))}"
+    }
+
   }
 
   # MQTT to Event Hub Connector
   container {
     name   = "connector"
     image  = "chesapeaketechnology/mqtt-azure-event-hub-connector:0.1.0"
-    cpu    = "1.0"
+    cpu    = "0.5"
     memory = "1.5"
 
     volume {
@@ -507,6 +523,39 @@ resource "azurerm_container_group" "datasci_mqtt" {
 
       storage_account_name = azurerm_storage_account.datasci.name
       storage_account_key  = azurerm_storage_account.datasci.primary_access_key
+    }
+  }
+
+  # Consul gateway
+  container {
+    name   = "mqttconsulgateway"
+    image  = "consul"
+    cpu    = "0.5"
+    memory = "1"
+
+    volume {
+      name       = "consul-config"
+      mount_path = "/consul/config"
+      read_only  = "false"
+      share_name = azurerm_storage_share.consul_config.name
+
+      storage_account_name = azurerm_storage_account.datasci.name
+      storage_account_key  = azurerm_storage_account.datasci.primary_access_key
+    }
+
+    ports {
+      port     = 8500
+      protocol = "TCP"
+    }
+
+    ports {
+      port     = 8600
+      protocol = "TCP"
+    }
+
+    environment_variables = {
+      "CONSUL_LOCAL_CONFIG"="{\"disable_update_check\": true}"
+      "CONSUL_BIND_INTERFACE"="eth0"
     }
   }
 }

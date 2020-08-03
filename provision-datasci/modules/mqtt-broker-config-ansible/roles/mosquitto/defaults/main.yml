@@ -1,5 +1,6 @@
 mosquitto:
-  fact_file: "/tmp/facts.txt"
-  passwd_file: "/tmp/pwfile.txt"
   conf_file: "/tmp/mosquitto.conf"
   connector_conf_file: "/tmp/mqtt-connector.conf"
+
+consul:
+  conf_file: /tmp/config.json

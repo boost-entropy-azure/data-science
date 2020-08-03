@@ -1,74 +1,4 @@
 ---
-- name: "Install mosquitto"
-  package:
-    name: mosquitto
-    state: present
-
-- name: "Add admin to list of mqtt_users"
-  set_fact:
-    auth_users: "{{ mqtt_users }},{{ mqtt_admin }}"
-
-- name: "Set the list of MQTT authorized users"
-  set_fact:
-    usernames: "{{ auth_users.split(',') }}"
-
-- name: "Check if password file exists"
-  stat:
-    path: "{{ mosquitto.passwd_file }}"
-  register: passwd
-
-- name: "Create the password file if not already there"
-  file:
-    path: "{{ mosquitto.passwd_file }}"
-    mode: 0640
-    state: touch
-  when: not passwd.stat.exists
-
-- name: "Clean up the current password file"
-  command:
-    mosquitto_passwd -D "{{ mosquitto.passwd_file }}" "{{ item }}"
-  when:
-    - item.state | default("present") == "absent"
-  with_items: "{{ usernames }}"
-  no_log: true
-
-- name: "Create new passwords"
-  set_fact:
-    words: "{{ words|default([]) + [lookup('password', '/dev/null length=8 chars=ascii_letters')] }}"
-  with_items: "{{ usernames }}"
-
-- name: "Regen the mosquitto passwords"
-  command:
-    mosquitto_passwd -b "{{ mosquitto.passwd_file }}" "{{ item.0 }}" "{{ item.1 }}"
-  with_together:
-    - "{{ usernames }}"
-    - "{{ words }}"
-  no_log: true
-
-- name: "Save usernames and generated passwords to fact file"
-  lineinfile:
-    path: "{{ mosquitto.fact_file }}"
-    line: "{{ item.0 }} {{ item.1 }}"
-    create: yes
-  with_together:
-    - "{{ usernames }}"
-    - "{{ words }}"
-  no_log: true
-
-- name: "Set connector password fact"
-  set_fact:
-    mqtt_password: "{{ (item.0 == mqtt_admin) | ternary(item.1, '') }}"
-  with_together:
-    - "{{ usernames }}"
-    - "{{ words }}"
-  no_log: true
-
-- name: "Upload the Mosquitto paswd file"
-  shell: az storage file upload --share-name {{ mqtt_broker_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ mosquitto.passwd_file }} --path config/pwfile.txt
-
-- name: "Upload the Mosquitto fact file"
-  shell: az storage file upload --share-name {{ mqtt_broker_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ mosquitto.fact_file }} --path config/facts.txt
-
 - name: "Render and write out mosquitto broker config"
   template:
     src: mosquitto.conf.j2
@@ -85,12 +15,18 @@
 - name: "Upload the connector config"
   shell: az storage file upload --share-name {{ mqtt_config_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ mosquitto.connector_conf_file }}
 
+- name: "Render and write out consul client config"
+  template:
+    src: config.json.j2
+    dest: "{{ consul.conf_file }}"
+
+- name: "Upload the Consul Config"
+  shell: az storage file upload --share-name {{ consul_config_share_name }} --account-name {{ storage_account_name }} --account-key {{ storage_account_key }} --source {{ consul.conf_file }}
+
 - name: "Remove generated files"
   file:
     path: "{{ item }}"
     state: absent
   with_items:
-    - "{{ mosquitto.fact_file }}"
-    - "{{ mosquitto.passwd_file }}"
     - "{{ mosquitto.conf_file }}"
     - "{{ mosquitto.connector_conf_file }}"
