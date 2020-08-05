@@ -468,8 +468,7 @@ resource "azurerm_container_group" "datasci_mqtt" {
   # MQTT Broker
   container {
     name   = "mqtt"
-    # image  = "eclipse-mosquitto"
-    image  = "dtufekcic/mqtt-consul:0.1"
+    image  = "chesapeaketechnology/mqtt-consul:0.1"
     cpu    = "1.0"
     memory = "1.5"
 
