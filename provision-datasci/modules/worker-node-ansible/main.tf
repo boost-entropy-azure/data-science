@@ -18,7 +18,7 @@ resource "null_resource" "provisioner" {
 
   connection {
     user        = var.user
-    host        = split(":", var.envs[1])[1]  # TODO: Wait for all datanodes instead of the first one
+    host        = split(":", var.envs[0])[1]  # TODO: Wait for all datanodes instead of the first one
     type        = "ssh"
     timeout     = "10m"
   }

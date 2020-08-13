@@ -7,9 +7,9 @@
   register: account_list
 
 - name: "Login to Azure"
-  shell: az login
+  shell: az login --service-principal --username {{ azure_client_id }} --password {{ azure_client_secret }} --tenant {{ azure_tenant_id }}
   register: login_status
-  when: account_list.stdout_lines[0] is not defined
+  # when: account_list.stdout_lines[0] is not defined
 
 - name: "Get subscription ID"
   shell: grep id {{ login_status.stdout_lines }} | awk '{print $2}'

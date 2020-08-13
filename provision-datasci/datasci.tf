@@ -275,79 +275,79 @@ module "alert_eventhubs" {
   default_tags       = var.default_tags
 }
 
-# Create Azure Event Hubs Namespace for IOThub
-resource "azurerm_eventhub_namespace" "iot_eventhubs" {
-  name                = join("-", [var.cluster_name, var.environment, "iothub-namespace"])
-  resource_group_name = azurerm_resource_group.datasci_group.name
-  location            = azurerm_resource_group.datasci_group.location
-  sku                 = "Standard"
-  capacity            = 1
-  tags                = var.default_tags
-}
+# # Create Azure Event Hubs Namespace for IOThub
+# resource "azurerm_eventhub_namespace" "iot_eventhubs" {
+#   name                = join("-", [var.cluster_name, var.environment, "iothub-namespace"])
+#   resource_group_name = azurerm_resource_group.datasci_group.name
+#   location            = azurerm_resource_group.datasci_group.location
+#   sku                 = "Standard"
+#   capacity            = 1
+#   tags                = var.default_tags
+# }
 
-# Create an Azure Event Hub for the IoT Hub traffic
-resource "azurerm_eventhub" "iot_eventhub" {
-  name                = "iot_message"
-  namespace_name      = azurerm_eventhub_namespace.iot_eventhubs.name
-  resource_group_name = azurerm_resource_group.datasci_group.name
-  partition_count     = 2
-  message_retention   = 1
+# # Create an Azure Event Hub for the IoT Hub traffic
+# resource "azurerm_eventhub" "iot_eventhub" {
+#   name                = "iot_message"
+#   namespace_name      = azurerm_eventhub_namespace.iot_eventhubs.name
+#   resource_group_name = azurerm_resource_group.datasci_group.name
+#   partition_count     = 2
+#   message_retention   = 1
 
-  capture_description {
-    enabled             = true
-    encoding            = "Avro"
-    interval_in_seconds = 300       # 5 min
-    size_limit_in_bytes = 314572800 # 300 MB
-    skip_empty_archives = true
+#   capture_description {
+#     enabled             = true
+#     encoding            = "Avro"
+#     interval_in_seconds = 300       # 5 min
+#     size_limit_in_bytes = 314572800 # 300 MB
+#     skip_empty_archives = true
 
-    destination {
-      name                = "EventHubArchive.AzureBlockBlob"
-      archive_name_format = "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
-      blob_container_name = azurerm_template_deployment.datasci_container.name
-      storage_account_id  = azurerm_storage_account.datasci_lake_storage.id
-    }
-  }
-}
+#     destination {
+#       name                = "EventHubArchive.AzureBlockBlob"
+#       archive_name_format = "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
+#       blob_container_name = azurerm_template_deployment.datasci_container.name
+#       storage_account_id  = azurerm_storage_account.datasci_lake_storage.id
+#     }
+#   }
+# }
 
-# Add a rule so the traffic can flow from IoT Hub to Event Hub.
-resource "azurerm_eventhub_authorization_rule" "auth_rule" {
-  resource_group_name = azurerm_resource_group.datasci_group.name
-  namespace_name      = azurerm_eventhub_namespace.iot_eventhubs.name
-  eventhub_name       = azurerm_eventhub.iot_eventhub.name
-  name                = join("-", [var.cluster_name, var.environment, "auth-rule"])
-  send                = true
-  listen              = true
-  manage              = true
-}
+# # Add a rule so the traffic can flow from IoT Hub to Event Hub.
+# resource "azurerm_eventhub_authorization_rule" "auth_rule" {
+#   resource_group_name = azurerm_resource_group.datasci_group.name
+#   namespace_name      = azurerm_eventhub_namespace.iot_eventhubs.name
+#   eventhub_name       = azurerm_eventhub.iot_eventhub.name
+#   name                = join("-", [var.cluster_name, var.environment, "auth-rule"])
+#   send                = true
+#   listen              = true
+#   manage              = true
+# }
 
-# Create IoT hub
-resource "azurerm_iothub" "datasci_iothub" {
-  name                = join("-", [var.cluster_name, var.environment, "iothub"])
-  resource_group_name = azurerm_resource_group.datasci_group.name
-  location            = azurerm_resource_group.datasci_group.location
+# # Create IoT hub
+# resource "azurerm_iothub" "datasci_iothub" {
+#   name                = join("-", [var.cluster_name, var.environment, "iothub"])
+#   resource_group_name = azurerm_resource_group.datasci_group.name
+#   location            = azurerm_resource_group.datasci_group.location
 
-  tags = var.default_tags
+#   tags = var.default_tags
 
-  //noinspection MissingProperty
-  sku {
-    name     = "B1"
-    capacity = "1"
-  }
+#   //noinspection MissingProperty
+#   sku {
+#     name     = "B1"
+#     capacity = "1"
+#   }
 
-  endpoint {
-    connection_string = azurerm_eventhub_authorization_rule.auth_rule.primary_connection_string
-    name              = join("-", [var.cluster_name, "iothub-eventhubs-endpoint"])
-    type              = "AzureIotHub.EventHub"
-  }
+#   endpoint {
+#     connection_string = azurerm_eventhub_authorization_rule.auth_rule.primary_connection_string
+#     name              = join("-", [var.cluster_name, "iothub-eventhubs-endpoint"])
+#     type              = "AzureIotHub.EventHub"
+#   }
 
-  route {
-    name           = "IotHub2EventHubs"
-    source         = "DeviceMessages"
-    condition      = "true"
-    endpoint_names = [join("-", [var.cluster_name, "iothub-eventhubs-endpoint"])]
-    enabled        = true
-  }
-}
+#   route {
+#     name           = "IotHub2EventHubs"
+#     source         = "DeviceMessages"
+#     condition      = "true"
+#     endpoint_names = [join("-", [var.cluster_name, "iothub-eventhubs-endpoint"])]
+#     enabled        = true
+#   }
+# }
 
 # Create an Azure Storage Account
 resource "azurerm_storage_account" "datasci" {
@@ -572,8 +572,9 @@ module "worker-node" {
   source         = "./modules/worker-node-ansible"
   user           = var.admin_username
   envs           = [
-    join("=", ["", ""]),
-    join("=", ["inventory", "${local.inventory}"])
+    join("=", ["inventory", "${local.inventory}"]),
+    join("=", ["resource_group", azurerm_resource_group.datasci_group.name]),
+    join("=", ["namespace_name", join("-", [var.cluster_name, var.environment, "mqtt-eventhubs-namespace"])])
   ]
   arguments      = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
   playbook       = "../configure-datasci/datasci_play.yml"

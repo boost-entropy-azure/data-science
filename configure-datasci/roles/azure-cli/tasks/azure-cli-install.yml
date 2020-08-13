@@ -1,6 +1,0 @@
----
-- name: "Dowload and install CLI"
-  shell: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
-- name: "Add iot hub extension"
-  shell: az extension add --name azure-iot

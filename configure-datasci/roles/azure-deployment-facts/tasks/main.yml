@@ -12,3 +12,5 @@
 - include: azure-cli-conf.yml
   tags:
     - azure-cli-conf
+
+- include: azure-deployment-facts.yml
