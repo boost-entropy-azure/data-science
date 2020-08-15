@@ -11,7 +11,8 @@
 //}
 
 provider "azurerm" {
-  version = "=2.0.0"
+  version = "~> 2.18.0"
+//  version = "= 2.0.0"
   features {}
   disable_terraform_partner_id = true
 }
@@ -529,4 +530,22 @@ module "worker-node" {
   ]
   arguments      = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
   playbook       = "../configure-datasci/datasci_play.yml"
+}
+
+module "grafana" {
+  source               = "github.com/chesapeaketechnology/terraform-datasci-grafana-cluster"
+  location             = azurerm_resource_group.datasci_group.location
+  resource_group_name  = azurerm_resource_group.datasci_group.name
+  cluster_name          = var.cluster_name
+  virtual_network_name = azurerm_virtual_network.datasci_net.name
+  environment          = var.environment
+  default_tags         = var.default_tags
+  grafana_admin_user   = var.grafana_admin_user
+  subnet_cidrs          = ["10.0.11.0/24"]
+  subnet_start_address = "10.0.11.1"
+  subnet_end_address   = "10.0.11.254"
+  topics             = toset(var.mqtt_topics)
+  eventhub_keys = module.mqtt_eventhubs.topic_primary_key
+  eventhub_namespace = module.mqtt_eventhubs.namespace_fqn
+  eventhub_shared_access_policies = module.mqtt_eventhubs.topic_shared_access_policy_name
 }

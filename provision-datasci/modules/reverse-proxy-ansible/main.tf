@@ -119,7 +119,7 @@ resource "azurerm_storage_account" "nginx_boot_storage" {
 
 # Create nginx virtual machine
 resource "azurerm_virtual_machine" "nginx_node" {
-  name                  = join("-", ["vm", var.sub_cluster_name, var.environment])
+  name                  = join("-", ["vm", var.cluster_name, var.sub_cluster_name, var.environment])
   location              = var.resource_group.location
   resource_group_name   = var.resource_group.name
   network_interface_ids = [azurerm_network_interface.nginx_nic.id]
@@ -128,7 +128,7 @@ resource "azurerm_virtual_machine" "nginx_node" {
   tags = var.default_tags
 
   storage_os_disk {
-    name              = join("", ["disknginx", "_", var.environment])
+    name              = join("-", ["disknginx", var.cluster_name, var.sub_cluster_name, var.environment])
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"

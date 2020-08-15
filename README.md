@@ -79,6 +79,28 @@ If you already have created a default SSH key, then you can skip creating a new 
 Detailed instructions can be found [here](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html)
 1. `ssh-keygen -C ""`
 
+#### Add your ssh key to your aah agent
+##### MacOS
+If you're on MacOS you may need to re-add your keys to the ssh-agent each time you re-start. You can do this by 
+running the following from Terminal:
+
+```ssh-add```
+
+If you want these keys added to your agent persistently you can use 
+the AddKeysToAgent config setting in ~/.ssh/config. For example,
+
+```
+Host *
+  UseKeychain yes
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_rsa
+``` 
+
+If you use a key with a password and would like to store the password in 
+Keychain you can also add ```UseKeychain yes``` to the config file.
+
+See [the ssh_config man page](https://www.manpagez.com/man/5/ssh_config/) for more information.
+
 ### Install Terraform
 
 #### Linux
