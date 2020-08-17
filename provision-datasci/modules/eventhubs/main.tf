@@ -54,7 +54,7 @@ resource "azurerm_eventhub_consumer_group" "fe_consumer_group" {
   namespace_name      = azurerm_eventhub_namespace.eventhubs.name
   eventhub_name       = each.key
   resource_group_name = var.resource_group
-  depends_on = [azurerm_eventhub_namespace.eventhubs]
+  depends_on = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub_authorization_rule.eventhub_auth_rule]
 }
 
 output "namespace_connection_string" {

@@ -79,6 +79,18 @@ resource "azurerm_network_security_group" "nginx_nsg" {
   }
 
   security_rule {
+    name                       = "HTTPS"
+    priority                   = 2002
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
     name                       = "MQTT"
     priority                   = 201
     direction                  = "Inbound"
@@ -166,6 +178,7 @@ locals {
     join("=", ["admin_username", var.admin_username]),
     join("=", ["admin_email", var.admin_email]),
     join("=", ["mqtt_ip_address", var.mqtt_ip_address]),
+    join("=", ["grafana_ip_address", var.grafana_ip_address]),
     join("=", ["consul_server", var.consul_server])
   ]
 }

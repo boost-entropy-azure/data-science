@@ -193,6 +193,7 @@ module "reverse_proxy" {
   environment          = var.environment
   default_tags         = var.default_tags
   mqtt_ip_address      = azurerm_container_group.datasci_mqtt.ip_address
+  grafana_ip_address   = module.grafana.grafana_ip_address
 }
 
 # Create a fact node and configure PostgreSQL to run on it
@@ -541,9 +542,9 @@ module "grafana" {
   environment          = var.environment
   default_tags         = var.default_tags
   grafana_admin_user   = var.grafana_admin_user
-  subnet_cidrs          = ["10.0.11.0/24"]
-  subnet_start_address = "10.0.11.1"
-  subnet_end_address   = "10.0.11.254"
+  network_profile_id   = azurerm_network_profile.datasci_net_profile.id
+  subnet_start_address = "10.0.1.0"
+  subnet_end_address   = "10.0.1.255"
   topics             = toset(var.mqtt_topics)
   eventhub_keys = module.mqtt_eventhubs.topic_primary_key
   eventhub_namespace = module.mqtt_eventhubs.namespace_fqn

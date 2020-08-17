@@ -1,6 +1,6 @@
 location       = "usgovarizona"
 environment    = "dev"
-cluster_name   = "fetestng"
+cluster_name   = "fetest"
 node_count     = 3
 admin_username = "datasci_admin"
 

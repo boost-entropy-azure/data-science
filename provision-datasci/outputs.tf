@@ -1,4 +1,3 @@
-
 output "grafana_server" {
   value = module.grafana.grafana_server
 }
@@ -24,12 +23,12 @@ output "grafana_url" {
 
 output "grafana_data_fqdn" {
   description = "The fully qualified domain name of the grafana data store"
-  value       = module.grafana.grafana_data_fqdn
+  value = module.grafana.grafana_data_fqdn
 }
 
 output "grafana_data_database_ids" {
   description = "The list of all database resource ids"
-  value       = module.grafana.grafana_data_database_ids
+  value = module.grafana.grafana_data_database_ids
 }
 
 output "grafana_data_login" {
@@ -37,7 +36,7 @@ output "grafana_data_login" {
 }
 
 output "grafana_data_password" {
-  value     = module.grafana.grafana_data_password
+  value = module.grafana.grafana_data_password
   //  sensitive = true
 }
 
@@ -45,12 +44,12 @@ output "grafana_data_password" {
 
 output "datasci_fqdn" {
   description = "The fully qualified domain name of the datasci data store"
-  value       = module.grafana.datasci_fqdn
+  value = module.grafana.datasci_fqdn
 }
 
 output "datasci_database_ids" {
   description = "The list of all database resource ids"
-  value       = module.grafana.datasci_database_ids
+  value = module.grafana.datasci_database_ids
 }
 
 output "datasci_login" {
@@ -58,6 +57,6 @@ output "datasci_login" {
 }
 
 output "datasci_password" {
-  value     = module.grafana.datasci_password
+  value = module.grafana.datasci_password
   //  sensitive = true
 }
