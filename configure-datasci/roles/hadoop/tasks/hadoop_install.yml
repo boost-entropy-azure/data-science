@@ -161,7 +161,7 @@
   lineinfile:
     dest: "{{ hadoop_home }}/etc/hadoop/hadoop-env.sh"
     regexp: "^export HADOOP_CLASSPATH="
-    line: "export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:{{ hadoop_home }}/share/hadoop/tools/lib/*"
+    line: "export HADOOP_CLASSPATH={{ hadoop_home }}/share/hadoop/tools/lib/*:$HADOOP_CLASSPATH"
     state: present
 
 - name: Add Azure tools to hadoop-env.sh

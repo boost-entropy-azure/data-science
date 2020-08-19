@@ -43,6 +43,19 @@
     when: db_name.data is none
 
 - block:
+  - name: "Check if DB port already exists in Consul"
+    consul_kv:
+      key: postgresql/db/port
+    register: db_port
+
+  - name: "Store db port"
+    consul_kv:
+      key: postgresql/db/port
+      value: "{{ item.port }}"
+    with_items: "{{ postgresql_databases }}"
+    when: db_port.data is none
+  
+- block:
   - name: "Check if DB username already exists in Consul"
     consul_kv:
       key: postgresql/user/name

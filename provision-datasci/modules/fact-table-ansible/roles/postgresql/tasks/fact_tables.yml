@@ -26,11 +26,11 @@
     - mcc smallint
     - mnc smallint
     - tac int
-    - ci int
+    - eci int
     - earfcn int
     - pci smallint
     - sector_id char(16)
-    - primary key (mcc, mnc, ci)
+    - primary key (mcc, mnc, eci)
 
 - name: "Create observed_cellids table"
   postgresql_table: 
@@ -43,7 +43,7 @@
     - mcc smallint
     - mnc smallint
     - tac int
-    - ci int
+    - eci int
     - earfcn int
     - pci smallint
     - sector_id char(16)
@@ -58,8 +58,8 @@
       RETURNS TRIGGER AS
       $BODY$
       BEGIN
-      INSERT INTO cellids (mcc, mnc, tac, ci, earfcn, pci, sector_id) VALUES (NEW.mcc, NEW.mnc, NEW.tac, NEW.ci, NEW.earfcn, NEW.pci, NEW.sector_id) ON CONFLICT ON CONSTRAINT cellids_pkey DO NOTHING;
-      DELETE FROM observed_cellids WHERE (NEW.mcc = mcc AND NEW.mnc = mnc AND NEW.ci = ci);
+      INSERT INTO cellids (mcc, mnc, tac, eci, earfcn, pci, sector_id) VALUES (NEW.mcc, NEW.mnc, NEW.tac, NEW.eci, NEW.earfcn, NEW.pci, NEW.sector_id) ON CONFLICT ON CONSTRAINT cellids_pkey DO NOTHING;
+      DELETE FROM observed_cellids WHERE (NEW.mcc = mcc AND NEW.mnc = mnc AND NEW.eci = eci);
       RETURN NEW;
       END;
       $BODY$

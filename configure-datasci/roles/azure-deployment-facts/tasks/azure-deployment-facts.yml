@@ -43,3 +43,21 @@
     value: "{{ item.value.primaryKey }}"
   with_dict: "{{ keys }}"
   no_log: True
+
+- name: "Store Azure client ID in Consul"
+  consul_kv:
+    key: azure/client/id
+    value: "{{ azure_client_id }}"
+  no_log: True
+
+- name: "Store Azure tenant ID in Consul"
+  consul_kv:
+    key: azure/tenant/id
+    value: "{{ azure_tenant_id }}"
+  no_log: True
+
+- name: "Store Azure client secret in Consul"
+  consul_kv:
+    key: azure/client/secret
+    value: "{{ azure_client_secret }}"
+  no_log: True
