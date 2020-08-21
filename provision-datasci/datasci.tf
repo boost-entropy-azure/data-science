@@ -545,8 +545,9 @@ module "grafana" {
   network_profile_id   = azurerm_network_profile.datasci_net_profile.id
   subnet_start_address = "10.0.1.0"
   subnet_end_address   = "10.0.1.255"
-  topics             = toset(var.mqtt_topics)
+  topics               = toset(var.mqtt_topics)
   eventhub_keys = module.mqtt_eventhubs.topic_primary_key
-  eventhub_namespace = module.mqtt_eventhubs.namespace_fqn
+  eventhub_namespace   = module.mqtt_eventhubs.namespace_fqn
   eventhub_shared_access_policies = module.mqtt_eventhubs.topic_shared_access_policy_name
+  consul_server        = azurerm_network_interface.datasci_nic[0].ip_configuration[0].private_ip_address
 }
