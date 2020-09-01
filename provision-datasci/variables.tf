@@ -48,3 +48,9 @@ variable "ansible_pwfile" {
   type        = string
   description = "Path to file holding ansible vault password"
 }
+
+variable "grafana_admin_user" {
+  type        = string
+  description = "The username for the grafana administrative user account"
+  default     = "admin"
+}
