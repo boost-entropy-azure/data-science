@@ -576,7 +576,10 @@ module "worker-node" {
   envs           = [
     join("=", ["inventory", "${local.inventory}"]),
     join("=", ["resource_group", azurerm_resource_group.datasci_group.name]),
-    join("=", ["namespace_name", join("-", [var.cluster_name, var.environment, "mqtt-eventhubs-namespace"])])
+    join("=", ["namespaces", join(",", [
+      join("-", [var.cluster_name, var.environment, "mqtt-eventhubs-namespace"]), 
+      join("-", [var.cluster_name, var.environment, "alert-eventhubs-namespace"])])
+    ])
   ]
   arguments      = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
   playbook       = "../configure-datasci/datasci_play.yml"

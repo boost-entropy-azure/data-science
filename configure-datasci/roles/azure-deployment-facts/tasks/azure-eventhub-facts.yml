@@ -1,0 +1,36 @@
+---    
+  - name: "Fetch connection string for each eventhub"
+    command: az eventhubs eventhub authorization-rule keys list --resource-group {{ resource_group }} --namespace-name {{ namespace_item }} --eventhub-name {{ item.name }} --name {{ item.name }}-auth-rule
+    register: eventhub_key
+  
+  - set_fact: 
+      keys: "{{ keys|default([]) + [ {'eventhub_key': eventhub_key.stdout|from_json} ] }}"
+  
+  - name: "Store eventhub topic key name in Consul"
+    consul_kv: 
+      key: eventhub/topic/{{ key_name[0].eventhub_key.keyName.split('-')[0] }}/keyName
+      value: "{{ key_name[0].eventhub_key.keyName }}"
+    register: output
+    loop: 
+        - "{{ keys }}"
+    loop_control:
+        loop_var: key_name
+  
+  - name: "Store eventhub topic connection strings in Consul"
+    consul_kv: 
+      key: eventhub/topic/{{ key_conn[0].eventhub_key.keyName.split('-')[0] }}/connectionString 
+      value: "{{ key_conn[0].eventhub_key.primaryConnectionString }}"
+    loop: 
+        - "{{ keys }}"
+    loop_control:
+        loop_var: key_conn
+  
+  - name: "Store eventhub topic primary key in Consul"
+    consul_kv: 
+      key: eventhub/topic/{{ prim_key[0].eventhub_key.keyName.split('-')[0] }}/primaryKey
+      value: "{{ prim_key[0].eventhub_key.primaryKey }}"
+    loop: 
+        - "{{ keys }}"
+    loop_control:
+        loop_var: prim_key
+    no_log: True

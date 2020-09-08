@@ -2,5 +2,5 @@
 - name: "Install Azure Data Lake Storage client library"
   pip:
     name: azure-storage-file-datalake
-    executable: pip3
+    executable: /usr/local/bin/pip3
 

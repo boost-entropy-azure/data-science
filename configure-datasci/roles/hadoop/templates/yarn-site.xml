@@ -44,8 +44,16 @@
 
   <property>
     <name>yarn.nodemanager.resource.memory-mb</name>
-    <value>{{yarn_memory_mb}}</value>
+    <value>{{ yarn_memory_mb }}</value>
     <description>Amount of physical memory, in MB, that can be allocated for containers.</description>
+  </property>
+  <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>{{ yarn_container_min_memory_mb }}</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.vmem-pmem-ratio</name>
+    <value>{{ yarn_vmem_pmem_ratio }}</value>
   </property>
 
 </configuration>
