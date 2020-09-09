@@ -2,7 +2,7 @@
 - hosts: localhost
   gather_facts: yes
   check_mode: no
-  become: true
+  become: no
   tasks:
     - name: "Add node names to dynamic inventory"
       add_host:

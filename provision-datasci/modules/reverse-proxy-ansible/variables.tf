@@ -45,6 +45,11 @@ variable "mqtt_ip_address" {
   description = "IP address of the MQTT broker node"
 }
 
+variable "grafana_ip_address" {
+  type = string
+  description = "IP address of the MQTT broker node"
+}
+
 variable "consul_server" {
   type        = string
   description = "IP address of a Consul server to join" 

@@ -11,7 +11,7 @@
 //}
 
 provider "azurerm" {
-  version = "=2.0.0"
+  version = "~> 2.18.0"
   features {}
   disable_terraform_partner_id = true
 }
@@ -192,6 +192,7 @@ module "reverse_proxy" {
   environment          = var.environment
   default_tags         = var.default_tags
   mqtt_ip_address      = azurerm_container_group.datasci_mqtt.ip_address
+  grafana_ip_address   = module.grafana.grafana_ip_address
 }
 
 # Create a fact node and configure PostgreSQL to run on it
@@ -574,8 +575,30 @@ module "worker-node" {
   envs           = [
     join("=", ["inventory", "${local.inventory}"]),
     join("=", ["resource_group", azurerm_resource_group.datasci_group.name]),
-    join("=", ["namespace_name", join("-", [var.cluster_name, var.environment, "mqtt-eventhubs-namespace"])])
+    join("=", ["namespaces", join(",", [
+      join("-", [var.cluster_name, var.environment, "mqtt-eventhubs-namespace"]), 
+      join("-", [var.cluster_name, var.environment, "alert-eventhubs-namespace"])])
+    ])
   ]
   arguments      = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
   playbook       = "../configure-datasci/datasci_play.yml"
+}
+
+module "grafana" {
+  source               = "github.com/chesapeaketechnology/terraform-datasci-grafana-cluster"
+  location             = azurerm_resource_group.datasci_group.location
+  resource_group_name  = azurerm_resource_group.datasci_group.name
+  cluster_name          = var.cluster_name
+  virtual_network_name = azurerm_virtual_network.datasci_net.name
+  environment          = var.environment
+  default_tags         = var.default_tags
+  grafana_admin_user   = var.grafana_admin_user
+  network_profile_id   = azurerm_network_profile.datasci_net_profile.id
+  subnet_start_address = "10.0.1.0"
+  subnet_end_address   = "10.0.1.255"
+  topics               = toset(var.mqtt_topics)
+  eventhub_keys = module.mqtt_eventhubs.topic_primary_key
+  eventhub_namespace   = module.mqtt_eventhubs.namespace_fqn
+  eventhub_shared_access_policies = module.mqtt_eventhubs.topic_shared_access_policy_name
+  consul_server        = azurerm_network_interface.datasci_nic[0].ip_configuration[0].private_ip_address
 }

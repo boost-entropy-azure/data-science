@@ -36,6 +36,7 @@ resource "azurerm_eventhub" "topic" {
 
 # Add a rule so that client apps can interract with the above eventhub instances
 resource "azurerm_eventhub_authorization_rule" "eventhub_auth_rule" {
+  depends_on = [azurerm_eventhub_namespace.eventhubs]
   for_each            = var.topics
 
   name                = join("-", [each.key, "auth-rule"])
@@ -47,7 +48,36 @@ resource "azurerm_eventhub_authorization_rule" "eventhub_auth_rule" {
   manage              = var.manage
 }
 
+resource "azurerm_eventhub_consumer_group" "fe_consumer_group" {
+  for_each            = var.topics
+  name                = "frontend"
+  namespace_name      = azurerm_eventhub_namespace.eventhubs.name
+  eventhub_name       = each.key
+  resource_group_name = var.resource_group
+  depends_on = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub_authorization_rule.eventhub_auth_rule]
+}
+
 output "namespace_connection_string" {
     description = "Connection string to the eventhub namespace"
     value    = azurerm_eventhub_namespace.eventhubs.default_primary_connection_string
+}
+
+output "namespace_fqn" {
+  description = "fully qualified namesapce for event hub"
+  value = join(".", [azurerm_eventhub_namespace.eventhubs.name, "servicebus.usgovcloudapi.net"])
+}
+
+output "topic_primary_key" {
+  description = "primary access key for the topic"
+  value = values(azurerm_eventhub_authorization_rule.eventhub_auth_rule)[*].primary_key
+}
+
+output "topic_secondary_key" {
+  description = "secondary access key for the topic"
+  value = values(azurerm_eventhub_authorization_rule.eventhub_auth_rule)[*].secondary_key
+}
+
+output "topic_shared_access_policy_name" {
+  description = "The shared access policy name for accessing the topic"
+  value = values(azurerm_eventhub_authorization_rule.eventhub_auth_rule)[*].name
 }
