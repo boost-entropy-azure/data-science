@@ -4,7 +4,7 @@ Description=Data Science Consul Server
 [Service]
 WorkingDirectory={{ consul_config_dir }}
 User=root
-ExecStart={{ consul_install_dir }}/consul agent -config-dir={{ consul_config_dir }}
+ExecStart={{ consul_install_dir }}/consul agent -config-dir={{ consul_config_dir }} -ui
 Restart=Always
 StartLimitIntervalSec=0
 
