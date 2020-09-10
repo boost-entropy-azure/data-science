@@ -12,8 +12,8 @@ default_tags   = {
   Environment = "DEV"
 }
 
-//mqtt_topics = ["lte_message", "umts_message", "cdma_message", "gsm_message", "80211_beacon_message"]
-mqtt_topics = ["lte_message"]
+mqtt_topics = ["lte_message","umts_message","cdma_message","gsm_message","80211_beacon_message","energy_detection_message","signal_detection_message"]
+//mqtt_topics = ["lte_message"]
 mqtt_users  = ["dino", "christian", "les", "steve", "shared"]
 
 

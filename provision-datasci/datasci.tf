@@ -270,7 +270,7 @@ module "alert_eventhubs" {
   namespace_name     = join("-", [var.cluster_name, var.environment, "alert-eventhubs"])
   resource_group     = azurerm_resource_group.datasci_group.name
   location           = azurerm_resource_group.datasci_group.location
-  topics             = toset(list("alert_message"))
+  topics             = local.alert_topics
   datalake_container = azurerm_template_deployment.datasci_container.name
   storage_account_id = azurerm_storage_account.datasci_lake_storage.id
   send               = true
@@ -384,6 +384,7 @@ resource "azurerm_storage_share" "consul_config" {
 }
 
 locals {
+  alert_topics                       = toset(list("alert_message"))
   mqtt_container_dns_name_label      = join("-", [var.cluster_name, var.environment, "mqtt"])
   mqtt-server                        = "tcp://${azurerm_container_group.datasci_mqtt.ip_address}:1883"
   azure-event-hubs-connection-string =  module.mqtt_eventhubs.namespace_connection_string  
@@ -594,9 +595,17 @@ module "grafana" {
   network_profile_id   = azurerm_network_profile.datasci_net_profile.id
   subnet_start_address = "10.0.1.0"
   subnet_end_address   = "10.0.1.255"
-  topics               = toset(var.mqtt_topics)
-  eventhub_keys = module.mqtt_eventhubs.topic_primary_key
-  eventhub_namespace   = module.mqtt_eventhubs.namespace_fqn
-  eventhub_shared_access_policies = module.mqtt_eventhubs.topic_shared_access_policy_name
   consul_server        = azurerm_network_interface.datasci_nic[0].ip_configuration[0].private_ip_address
+  system_topic_settings = {
+    topics               = local.alert_topics
+    eventhub_keys        = module.alert_eventhubs.topic_primary_key
+    eventhub_namespace   = module.alert_eventhubs.namespace_fqn
+    eventhub_shared_access_policies = module.alert_eventhubs.topic_shared_access_policy_name
+  }
+  topic_settings = {
+    topics               = toset(var.mqtt_topics)
+    eventhub_keys        =  module.mqtt_eventhubs.topic_primary_key
+    eventhub_namespace   = module.mqtt_eventhubs.namespace_fqn
+    eventhub_shared_access_policies = module.mqtt_eventhubs.topic_shared_access_policy_name
+  }
 }
