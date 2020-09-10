@@ -23,8 +23,10 @@ hadoop_keys_tmp: "/tmp/hadoop_KEYS"
 hadoop_sig_tmp: "/tmp/hadoop-{{ hadoop_version }}.tar.gz.asc"
 
 # helper: https://hortonworks.com/blog/how-to-plan-and-configure-yarn-in-hdp-2-0/
-yarn_memory_mb: 4000
+yarn_memory_mb: 8196
+yarn_container_min_memory_mb: 512
+yarn_vmem_pmem_ratio: 5
 
 # MapReduce mapred-site.xml
 map_memory_mb: 1024
-reduce_memory_mb: 2048
+reduce_memory_mb: 1024

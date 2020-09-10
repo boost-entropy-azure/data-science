@@ -4,42 +4,7 @@
     name: python-consul
  
 - name: "Register all deployed eventhubs"
-  command: az eventhubs eventhub list --resource-group {{ resource_group }} --namespace-name {{ namespace_name }}
-  register: eventhubs_list
-  no_log: True
-
-- set_fact: eventhubs="{{ eventhubs_list.stdout|from_json }}"
-  no_log: True
-
-- name: "Fetch connection string for each eventhub"
-  command: az eventhubs eventhub authorization-rule keys list --resource-group {{ resource_group }} --namespace-name {{ namespace_name }} --eventhub-name {{ item.name }} --name {{ item.name }}-auth-rule
-  register: keys_list
-  with_items: "{{ eventhubs }}"
-  no_log: True
-
-- set_fact: 
-    keys: "{{ keys|default([]) + [ {'eventhub_key': item.stdout|from_json} ] }}"
-  with_items: "{{ keys_list.results }}"
-  no_log: True
-
-- name: "Store eventhub topic key name in Consul"
-  consul_kv: 
-    key: eventhub/topic/{{ item.value.keyName.split('-')[0] }}/keyName
-    value: "{{ item.value.keyName }}"
-  register: output
-  with_dict: "{{ keys }}"
-  no_log: True
-
-- name: "Store eventhub topic connection strings in Consul"
-  consul_kv: 
-    key: eventhub/topic/{{ item.value.keyName.split('-')[0] }}/connectionString 
-    value: "{{ item.value.primaryConnectionString }}"
-  with_dict: "{{ keys }}"
-  no_log: True
-
-- name: "Store eventhub topic primary key in Consul"
-  consul_kv: 
-    key: eventhub/topic/{{ item.value.keyName.split('-')[0] }}/primaryKey
-    value: "{{ item.value.primaryKey }}"
-  with_dict: "{{ keys }}"
-  no_log: True
+  include_tasks: azure-namespace-facts.yml
+  loop: "{{ namespaces.split(',') }}"
+  loop_control:
+    loop_var: namespace_item
