@@ -16,11 +16,6 @@ output "grafana_datasource_host" {
   value = "${module.grafana.datasci_fqdn}:5432"
 }
 
-output "grafana_datasource_db_names" {
-  description = "The list of all database resource ids"
-  value = module.grafana.datasci_database_ids
-}
-
 output "grafana_datasource_login" {
   value = "${module.grafana.datasci_login}@${module.grafana.datasci_fqdn}"
 }
