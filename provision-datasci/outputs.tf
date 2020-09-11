@@ -13,7 +13,7 @@ output "grafana_admin_password" {
 
 output "grafana_datasource_host" {
   description = "The fully qualified domain name of the datasci data store"
-  value = module.grafana.datasci_fqdn
+  value = "${module.grafana.datasci_fqdn}:5432"
 }
 
 output "grafana_datasource_db_names" {
