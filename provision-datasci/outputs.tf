@@ -22,7 +22,7 @@ output "grafana_datasource_db_names" {
 }
 
 output "grafana_datasource_login" {
-  value = module.grafana.datasci_login
+  value = "${module.grafana.datasci_login}@${module.grafana.datasci_fqdn}"
 }
 
 output "grafana_datasource_password" {
