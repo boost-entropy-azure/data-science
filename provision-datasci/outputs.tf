@@ -1,9 +1,5 @@
-output "grafana_server" {
-  value = module.grafana.grafana_server
-}
-
-output "grafana_ip_address" {
-  value = module.grafana.grafana_ip_address
+output "grafana_endpoint" {
+  value = "https://${module.reverse_proxy.reverse_proxy_fqdn}"
 }
 
 output "grafana_admin_user" {
@@ -11,52 +7,20 @@ output "grafana_admin_user" {
 }
 
 output "grafana_admin_password" {
-  value = module.grafana.grafana_admin_password
+  value = module.grafana.grafana_admin_password.result
   //  sensitive = true
 }
 
-output "grafana_url" {
-  value = module.grafana.grafana_url
-}
-
-//------------
-
-output "grafana_data_fqdn" {
-  description = "The fully qualified domain name of the grafana data store"
-  value = module.grafana.grafana_data_fqdn
-}
-
-output "grafana_data_database_ids" {
-  description = "The list of all database resource ids"
-  value = module.grafana.grafana_data_database_ids
-}
-
-output "grafana_data_login" {
-  value = module.grafana.grafana_data_login
-}
-
-output "grafana_data_password" {
-  value = module.grafana.grafana_data_password
-  //  sensitive = true
-}
-
-//--------------------------
-
-output "datasci_fqdn" {
+output "grafana_datasource_host" {
   description = "The fully qualified domain name of the datasci data store"
-  value = module.grafana.datasci_fqdn
+  value = "${module.grafana.datasci_fqdn}:5432"
 }
 
-output "datasci_database_ids" {
-  description = "The list of all database resource ids"
-  value = module.grafana.datasci_database_ids
+output "grafana_datasource_login" {
+  value = "${module.grafana.datasci_login}@${module.grafana.datasci_fqdn}"
 }
 
-output "datasci_login" {
-  value = module.grafana.datasci_login
-}
-
-output "datasci_password" {
+output "grafana_datasource_password" {
   value = module.grafana.datasci_password
   //  sensitive = true
 }

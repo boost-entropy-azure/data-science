@@ -218,3 +218,11 @@ resource "null_resource" "nginx-provisioner" {
     command = "ansible-playbook ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))} ${path.module}/nginx_play.yml"
   }
 }
+
+output "reverse_proxy_fqdn" {
+  value = azurerm_public_ip.nginx_ip.fqdn
+}
+
+output "reverse_proxy_ip_address" {
+  value = azurerm_public_ip.nginx_ip.ip_address
+}
