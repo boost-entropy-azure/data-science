@@ -241,3 +241,12 @@ Common commands:
 
 ## (Optional) Tear down the Azure Deployment
 1. To tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`.
+
+# Change Log
+##### [0.2.0](https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.0) - 2020-09-14
+* Deploy three worker nodes managed by YARN
+* Deploy Consul server and use it for storing deployment facts
+* Integrate Grafana visualizations for all data topics
+
+##### [0.1.0](https://github.com/chesapeaketechnology/data-science/releases/tag/v0.1.0) - 2020-05-11
+* Initial release
