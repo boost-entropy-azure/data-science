@@ -6,6 +6,11 @@ variable "location" {
   description = "Location to provision within"
 }
 
+variable "azure_cloud_domain" {
+  type        = string
+  description = "Azure cloud domain used within this cloud instance"
+}
+
 variable "namespace_name" {
   description = "Eventhubs namespace name"
 }

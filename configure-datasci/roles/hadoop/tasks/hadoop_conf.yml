@@ -8,7 +8,9 @@
 
 - name: Prepare known_hosts entries
   shell: ssh-keyscan -t rsa "{{ item }}"
-  with_items: "{{ fqdns }}"
+  with_items: 
+    - "{{ private_ips }}"
+    - "{{ fqdns }}"
   register: keyscans
 
 - name: Prepare known_hosts

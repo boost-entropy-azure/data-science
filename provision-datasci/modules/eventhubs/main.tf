@@ -64,7 +64,7 @@ output "namespace_connection_string" {
 
 output "namespace_fqn" {
   description = "fully qualified namesapce for event hub"
-  value = join(".", [azurerm_eventhub_namespace.eventhubs.name, "servicebus.usgovcloudapi.net"])
+  value = join(".", [azurerm_eventhub_namespace.eventhubs.name, "servicebus", var.azure_cloud_domain])
 }
 
 output "topic_primary_key" {

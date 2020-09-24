@@ -14,6 +14,7 @@ provider "azurerm" {
   version = "~> 2.18.0"
   features {}
   disable_terraform_partner_id = true
+  skip_provider_registration = true
 }
 
 # Create a resource group that all the Azure resources will live in
@@ -211,7 +212,7 @@ module "fact-table" {
 resource azurerm_storage_account "datasci_lake_storage" {
   resource_group_name      = azurerm_resource_group.datasci_group.name
   location                 = azurerm_resource_group.datasci_group.location
-  name                     = join("", [var.cluster_name, var.environment, "lakestorage"])
+  name                     = join("", [var.cluster_name, var.environment, "lake"])
   account_kind             = "StorageV2"
   account_replication_type = "LRS"
   account_tier             = "Standard"
@@ -258,6 +259,7 @@ module "mqtt_eventhubs" {
   namespace_name     = join("-", [var.cluster_name, var.environment, "mqtt-eventhubs"])
   resource_group     = azurerm_resource_group.datasci_group.name
   location           = azurerm_resource_group.datasci_group.location
+  azure_cloud_domain = var.azure_cloud_domain
   topics             = toset(var.mqtt_topics)
   datalake_container = azurerm_template_deployment.datasci_container.name
   storage_account_id = azurerm_storage_account.datasci_lake_storage.id
@@ -269,6 +271,7 @@ module "alert_eventhubs" {
   namespace_name     = join("-", [var.cluster_name, var.environment, "alert-eventhubs"])
   resource_group     = azurerm_resource_group.datasci_group.name
   location           = azurerm_resource_group.datasci_group.location
+  azure_cloud_domain = var.azure_cloud_domain
   topics             = local.alert_topics
   datalake_container = azurerm_template_deployment.datasci_container.name
   storage_account_id = azurerm_storage_account.datasci_lake_storage.id
@@ -470,7 +473,7 @@ resource "azurerm_container_group" "datasci_mqtt" {
   # MQTT Broker
   container {
     name   = "mqtt"
-    image  = "chesapeaketechnology/mqtt-consul:0.1"
+    image  = "chesapeaketechnology/mqtt-consul:0.2"
     cpu    = "1.0"
     memory = "1.5"
 
@@ -579,7 +582,8 @@ module "worker-node" {
     join("=", ["namespaces", join(",", [
       join("-", [var.cluster_name, var.environment, "mqtt-eventhubs-namespace"]), 
       join("-", [var.cluster_name, var.environment, "alert-eventhubs-namespace"])])
-    ])
+    ]),
+    join("=", ["azure_cloud_name", var.azure_cloud_name])
   ]
   arguments      = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
   playbook       = "../configure-datasci/datasci_play.yml"

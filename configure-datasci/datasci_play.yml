@@ -84,8 +84,12 @@
       role: "consul",
       is_leader: "{{ inventory_hostname == public_ips[0] }}"
     }
-  post_tasks:
-      - include_tasks: "roles/azure-deployment-facts/tasks/main.yml"
+
+- name: "Store all Azure deployment facts to Consul from one node"
+  hosts: "{{ groups['nodes'][0] }}"
+  tasks:
+    - name: "Azure deployment role"
+      include_tasks: "roles/azure-deployment-facts/tasks/main.yml"
 
 - name: "Start hadoop on one of the nodes"
   hosts: "{{ groups['nodes'][0] }}"

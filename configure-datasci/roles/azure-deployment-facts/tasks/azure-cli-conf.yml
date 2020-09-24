@@ -1,6 +1,6 @@
 ---
 - name: "Change clouds"
-  shell: az cloud set --name AzureUSGovernment
+  shell: az cloud set --name {{ azure_cloud_name }}
 
 - name: "Check Azure accounts"
   shell: az account list

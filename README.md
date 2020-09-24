@@ -182,14 +182,14 @@ Common commands:
 1. Install pip, `sudo apt install python-pip`
 1. `pip install ansible[azure]`
 1. `ansible-galaxy install geerlingguy.java`
-1. Disable host checking by uncommenting `host_key_checking = False` under `/etc/ansible/ansible.conf`
+1. Disable host checking by uncommenting `host_key_checking = False` under `/etc/ansible/ansible.cfg`
 
 #### macOS
 1. `brew install ansible`
 1. `pip3 install 'ansible[azure]'`
 1. `ansible-galaxy install geerlingguy.java`
 1. To verify, run `ansible --version`
-1. Disable host checking by uncommenting `host_key_checking = False` under `/usr/local/etc/ansible/ansible.conf`
+1. Disable host checking by uncommenting `host_key_checking = False` under `/usr/local/etc/ansible/ansible.cfg`
 
 
 ## Run the Terraform Deployment

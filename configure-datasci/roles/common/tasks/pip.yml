@@ -4,7 +4,7 @@
     state: latest
 
 - name: "Upgrade pip3"
-  command: /usr/local/bin/pip3 install --upgrade pip
+  command: pip3 install --upgrade pip
 
 - name: "Add EPEL repo for CentOS"
   package:
@@ -17,4 +17,4 @@
     state: latest
 
 - name: "Upgrade pip2"
-  command: /usr/local/bin/pip install --upgrade pip
+  command: pip install --upgrade pip

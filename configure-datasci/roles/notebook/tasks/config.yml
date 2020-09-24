@@ -2,7 +2,7 @@
 - name: "Install python modules needed by Jupyter"
   pip:
     name: ["pexpect", "cryptography", "PyOpenSSL"]
-    executable: /usr/local/bin/pip
+    executable: pip
 
 - block:
   - name: "Create a dedicated group to run Jupyter"

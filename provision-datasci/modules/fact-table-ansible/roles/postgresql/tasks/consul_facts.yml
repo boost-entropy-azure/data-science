@@ -61,15 +61,14 @@
       key: postgresql/user/name
     register: user_name
 
-  - name: "Store user name"
+  - name: "Store DB admin user name"
     consul_kv:
       key: postgresql/user/name
-      value: "{{ item.name }}"
-    with_items: "{{ postgresql_users }}"
+      value: "{{ admin_username }}"
     when: user_name.data is none
 
 - block:
-  - name: "Check if DB password already exists in Consul"
+  - name: "Check if admin DB password already exists in Consul"
     consul_kv:
       key: postgresql/user/password
     register: user_password

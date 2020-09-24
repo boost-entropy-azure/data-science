@@ -22,6 +22,18 @@ variable "environment" {
   default     = "dev"
 }
 
+variable "azure_cloud_name" {
+  type        = string
+  description = "Azure cloud name to use for this deployment"
+  default     = "AzureUSGovernment"
+}
+
+variable "azure_cloud_domain" {
+  type        = string
+  description = "Azure cloud domain used within this cloud instance (need a way to discover this during deployment)"
+  default     = "usgovcloudapi.net"
+}
+
 variable "node_count" {
   type        = number
   description = "Number of Virtual Machine nodes to provision"
