@@ -7,7 +7,7 @@ variable "admin_username" {
 variable "location" {
   type        = string
   description = "Region to provision resources in"
-  default     = "usgovarizona"
+  default     = "East US"
 }
 
 variable "cluster_name" {
@@ -25,13 +25,13 @@ variable "environment" {
 variable "azure_cloud_name" {
   type        = string
   description = "Azure cloud name to use for this deployment"
-  default     = "AzureUSGovernment"
+  default     = "AzureCloud"
 }
 
 variable "azure_cloud_domain" {
   type        = string
   description = "Azure cloud domain used within this cloud instance (need a way to discover this during deployment)"
-  default     = "usgovcloudapi.net"
+  default     = "windows.net"
 }
 
 variable "node_count" {

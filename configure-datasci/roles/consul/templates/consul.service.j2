@@ -1,12 +1,17 @@
 [Unit]
-Description=Data Science Consul Server
+Description="Data Science Consul Server"
+Requires=network-online.target
+After=network-online.target
 
 [Service]
 WorkingDirectory={{ consul_config_dir }}
 User=root
 ExecStart={{ consul_install_dir }}/consul agent -config-dir={{ consul_config_dir }} -ui
-Restart=Always
-StartLimitIntervalSec=0
+ExecReload={{ consul_install_dir }}/consul reload
+ExecStop={{ consul_install_dir }}/consul leave
+KillMode=process
+Restart=on-failure
+LimitNOFILE=65536
 
 [Install]
 WantedBy=multi-user.target

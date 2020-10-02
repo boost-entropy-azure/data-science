@@ -27,7 +27,6 @@
   template: 
     dest: "{{ consul_config_dir }}/config.json"
     src: consul.config.j2
-  notify: restart consul
 
 - name: ensure consul service file exists
   template:
@@ -35,4 +34,16 @@
     src: consul.service.j2
     force: yes
     mode: 0644
-  notify: restart consul
+
+- name: Enable consul service
+  systemd:
+    name: consul.service
+    enabled: yes
+  become: yes
+
+- name: Start consul service
+  systemd:
+    name: consul.service
+    state: started
+    daemon_reload: yes
+  become: yes

@@ -461,6 +461,7 @@ resource "azurerm_network_profile" "datasci_net_profile" {
 
 # Create a Container Group
 resource "azurerm_container_group" "datasci_mqtt" {
+  depends_on          = [azurerm_virtual_machine.datasci_node]
   name                = join("-", [var.cluster_name, var.environment, "mqtt"])
   resource_group_name = azurerm_resource_group.datasci_group.name
   location            = azurerm_resource_group.datasci_group.location
@@ -591,10 +592,10 @@ module "worker-node" {
 
 module "grafana" {
   source               = "github.com/chesapeaketechnology/terraform-datasci-grafana-cluster"
+  grafana_depends_on   = [azurerm_virtual_network.datasci_net.id]
   location             = azurerm_resource_group.datasci_group.location
   resource_group_name  = azurerm_resource_group.datasci_group.name
   cluster_name          = var.cluster_name
-  virtual_network_name = azurerm_virtual_network.datasci_net.name
   environment          = var.environment
   default_tags         = var.default_tags
   grafana_admin_user   = var.grafana_admin_user

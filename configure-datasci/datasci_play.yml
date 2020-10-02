@@ -68,6 +68,10 @@
     - include_vars: azurevars.yml
     - include_vars: securevars.yml
   roles:
+    - {
+      role: "consul",
+      is_leader: "{{ inventory_hostname == public_ips[0] }}"
+    }
     - role: geerlingguy.java
       java_packages:
         - java-1.8.0-openjdk
@@ -80,13 +84,10 @@
     }
     - role: "spark-cluster-admin"
     - role: "notebook"
-    - {
-      role: "consul",
-      is_leader: "{{ inventory_hostname == public_ips[0] }}"
-    }
 
 - name: "Store all Azure deployment facts to Consul from one node"
   hosts: "{{ groups['nodes'][0] }}"
+  become: true
   tasks:
     - name: "Azure deployment role"
       include_tasks: "roles/azure-deployment-facts/tasks/main.yml"
