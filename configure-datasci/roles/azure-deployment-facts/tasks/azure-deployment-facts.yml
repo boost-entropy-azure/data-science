@@ -9,6 +9,9 @@
   loop_control:
     loop_var: namespace_item
 
+- name: "Store datalake facts"
+  include_tasks: azure-datalake-facts.yml
+
 - name: "Store azure service principal ID in Consul"
   consul_kv:
     key: azure/client/id

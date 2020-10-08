@@ -22,6 +22,3 @@
 - import_tasks: users.yml
 - import_tasks: databases.yml
 
-# Setup fact tables
-- import_tasks: fact_tables.yml
-

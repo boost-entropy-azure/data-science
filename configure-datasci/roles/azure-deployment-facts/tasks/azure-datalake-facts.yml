@@ -1,0 +1,10 @@
+---
+- name: "Store azure data lake container name"
+  consul_kv:
+    key: azure/datalake/container
+    value: "{{ azure_datalake_container }}"
+
+- name: "Store azure data lake endpoint"
+  consul_kv:
+    key: azure/datalake/endpoint
+    value: "{{ azure_datalake_endpoint }}"

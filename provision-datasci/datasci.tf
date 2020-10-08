@@ -41,7 +41,7 @@ resource "azurerm_subnet" "datasci_subnet" {
   virtual_network_name = azurerm_virtual_network.datasci_net.name
   address_prefix       = "10.0.1.0/24"
 
-  service_endpoints = ["Microsoft.Storage"]
+  service_endpoints = ["Microsoft.Storage", "Microsoft.EventHub"]
 }
 
 # Create Network Security Group and rule
@@ -442,6 +442,8 @@ resource "azurerm_subnet" "mqtt_subnet" {
       actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
     }
   }
+
+  service_endpoints = ["Microsoft.EventHub"]
 }
 
 resource "azurerm_network_profile" "datasci_net_profile" {
@@ -506,7 +508,7 @@ resource "azurerm_container_group" "datasci_mqtt" {
   # MQTT to Event Hub Connector
   container {
     name   = "connector"
-    image  = "chesapeaketechnology/mqtt-azure-event-hub-connector:0.1.3"
+    image  = "chesapeaketechnology/mqtt-azure-event-hub-connector:0.1.4"
     cpu    = "0.5"
     memory = "1.5"
 
@@ -584,7 +586,9 @@ module "worker-node" {
       join("-", [var.cluster_name, var.environment, "mqtt-eventhubs-namespace"]), 
       join("-", [var.cluster_name, var.environment, "alert-eventhubs-namespace"])])
     ]),
-    join("=", ["azure_cloud_name", var.azure_cloud_name])
+    join("=", ["azure_cloud_name", var.azure_cloud_name]),
+    join("=", ["azure_datalake_container", azurerm_template_deployment.datasci_container.name]),
+    join("=", ["azure_datalake_endpoint", azurerm_storage_account.datasci_lake_storage.primary_dfs_endpoint])
   ]
   arguments      = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
   playbook       = "../configure-datasci/datasci_play.yml"
