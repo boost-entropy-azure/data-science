@@ -143,6 +143,7 @@
     - {src: "hdfs-site.xml", dest: "{{ hadoop_home }}/etc/hadoop/hdfs-site.xml"}
     - {src: "yarn-site.xml", dest: "{{ hadoop_home }}/etc/hadoop/yarn-site.xml"}
     - {src: "mapred-site.xml", dest: "{{ hadoop_home }}/etc/hadoop/mapred-site.xml"}
+    - {src: "capacity-scheduler.xml", dest: "{{ hadoop_home }}/etc/hadoop/capacity-scheduler.xml"}
 
 - name: Read Java home
   shell: dirname $(dirname $(readlink $(readlink $(which java))))
