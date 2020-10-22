@@ -595,7 +595,7 @@ module "worker-node" {
 }
 
 module "grafana" {
-  source               = "github.com/chesapeaketechnology/terraform-datasci-grafana-cluster"
+  source               = "github.com/chesapeaketechnology/terraform-datasci-grafana-cluster?ref=v0.9"
   grafana_depends_on   = [azurerm_virtual_network.datasci_net.id]
   location             = azurerm_resource_group.datasci_group.location
   resource_group_name  = azurerm_resource_group.datasci_group.name
