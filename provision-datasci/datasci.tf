@@ -429,10 +429,11 @@ module "mqtt-broker-conf" {
 
 # Create subnet for use with containers
 resource "azurerm_subnet" "mqtt_subnet" {
-  name                 = "mqtt_broker_subnet"
+  name                 = join("-", ["snet", var.cluster_name, var.environment, "mqtt"])
   resource_group_name  = azurerm_resource_group.datasci_group.name
   virtual_network_name = azurerm_virtual_network.datasci_net.name
   address_prefix       = "10.0.4.0/24"
+  service_endpoints    = ["Microsoft.EventHub"]
 
   delegation {
     name = "mqtt_subnet_delegation"
@@ -442,8 +443,6 @@ resource "azurerm_subnet" "mqtt_subnet" {
       actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
     }
   }
-
-  service_endpoints = ["Microsoft.EventHub"]
 }
 
 resource "azurerm_network_profile" "datasci_net_profile" {
@@ -461,7 +460,7 @@ resource "azurerm_network_profile" "datasci_net_profile" {
   }
 }
 
-# Create a Container Group
+# Create the MQTT Container Group
 resource "azurerm_container_group" "datasci_mqtt" {
   depends_on          = [azurerm_virtual_machine.datasci_node]
   name                = join("-", [var.cluster_name, var.environment, "mqtt"])
@@ -476,7 +475,7 @@ resource "azurerm_container_group" "datasci_mqtt" {
   # MQTT Broker
   container {
     name   = "mqtt"
-    image  = "chesapeaketechnology/mqtt-consul:0.2"
+    image  = "chesapeaketechnology/mqtt-consul:0.3"
     cpu    = "1.0"
     memory = "1.5"
 
@@ -502,7 +501,6 @@ resource "azurerm_container_group" "datasci_mqtt" {
     environment_variables = {
       "USERS"="${join(",", concat(var.mqtt_users, list(var.admin_username)))}"
     }
-
   }
 
   # MQTT to Event Hub Connector
@@ -537,7 +535,7 @@ resource "azurerm_container_group" "datasci_mqtt" {
   container {
     name   = "mqttconsulgateway"
     image  = "consul"
-    cpu    = "0.5"
+    cpu    = "0.25"
     memory = "1"
 
     volume {
@@ -563,6 +561,25 @@ resource "azurerm_container_group" "datasci_mqtt" {
     environment_variables = {
       "CONSUL_LOCAL_CONFIG"="{\"disable_update_check\": true}"
       "CONSUL_BIND_INTERFACE"="eth0"
+    }
+  }
+
+  # mqtt-exporter
+  container {
+    name   = "mqttexporter"
+    image  = "chesapeaketechnology/mosquitto-exporter:0.1.0"
+    cpu    = "0.25"
+    memory = "1"
+
+    ports {
+      port     = 9234
+      protocol = "TCP"
+    }
+
+    environment_variables = {
+      "BROKER_ENDPOINT"="tcp://127.0.0.1:1883"
+      "BIND_ADDRESS"="0.0.0.0:9234"
+      "MQTT_USER"=var.admin_username
     }
   }
 }
@@ -615,8 +632,29 @@ module "grafana" {
   }
   topic_settings = {
     topics               = toset(var.mqtt_topics)
-    eventhub_keys        =  module.mqtt_eventhubs.topic_primary_key
+    eventhub_keys        = module.mqtt_eventhubs.topic_primary_key
     eventhub_namespace   = module.mqtt_eventhubs.namespace_fqn
     eventhub_shared_access_policies = module.mqtt_eventhubs.topic_shared_access_policy_name
   }
+}
+
+locals {
+  worker_ips = join(",", [for nic in azurerm_network_interface.datasci_nic: nic.ip_configuration[0].private_ip_address])
+}
+
+module "status-monitor" {
+  source               = "./modules/status-monitor-ansible"
+  cluster_name         = var.cluster_name
+  environment          = var.environment
+  location             = azurerm_resource_group.datasci_group.location
+  resource_group_name  = azurerm_resource_group.datasci_group.name
+  storage_account_name = azurerm_storage_account.datasci.name
+  storage_account_key  = azurerm_storage_account.datasci.primary_access_key
+  network_profile_id   = azurerm_network_profile.datasci_net_profile.id
+  worker_node_ips      = "${local.worker_ips}"
+  mqtt_server_ip       = azurerm_container_group.datasci_mqtt.ip_address
+  reverse_proxy_ip     = module.reverse_proxy.reverse_proxy_private_ip
+  consul_server_ip     = azurerm_network_interface.datasci_nic[0].ip_configuration[0].private_ip_address
+
+  default_tags         = var.default_tags
 }
