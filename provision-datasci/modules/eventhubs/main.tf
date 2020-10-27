@@ -36,7 +36,7 @@ resource "azurerm_eventhub" "topic" {
 
 # Add a rule so that client apps can interract with the above eventhub instances
 resource "azurerm_eventhub_authorization_rule" "eventhub_auth_rule" {
-  depends_on          = [azurerm_eventhub_namespace.eventhubs]
+  depends_on          = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub.topic]
   for_each            = var.topics
 
   name                = join("-", [each.key, "auth-rule"])

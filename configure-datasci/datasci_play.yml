@@ -5,7 +5,7 @@
   become: false
   tasks:
     - name: "Parse host groups from inventory list"
-      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | awk -F ":" '{print $1}'
+      shell: echo "{{ inventory }}" | tr , '\n' | awk -F ":" '{print $1}'
       register: group_list
       changed_when: false
 
@@ -13,7 +13,7 @@
         var: group_list
 
     - name: "Parse host public ip addresses from inventory list"
-      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | awk -F ":" '{print $2}'
+      shell: echo "{{ inventory }}" | tr , '\n' | awk -F ":" '{print $2}'
       register: hosts
       changed_when: false
 
@@ -21,7 +21,7 @@
         var: hosts
 
     - name: "Parse host FQDN from inventory"
-      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | awk -F ":" '{print $3}'
+      shell: echo "{{ inventory }}" | tr , '\n' | awk -F ":" '{print $3}'
       register: fqdn_list
       changed_when: false
 
@@ -29,7 +29,7 @@
         var: fqdn_list
 
     - name: "Parse host private ip addresses from inventory"
-      shell: echo "{{ inventory }}" | sed 's/,/\n/g' | awk -F ":" '{print $4}'
+      shell: echo "{{ inventory }}" | tr , '\n' | awk -F ":" '{print $4}'
       register: pip_list
       changed_when: false
 
