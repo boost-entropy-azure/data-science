@@ -616,7 +616,7 @@ module "grafana" {
   grafana_depends_on   = [azurerm_virtual_network.datasci_net.id]
   location             = azurerm_resource_group.datasci_group.location
   resource_group_name  = azurerm_resource_group.datasci_group.name
-  cluster_name          = var.cluster_name
+  cluster_name         = var.cluster_name
   environment          = var.environment
   default_tags         = var.default_tags
   grafana_admin_user   = var.grafana_admin_user
@@ -624,6 +624,7 @@ module "grafana" {
   subnet_start_address = "10.0.1.0"
   subnet_end_address   = "10.0.1.255"
   consul_server        = azurerm_network_interface.datasci_nic[0].ip_configuration[0].private_ip_address
+  prometheus_server    = module.status-monitor.prometheus_ip_address
   system_topic_settings = {
     topics               = local.alert_topics
     eventhub_keys        = module.alert_eventhubs.topic_primary_key
