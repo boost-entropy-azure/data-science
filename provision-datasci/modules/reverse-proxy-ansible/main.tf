@@ -44,6 +44,7 @@ resource "azurerm_subnet" "nginx_subnet" {
   resource_group_name  = var.resource_group.name
   virtual_network_name = var.parent_vnetwork_name
   address_prefix       = "10.0.2.0/24"
+  service_endpoints    = ["Microsoft.EventHub"]
 }
 
 # Create Network Security Group and rule
@@ -215,6 +216,10 @@ resource "null_resource" "nginx-provisioner" {
   }
 
   provisioner "local-exec" {
+    command = "ansible-galaxy install bdellegrazie.nginx_exporter"
+  }
+
+  provisioner "local-exec" {
     command = "ansible-playbook ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))} ${path.module}/nginx_play.yml"
   }
 }
@@ -225,4 +230,8 @@ output "reverse_proxy_fqdn" {
 
 output "reverse_proxy_ip_address" {
   value = azurerm_public_ip.nginx_ip.ip_address
+}
+
+output "reverse_proxy_private_ip" {
+  value = azurerm_network_interface.nginx_nic.ip_configuration[0].private_ip_address
 }

@@ -80,7 +80,12 @@
   roles:
     - role: geerlingguy.certbot
     - role: geerlingguy.nginx
-      roles:
+    - {
+      role: bdellegrazie.nginx_exporter,
+      nginx_exporter_version: "0.8.0",
+      nginx_exporter_tarball_checksum: "sha256:fce51ce62650186f9f4cb3ff13fa4b36ffc2980058a63bccdb471c929c078e50",
+      nginx_exporter_options: ['-web.listen-address=0.0.0.0:9113', '-nginx.scrape-uri https://{{ fqdn }}/stats']
+    }
     - {
       role: "../../../configure-datasci/roles/consul",
       private_ips: ["{{ consul_server }}"],

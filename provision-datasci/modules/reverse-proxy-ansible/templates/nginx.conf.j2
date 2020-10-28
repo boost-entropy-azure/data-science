@@ -69,6 +69,10 @@ http {
 
         ssl_dhparam /etc/ssl/certs/dhparam.pem;
 
+        location /stats {
+            stub_status on;
+        }
+
         location / {
             proxy_pass http://grafana_cluster;
             proxy_read_timeout  90;
