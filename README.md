@@ -69,11 +69,13 @@ If running on macOS or Linux natively, the step of creating a dedicated VM can b
 the development and testing environment manually on your host machine if you're planning on developing the project.
 
 ### Create an SSH Key Pair
-An SSH key pair is needed to provision any machine with SSH access.  When creating a cluster using this terraform configuration, 
+An SSH key pair is needed to provision any machine with SSH access. When creating a cluster using this terraform configuration, 
 any VMs will have their [authorized_keys](https://www.ssh.com/ssh/authorized_keys) file updated to include your public key 
 so that you can SSH into the server.
 
 If you already have created a default SSH key, then you can skip creating a new SSH key pair.
+
+> ⚠️ WARNING:  Currently, only private SSH keys without passphrases are supported. If your `id_rsa` private ssh key has a passphrase you will need to remove it.
 
 #### Create a new SSH key pair
 Detailed instructions can be found [here](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html)
@@ -141,7 +143,7 @@ Common commands:
 1. `brew update && brew install azure-cli`
 
 #### Try it
-1. `az cloud set --name AzureUSGovernment`
+1. `az cloud set --name AzureCloud`
 1. `az login`
 1. You'll see output similar to this  
     ```
@@ -190,6 +192,7 @@ Common commands:
 1. `ansible-galaxy install geerlingguy.java`
 1. To verify, run `ansible --version`
 1. Disable host checking by uncommenting `host_key_checking = False` under `/usr/local/etc/ansible/ansible.cfg`
+    1. On macOS the ansible.cfg file is located at `~/.ansible.cfg`
 
 
 ## Run the Terraform Deployment
