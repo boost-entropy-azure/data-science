@@ -246,6 +246,19 @@ Common commands:
 1. To tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`.
 
 # Change Log
+
+##### [0.2.2](https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.2) - 2020-10-29
+* Disable anonymous access to the Mosquitto MQTT broker
+* Synchronize Event Hubs creation with creation of their access rules
+* Add Prometheus server and exporters
+* Add pipeline health and status Grafana dashboards
+* Store Jupyter Notebook password in Consul
+
+##### [0.2.1](https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.1) - 2020-10-07
+* Remove analytics job specifics from pipeline repo
+* Tweak HDFS settings to allow multiple jobs on YARN
+* Deployment fixes
+
 ##### [0.2.0](https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.0) - 2020-09-14
 * Deploy three worker nodes managed by YARN
 * Deploy Consul server and use it for storing deployment facts
