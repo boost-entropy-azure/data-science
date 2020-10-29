@@ -11,6 +11,7 @@
 * <<MQTT broker passwords, How do I look up the MQTT broker passwords>>
 * <<Prometheus server, How do I look at the status of configured Prometheus targets>>
 * <<Grafana dashboards, How do I access Grafana dashboards>>
+* <<Reverse Proxy status, How do I check the status of the NGINX service>>
 
 === SSH onto a worker node
 . `ssh datasci_admin@<vm-name>.<azure-cloud-location>` where

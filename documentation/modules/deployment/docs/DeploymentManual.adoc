@@ -90,6 +90,8 @@ so that you can log in with SSH into the VM.
 
 If you already have created an SSH key, then you can skip creating a new SSH key pair.
 
+> ⚠️ WARNING:  Currently, only private SSH keys without passphrases are supported. If your `id_rsa` private ssh key has a passphrase you will need to remove it.
+
 ==== Create a new SSH key pair
 
 Detailed instructions can be found https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html[here]
