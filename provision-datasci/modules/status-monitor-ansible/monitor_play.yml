@@ -1,0 +1,24 @@
+---
+# tasks for configuring prometheus server
+- hosts: localhost
+  gather_facts: yes
+  check_mode: no
+  become: no
+  tasks:
+    - name: "Parse private ips from worker nodes list"
+      shell: echo "{{ worker_node_ips }}" | sed 's/,/\n/g'
+      register: worker_nodes
+
+    - name: "Render and write out prometheus config"
+      template:
+        src: prometheus.yml.j2
+        dest: /tmp/prometheus.yml
+
+    - name: "Upload the connector config"
+      shell: az storage file upload --share-name {{ share_name }} --account-name {{ account_name }} --account-key {{ account_key }} --source /tmp/prometheus.yml
+        
+    - name: "Remove generated configs"
+      file:
+        path: /tmp/prometheus.yml
+        state: absent
+  
