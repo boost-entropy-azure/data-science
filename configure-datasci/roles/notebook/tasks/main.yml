@@ -1,22 +1,12 @@
-- name: "Install Jupyter notebook using pip"
+- name: "Install python  modules for notebook role"
   pip:
-    name: notebook
+    name: [notebook, h3, folium, python-consul]
     executable: pip3
 
 - name: "Install pyspark python module"
   pip:
     name: pyspark
     version: 2.4.5 # ToDo - set spark version in a global config or move this to the spark role
-    executable: pip3
-
-- name: install Uber's H3
-  pip:
-    name: h3
-    executable: pip3
-
-- name: Install folium
-  pip:
-    name: folium
     executable: pip3
 
 - name: "Install python3 kernel"

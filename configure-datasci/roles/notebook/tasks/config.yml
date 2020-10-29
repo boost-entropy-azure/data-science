@@ -46,6 +46,11 @@
       Verify password: "{{ lookup('password', '/tmp/jupyter_pass length=8 chars=ascii_letters') }}"
   become_user: jupyter
 
+- name: "Store the Jupyter password in Consul"
+  consul_kv:
+    key: jupyter/admin/password
+    value: "{{ lookup('password', '/tmp/jupyter_pass length=8 chars=ascii_letters') }}"
+
 - name: "Create OpenSSL directory"
   file:
     path: "{{ jupyter_ssl_path }}"

@@ -1,0 +1,9 @@
+:uri-org: https://github.com/chesapeaketechnology/data-science/
+:doc-path: documentation/modules/
+
+# Data Science Pipeline
+
+A detailed documentation on deploying an Azure-hosted instance of the data science pipeline is available
+{uri-org}{doc-path}/deployment/DeploymentManual.adox[here]
+
+{uri-org}{doc-path}/faq/FAQ.adoc[FAQ]
