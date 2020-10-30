@@ -12,7 +12,7 @@ image::../images/DataSciencePipeline.png[Pipeline Diagram]
 
 === Sensors
 These devices are present and sensing the world around them. The data they collect contains useful information, and extracting
-that information is what this pipeline enables. Note that the data-centric analysis jobs needed to extract information our of
+that information is what this pipeline enables. Note that the data-centric analysis jobs needed to extract information out of
 sensor data is not in the scope of this project. Instead, all we provide are the building blocks we found useful for extracting
 information out of the massive sensor data we collect.
 
