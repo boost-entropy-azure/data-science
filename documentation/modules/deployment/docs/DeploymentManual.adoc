@@ -1,3 +1,4 @@
+:toc:
 = Data Science Infrastructure Deployment
 
 Use this project to deploy an instance of a data science pipeline to Azure using Terraform and Ansible.
@@ -20,15 +21,6 @@ Currently, the main Terraform datasci.tf script deploys the following resources 
 - A Grafana server in a Docker container
 - A set of container groups for Grafana data integrations
 - A set of Azure Databases for PostgreSQL server use with Grafana server
-
-== Table of Contents
-
-* <<Initial Setup,Initial Setup>>
-    **  <<Create an SSH Key Pair,Create an SSH Key Pair>>
-    ** <<Install Terraform, Install Terraform>>
-    ** <<Install Azure CLI, Install Azure CLI>>
-    ** <<Install Ansible, Install Ansible>>
-* <<Run the Terraform Deployment,Run the Terraform Deployment>>
 
 == Initial Setup
 There are two Vagrant scripts provided in this project. They are included to help you set up your local environment
@@ -252,25 +244,3 @@ to the MQTT broker, add the following to the above command
 == (Optional) Tear down the Azure Deployment
 
 . To tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`.
-
-== Change Log
-
-=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.2[0.2.2] - 2020-10-29
-* Disable anonymous access to the Mosquitto MQTT broker
-* Synchronize Event Hubs creation with creation of their access rules
-* Add Prometheus server and exporters
-* Add pipeline health and status Grafana dashboards
-* Store Jupyter Notebook password in Consul
-
-=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.1[0.2.1] - 2020-10-07
-* Remove analytics job specific from pipeline repo
-* Tweak HDFS settings to allow multiple jobs on YARN
-* Deployment fixes
-
-=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.0[0.2.0] - 2020-09-14
-* Deploy three worker nodes managed by YARN
-* Deploy Consul server and use it for storing deployment facts
-* Integrate Grafana visualizations for all data topics
-
-=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.1.0[0.1.0] - 2020-05-11
-* Initial release

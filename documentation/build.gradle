@@ -14,6 +14,10 @@ plugins {
 
 defaultTasks 'build' // If no task is given, default to 'build'
 
+wrapper {
+  gradleVersion = '6.3'
+}
+
 subprojects {
   apply plugin: 'org.asciidoctor.jvm.gems'
   apply plugin: 'org.asciidoctor.jvm.convert'

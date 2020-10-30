@@ -1,72 +1,67 @@
+:toc:
+// settings
+:uri-org: https://github.com/chesapeaketechnology/data-science/
+:doc-path: documentation/modules/
+
 = Frequently Asked Questions
 
-== Table of Contents
-* <<Confirm messages are flowing, How do confirm messages are flowing from my device through the pipeline>>
-* <<SSH onto a worker node, How do I log into a worker node>>
-* <<Set up SSH port forwarding, How do I set up port forwarding for an application>>
-* <<Open a Jupyter notebook, How do I open a Jupyter notebook on a worker node>>
-* <<Check HDFS and YARN, How do I check HDFS and YARN are up and running on the cluster>>
-* <<Start HDFS and YARN, How Do I start HDFS and YARN>>
-* <<Status of the Spark jobs, How do I look at the status of my Spark jobs>>
-* <<MQTT broker passwords, How do I look up the MQTT broker passwords>>
-* <<Prometheus server, How do I look at the status of configured Prometheus targets>>
-* <<Grafana dashboards, How do I access Grafana dashboards>>
-* <<Reverse Proxy status, How do I check the status of the NGINX service>>
+=== How do I log into a worker node
+. `ssh datasci_admin@<vm-name>.<azure-cloud-url>` where
+... `<vm-name>` is the Virtual Machine name (e.g. datasci-dev0)
+... `<azure-cloud-url>` is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)
 
-=== SSH onto a worker node
-. `ssh datasci_admin@<vm-name>.<azure-cloud-location>` where
-... `<vm-name>` is the Virtual Machine name (eg. datasci-dev0)
-... `<azure-cloud-location>` is the Azure cloud URL (eg. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc)
-
-=== Set up SSH port forwarding
-SSh port forwarding is a mechnism for tunneling application ports from a client to a server. The data science pipeline
+=== How do I set up port forwarding for an application
+SSh port forwarding is a mechanism for tunneling application ports from a client to a server. The data science pipeline
 deploys a number of applications/services that have custom web interfaces. To access these applications on the worker nodes
 you will need to follow these steps.
 
-. In a terminal, run `sh -N -f -L localhost:<app-port>:<node-private-ip>:<app-port> datasci_admin@<vm-name>.<azure-cloud-location>` where
-... `<app-port>` is the application port number (eg 8500 for Consul, 8088 for YARN, 9090 for Prometheus)
+. In a terminal, run `ssh -N -f -L localhost:<app-port>:<node-private-ip>:<app-port> datasci_admin@<vm-name>.<azure-cloud-url>` where
+... `<app-port>` is the application port number (e.g. 8500 for Consul, 8088 for YARN, 9090 for Prometheus)
 ... `<node-private-ip>` is the private IP address of the VM running the application
-... `<vm-name>` is the Virtual Machine name (eg. datasci-dev0)
-... `<azure-cloud-location>` is the Azure cloud URL (eg. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc)
+... `<vm-name>` is the Virtual Machine name (e.g. datasci-dev0)
+... `<azure-cloud-url>` is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)
 
-=== Status of the Spark jobs
-. Set up <<Set up SSH port forwarding, port forwarding>> using port 8088, and the private IP address of the NameNode
+=== How do I check the status of Spark jobs
+. Set up <<How do I set up port forwarding for an application, port forwarding>> using port 8088, and the private IP
+address of the NameNode
 . Open an Internet browser page at localhost:8088
 
-=== MQTT broker passwords
-. Set up <<Set up SSH port forwarding, port forwarding>> using port 8500 and 'localhost' as <node-private-ip>
+=== How do I look up the MQTT broker passwords
+. Set up <<How do I set up port forwarding for an application, port forwarding>> using port 8500 and 'localhost' as <node-private-ip>
 . Open an Internet browser page at localhost:8500
 . Browse to the 'Key/Value' page on Consul's web page and then look at mqtt/user/<user-name> key. The key's value is the
 password for <user-name>
 
-=== Prometheus server
-. Set up <<Set up SSH port forwarding, port forwarding>> using port 9090, and the private IP address of the
-`<pipeline-name>-monitor` container group where `<pipeline-name>` is the combination of `cluster_name` and `environment`
-variables specified during deployment (see DeploymentManual.adoc for details and datasci_vars.tfvars in particular)
+=== How do I look at the status of provisioned Prometheus targets
+. Set up <<How do I set up port forwarding for an application, port forwarding>> using port 9090, and the private IP
+address of the `<pipeline-name>-monitor` container group where
+.. `<pipeline-name>` is the combination of `cluster_name` and `environment` variables specified during deployment
+(see {uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[DeploymentManual] for details and datasci_vars.tfvars in particular)
 . Open an Internet browser page at localhost:9090
 . Browse to 'Status/Targets' page to see the status of configured Prometheus targets
 
-=== Open a Jupyter notebook
+=== How do I open a Jupyter notebook
 . Look up the Jupyter admin password from Consul (at jupyter/admin/password path)
-. Log in using the above password from an Internet browser at https://<vm-name>.<azure-cloud-location>:9999 where
-... `<vm-name>` is the Virtual Machine name (eg. datasci-dev0)
-... `<azure-cloud-location>` is the Azure cloud URL (eg. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc)
+. Log in using the above password from an Internet browser at https://<vm-name>.<azure-cloud-url>:9999 where
+... `<vm-name>` is the Virtual Machine name (e.g. datasci-dev0)
+... `<azure-cloud-url>` is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)
 
-=== Check HDFS and YARN
-. Log into one of the worker machines (see <<SSH onto a worker node, above>> for details)
-. `hadoop fs -ls abfs://<datalake-container>@<datalake-storage-name>.<azure-datalake-url>` where
-... `<datalake-container>` eg. datasci-dev-container
-... `<datalake-storage-name>` eg. datascidevlakestorage
-... `<azure-datalake-url>` eg. dfs.core.windows.net/ (available from Azure portal on the datalake 'Properties' page)
+=== How do I figure out which worker node is the NameNode
+. Log into one of the worker machines (see <<How do I log into a worker node, above>> for details)
+. Look up the `/etc/hosts` file contents
+. The node listed first after the localhost entries is the NameNode
 
-=== Start HDFS and YARN
-. First figure out which worker node is the HDFS namenode
-.. Log into one of the worker machines (see <<SSH onto a worker node, above>> for details)
-.. Look up the `/etc/hosts` file contents and see which node is listed first after the localhost entries
-. Log into the namenode (see <<SSH onto a worker node, above>> for details) using the `hadoop` user name
-. In a terminal on the namenode, run `/usr/local/hadoop/sbin/hadoop/start-hdfs.sh` followed by `/usr/local/hadoop/sbin/hadoop/start-yarn.sh`
-. Check everything started correctly
-.. In a terminal on the namenode, run `jps`. It should show the following output:
+=== How do I check the status of HDFS and YARN
+. Log into one of the worker machines (see <<How do I log into a worker node, above>> for details)
+. List the files currently in the datalake by running:
+`hadoop fs -ls abfs://<datalake-container>@<datalake-storage-name>.<azure-datalake-url>` where
+... `<datalake-container>` is the name of the container (e.g. datasci-dev-container)
+... `<datalake-storage-name>` is the name of the storage account (e.g. datascidevlakestorage)
+... `<azure-datalake-url>` is the URL of the datalake (e.g. dfs.core.windows.net/). This URL is
+available from Azure portal on the datalake 'Properties' page)
+. Alternatively,
+.. In a terminal on the <<How do I figure out which worker node is the NameNode, NameNode>>, run `jps`.
+It should show the following output:
 
     [source]
     ----
@@ -82,7 +77,7 @@ variables specified during deployment (see DeploymentManual.adoc for details and
     [hadoop@ctidev1 ~]$
     ----
 
-.. In a terminal on a datanode (i.e. not namenode), run `jps`. It should show the following output:
+.. In a terminal on a datanode (i.e. not NameNode), run `jps`. It should show the following output:
 
     [source]
     ----
@@ -94,27 +89,43 @@ variables specified during deployment (see DeploymentManual.adoc for details and
     [hadoop@ctidev2 ~]$
     ----
 
-=== Grafana dashboards
+=== How do I start HDFS and YARN services
+. First figure out which worker node is the HDFS NameNode
+. Log into the NameNode (see <<How do I log into a worker node, above>> for details) using the `hadoop` user name
+. In a terminal on the <<How do I figure out which worker node is the NameNode, NameNode>>, run:
+.. `/usr/local/hadoop/sbin/hadoop/start-hdfs.sh`
+.. followed by`/usr/local/hadoop/sbin/hadoop/start-yarn.sh`
+.. Check the services <<How do I check the status of HDFS and YARN, started correctly>>
+
+=== How do I access Grafana dashboards
 . Look up the reverse proxy's fully qualified domain name in Consul's Key/Value store at reverseproxy/fqdn path
 . Look up the Grafana admin password in Consul, or the Terraform state file
 . Open an Internet browser at https://<reverseproxy-fqdn> where
 .. `<reverseproxy-fqdn>` is the url looked up above
 . Log into Grafana using `admin` user name, and the password looked up above
 
-=== Confirm messages are flowing
+=== How do I confirm messages are flowing from my device through the pipeline
 . Log into Azure portal
-. Look at <pipeline-name>-mqtt-eventhubs-namespace resource page and look at the metrics graph
+. Look at <pipeline-name>-mqtt-eventhubs-namespace resource page and look at the metrics graph, where
+... `<pipeline-name>` is the combination of `cluster_name` and `environment` variables specified during deployment
+(see {uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[DeploymentManual] for details and datasci_vars.tfvars in particular)
 . If messages are not getting to the eventhubs namespace
 .. Browse to the <pipeline-name>-mqtt Container Instance resource page
 .. Look at the logs of the `mqtt` container. No errors should be shown
 .. Look at the logs of the `connector` container. No errors should be shown
 .. Make sure your device is able to connect to the MQTT broker and is sending messages
 . If messages are flowing to the eventhubs namespace, next check the specific EventHubs instance (topic) that you're
-interested in (eg lte_message)
-.. If messages are not getting to the specific EventHub instance, make sure your app (eg Network Survey) is actually
-collecting the messages you're expecting to see
+interested in
+.. If messages are not getting to the specific EventHub instance, make sure your sensor is actually collecting and sending
+the messages you're expecting to see
 .. If messages are getting to the EventHub instance, next look at <pipeline-name>lake Storage Account resource page
 ... Browse to 'Containers/<pipeline-name>-container/<pipeline-name>-mqtt-eventhubs-namespace/<message_topic>'
 ... Browse to an avro file corresponding to the current date/time. If a recent file exists, the messages are landing
 into the data lake
-. Look at the <<Status of the Spark jobs>>
+. Look at the <<How do I check the status of Spark jobs, Spark job status page>>
+
+=== Reverse Proxy status
+. In a terminal, run `ssh nginx_admin@<pipeline-name>-nginx.<azure-cloud-url>` where
+.. `<pipeline-name>` is the combination of `cluster_name` and `environment` variables specified during deployment
+(see {uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[DeploymentManual] for details and datasci_vars.tfvars in particular)
+.. `<azure-cloud-url>` is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)
