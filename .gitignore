@@ -3,7 +3,6 @@ terraform.tfstate.backup
 */.terraform/*
 terraform.tfstate
 *.tfstate.lock.info
-*/.terraform/*
 .ipynb_*/*
 *.pyc
 __pychache__
@@ -17,4 +16,7 @@ __pychache__
 securevars.yml
 
 # Prevent custom config files with secret keys from being committed
-pwfile.txt  
+pwfile.txt
+documentation/modules/*/build/*
+documentation/modules/*/docs/*.pdf
+documentation/.gradle/*

@@ -1,0 +1,10 @@
+rootProject.name = 'data-science-manuals'
+
+include 'deployment'
+project(':deployment').projectDir = file('modules/deployment')
+
+include 'administration'
+project(':administration').projectDir = file('modules/administration')
+
+include 'faq'
+project(':faq').projectDir = file('modules/faq')

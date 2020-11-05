@@ -1,0 +1,32 @@
+// settings
+:uri-org: https://github.com/chesapeaketechnology/data-science/
+:doc-path: documentation/modules/
+
+= Data Science Pipeline
+
+A detailed documentation on deploying an Azure-hosted instance of the data science pipeline is available
+{uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[here]
+
+{uri-org}{doc-path}/faq/docs/FAQ.adoc[FAQ]
+
+== Change Log
+
+=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.2[0.2.2] - 2020-10-29
+* Disable anonymous access to the Mosquitto MQTT broker
+* Synchronize Event Hubs creation with creation of their access rules
+* Add Prometheus server and exporters
+* Add pipeline health and status Grafana dashboards
+* Store Jupyter Notebook password in Consul
+
+=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.1[0.2.1] - 2020-10-07
+* Remove analytics job specific from pipeline repo
+* Tweak HDFS settings to allow multiple jobs on YARN
+* Deployment fixes
+
+=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.0[0.2.0] - 2020-09-14
+* Deploy three worker nodes managed by YARN
+* Deploy Consul server and use it for storing deployment facts
+* Integrate Grafana visualizations for all data topics
+
+=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.1.0[0.1.0] - 2020-05-11
+* Initial release
