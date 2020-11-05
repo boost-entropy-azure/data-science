@@ -1,6 +1,6 @@
 // settings
 :uri-org: https://github.com/chesapeaketechnology/data-science/
-:doc-path: documentation/modules/
+:doc-path: blob/master/documentation/modules/
 
 = Data Science Pipeline
 
