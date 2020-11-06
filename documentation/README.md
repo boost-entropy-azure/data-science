@@ -51,21 +51,17 @@ If you are using Windows, don’t forget to replace `./gradlew` by
     $ ./gradlew convertOnlinePdf
 
 All the generated files will be available at
-*documentation/build*.
+*documentation/asciidoc/build*.
 
 If you want to convert all the files at once, you can use the `convert`
 task:
 
     $ ./gradlew convert
 
-You can also run a task on a specific module:
-
-    $ ./gradlew :faq:convertOnlineHtml
-    $ ./gradlew :faq:convert
 
 Or multiple tasks:
 
-    $ ./gradlew :faq:convertOnlinePdf :faq:convertOnlineHtml
+    $ ./gradlew convertOnlinePdf convertOnlineHtml
 
 Gradle will do its best to detect if a task needs to be run again or
 not. If you want to force Gradle to execute a task again, you can remove
@@ -75,10 +71,6 @@ the `build` directory using the `clean` task:
 
 Once the `build` directory is removed, type the task you want to
 execute.
-
-You can also clean a particular directory:
-
-    $ ./gradlew :faq:clean
 
 
 LiveReload
@@ -93,21 +85,21 @@ Next, you need to open two terminals. In the first one, type the
 following command to continuously convert the AsciiDoc source to a
 reveal.js presentation:
 
-    $ ./gradlew --continuous :faq:convertSlides
+    $ ./gradlew --continuous convertSlides
 
 On the second one, type the following command to start the LiveReload
-server on the *demo* module:
+server
 
-    $ ./gradlew :faq:liveReload
+    $ ./gradlew liveReload
 
     > Task :liveReload
-    Enabling LiveReload at port 35729 for /path/to/modules/faq/build
+    Enabling LiveReload at port 35729 for /path/to/asciidoc/build
 
 You’re all set!
 
 Now, open Chrome and navigate to the HTML file of your choice, for
 instance:
-<http://localhost:35729/online/faq.html>.
+<http://localhost:35729/online/index.html>.
 Don’t forget to enable the LiveReload extension on your browser by
 clicking on the icon. (Notice that the middle circle is now filled in black.)
 
@@ -117,23 +109,4 @@ changes.
 
 Similarly, you can use LiveReload with the online training using:
 
-    $ ./gradlew --continuous :faq:convertOnlineHtml -Penv=dev
-
-Add a new module
-================
-
-To add a new module, edit the *settings.gradle* file at the root of this
-project. For instance, if we want to add a new module named \`browser"
-located at *modules/browser-guides*, we need to add the following lines:
-
-    include 'browser'
-    project(':browser').projectDir = file('modules/browser-guides')
-
-Now we can execute tasks on this new module, for instance:
-`./gradlew :browser:convert`
-
-Follow the convention of storing your documentation and images under:
-
-    modules/browser-guides/docs
-    modules/browser-guides/images
-
+    $ ./gradlew --continuous convertOnlineHtml -Penv=dev
