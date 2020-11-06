@@ -17,6 +17,6 @@ securevars.yml
 
 # Prevent custom config files with secret keys from being committed
 pwfile.txt
-documentation/modules/*/build/*
+documentation/modules/**/build/**
 documentation/modules/*/docs/*.pdf
 documentation/.gradle/*

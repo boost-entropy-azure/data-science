@@ -36,7 +36,7 @@ subprojects {
   }
 
   asciidoctorj {
-    requires ['rouge']
+    requires 'rouge'
     attributes 'allow-uri-read': '',
       'source-highlighter': 'rouge',
       'rouge-style': 'neo.forest',
@@ -61,6 +61,29 @@ subprojects {
 
   task convertOnlinePdf(type: AsciidoctorPdfTask) {
     dependsOn asciidoctorGemsPrepare
+
+    def customThemeDir = new File("${rootProject.projectDir}/modules/${project.name}/themes/pdf-theme.yml")
+    def customFontsDir = new File("${rootProject.projectDir}/modules/${project.name}/fonts/")
+    def themeToUse
+
+    //Checks for custom font & theme folders, otherwise uses defaults.
+    if (customFontsDir.exists()) {
+      fontsDir = customFontsDir
+    } else {
+      fontsDir = new File("${rootProject.projectDir}/resources/fonts/")
+    }
+
+    if (customThemeDir.exists()) {
+      themeToUse = customThemeDir
+    } else {
+      themeToUse = new File("${rootProject.projectDir}/resources/themes/pdf-theme.yml")
+    }
+
+    asciidoctorj {
+      modules.pdf.version '1.5.2'
+      attributes 'pdf-style': themeToUse,
+              'imagesdir': '../images'
+    }
 
     baseDir file("${projectDir}/docs")
     sourceDir file("${projectDir}/docs")

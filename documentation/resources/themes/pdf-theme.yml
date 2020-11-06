@@ -1,0 +1,21 @@
+extends: default
+font:
+  catalog:
+    Noto Sans Serif:
+      normal: NotoSans-Regular.ttf
+      italic: NotoSans-Italic.ttf
+      bold: NotoSans-Bold.ttf
+      bold_italic: NotoSans-BoldItalic.ttf
+heading:
+  font-color: #0095D8
+  
+base:
+  font-family: Noto Sans Serif
+
+footer:
+  recto:
+    right:
+      content: '{doctitle} | {page-number}'
+  verso:
+    left:
+      content: $footer_recto_right_content
