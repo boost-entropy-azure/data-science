@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Data Science Documentation</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment @import statement to use as custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*::before,*::after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite::before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
+:not(pre)>code.nobreak{word-wrap:normal}
+:not(pre)>code.nowrap{white-space:nowrap}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre>code{display:block}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details>summary:first-of-type{cursor:pointer;display:list-item;outline:none;margin-bottom:.75em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class="paragraph"]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class="highlight"],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos{border-right:1px solid currentColor;opacity:.35;padding-right:.5em}
+pre.pygments .lineno{border-right:1px solid currentColor;opacity:.35;display:inline-block;margin-right:.75em}
+pre.pygments .lineno::before{content:"";margin-right:-.125em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;text-align:left;margin-right:0}
+table.tableblock{max-width:100%;border-collapse:separate}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+td.tableblock>.content>:last-child.sidebarblock{margin-bottom:0}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>thead>tr>.tableblock,table.grid-all>tbody>tr>.tableblock{border-width:0 1px 1px 0}
+table.grid-all>tfoot>tr>.tableblock{border-width:1px 1px 0 0}
+table.grid-cols>*>tr>.tableblock{border-width:0 1px 0 0}
+table.grid-rows>thead>tr>.tableblock,table.grid-rows>tbody>tr>.tableblock{border-width:0 0 1px}
+table.grid-rows>tfoot>tr>.tableblock{border-width:1px 0 0}
+table.grid-all>*>tr>.tableblock:last-child,table.grid-cols>*>tr>.tableblock:last-child{border-right-width:0}
+table.grid-all>tbody>tr:last-child>.tableblock,table.grid-all>thead:last-child>tr>.tableblock,table.grid-rows>tbody>tr:last-child>.tableblock,table.grid-rows>thead:last-child>tr>.tableblock{border-bottom-width:0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot,table.frame-ends{border-width:1px 0}
+table.stripes-all tr,table.stripes-odd tr:nth-of-type(odd),table.stripes-even tr:nth-of-type(even),table.stripes-hover tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
+ul.inline{display:-ms-flexbox;display:-webkit-box;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media print,amzn-kf8{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>Data Science Documentation</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">1. Introduction</a></li>
+<li><a href="#_administering_the_data_science_pipeline">2. Administering the Data Science Pipeline</a>
+<ul class="sectlevel2">
+<li><a href="#_sensors">2.1. Sensors</a></li>
+<li><a href="#_reverse_proxy_nginx_gateway">2.2. Reverse Proxy (NGINX Gateway)</a></li>
+<li><a href="#_mqtt_cluster">2.3. MQTT cluster</a></li>
+<li><a href="#_mqtt_event_hubs_namespace">2.4. MQTT Event Hubs Namespace</a></li>
+<li><a href="#_data_lake">2.5. Data Lake</a></li>
+<li><a href="#_stream_processing_cluster">2.6. Stream Processing cluster</a></li>
+<li><a href="#_alerts_event_hubs_namespace">2.7. Alerts Event Hubs Namespace</a></li>
+<li><a href="#_grafana_server_cluster">2.8. Grafana server cluster</a></li>
+<li><a href="#_grafana_be_cluster">2.9. Grafana BE cluster</a></li>
+<li><a href="#_grafana_fe_cluster">2.10. Grafana FE cluster</a></li>
+<li><a href="#_prometheus_cluster">2.11. Prometheus cluster</a></li>
+</ul>
+</li>
+<li><a href="#_data_science_infrastructure_deployment">3. Data Science Infrastructure Deployment</a>
+<ul class="sectlevel2">
+<li><a href="#_initial_setup">3.1. Initial Setup</a></li>
+<li><a href="#_to_set_up_a_development_environment">3.2. To set up a Development environment</a></li>
+<li><a href="#_to_set_up_an_administrator_environment">3.3. To Set up an Administrator environment</a></li>
+<li><a href="#_optional_manual_setup">3.4. (Optional) Manual setup</a></li>
+<li><a href="#_create_an_ssh_key_pair">3.5. Create an SSH Key Pair</a></li>
+<li><a href="#_install_terraform">3.6. Install Terraform</a></li>
+<li><a href="#_install_azure_cli">3.7. Install Azure CLI</a></li>
+<li><a href="#_install_ansible">3.8. Install Ansible</a></li>
+<li><a href="#_run_the_terraform_deployment">3.9. Run the Terraform Deployment</a></li>
+<li><a href="#_optional_tear_down_the_azure_deployment">3.10. (Optional) Tear down the Azure Deployment</a></li>
+</ul>
+</li>
+<li><a href="#_frequently_asked_questions_faq">4. Frequently Asked Questions (FAQ)</a>
+<ul class="sectlevel2">
+<li><a href="#_how_do_i_log_into_a_worker_node">4.1. How do I log into a worker node</a></li>
+<li><a href="#_how_do_i_set_up_port_forwarding_for_an_application">4.2. How do I set up port forwarding for an application</a></li>
+<li><a href="#_how_do_i_check_the_status_of_spark_jobs">4.3. How do I check the status of Spark jobs</a></li>
+<li><a href="#_how_do_i_look_up_the_mqtt_broker_passwords">4.4. How do I look up the MQTT broker passwords</a></li>
+<li><a href="#_how_do_i_look_at_the_status_of_provisioned_prometheus_targets">4.5. How do I look at the status of provisioned Prometheus targets</a></li>
+<li><a href="#_how_do_i_open_a_jupyter_notebook">4.6. How do I open a Jupyter notebook</a></li>
+<li><a href="#_how_do_i_figure_out_which_worker_node_is_the_namenode">4.7. How do I figure out which worker node is the NameNode</a></li>
+<li><a href="#_how_do_i_check_the_status_of_hdfs_and_yarn">4.8. How do I check the status of HDFS and YARN</a></li>
+<li><a href="#_how_do_i_start_hdfs_and_yarn_services">4.9. How do I start HDFS and YARN services</a></li>
+<li><a href="#_how_do_i_access_grafana_dashboards">4.10. How do I access Grafana dashboards</a></li>
+<li><a href="#_how_do_i_confirm_messages_are_flowing_from_my_device_through_the_pipeline">4.11. How do I confirm messages are flowing from my device through the pipeline</a></li>
+<li><a href="#_reverse_proxy_status">4.12. Reverse Proxy status</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction"><a class="anchor" href="#_introduction"></a>1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Welcome!
+The Data Science Pipeline project is an open source project with a goal of facilitating the analysis of sensor data. At its
+core, the Data Science Pipeline is a generic streaming platform which can be built upon. It was designed to be abstracted
+away from specific data and sensors so that any device can feed data into the pipeline and specific analysis jobs can be
+written to extract meaningful information.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_administering_the_data_science_pipeline"><a class="anchor" href="#_administering_the_data_science_pipeline"></a>2. Administering the Data Science Pipeline</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data Science Pipeline Overview</p>
+</div>
+<div class="paragraph">
+<p>The core purpose of this project is to create a cloud-based framework enabling the analysis of sensor data. A high-level
+diagram of the pipeline components is shown below.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/DataSciencePipeline.png" alt="Pipeline Diagram">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sensors"><a class="anchor" href="#_sensors"></a>2.1. Sensors</h3>
+<div class="paragraph">
+<p>These devices are present and sensing the world around them. The data they collect contains useful information, and extracting
+that information is what this pipeline enables. Note that the data-centric analysis jobs needed to extract information out of
+sensor data is not in the scope of this project. Instead, all we provide are the building blocks we found useful for extracting
+information out of the massive sensor data we collect.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reverse_proxy_nginx_gateway"><a class="anchor" href="#_reverse_proxy_nginx_gateway"></a>2.2. Reverse Proxy (NGINX Gateway)</h3>
+<div class="paragraph">
+<p>This is the gateway for all the sensors to authenticate against and send their messages to. The reverse proxy accepts
+connections from devices and passes them onto a Mosquitto MQTT broker.</p>
+</div>
+<div class="paragraph">
+<p>Additionally, the NGINX gateway also allows for https access to our Grafana instance. The default Grafana dashboards present
+a simple overview of the status of the pipeline and the data flowing through it. Using the default dashboards as a starting
+point for building more custom ones is the best way to gain further insight into the data flowing through.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mqtt_cluster"><a class="anchor" href="#_mqtt_cluster"></a>2.3. MQTT cluster</h3>
+<div class="paragraph">
+<p>This Azure container instance consists of four containers.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The <code>mqtt</code> container is responsible for authenticating the users sending messages into the pipeline and
+enqueuing incoming messages onto their respective Mosquitto MQTT topics.</p>
+</li>
+<li>
+<p>The <code>connector</code> container is responsible for subscribing to configured MQTT topics and passing messages onto the
+corresponding EventHubs instances.</p>
+</li>
+<li>
+<p>The <code>mqttconsulgateway</code> is responsible for starting up a Consul client instance and providing insight into provisioned
+MQTT user credentials.</p>
+</li>
+<li>
+<p>The <code>mqttexporter</code> is responsible for exporting Mosquitto MQTT broker metrics in the Prometheus format.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mqtt_event_hubs_namespace"><a class="anchor" href="#_mqtt_event_hubs_namespace"></a>2.4. MQTT Event Hubs Namespace</h3>
+<div class="paragraph">
+<p>This namespace includes the provisioned Event Hubs instances matching the number of MQTT topics. Each instance is
+configured to forward its messages to the provisioned data lake every 5 minutes or 300 MB which ever occurs first. If no
+data is received on the instance, an empty data file will not be created in the data lake.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_data_lake"><a class="anchor" href="#_data_lake"></a>2.5. Data Lake</h3>
+<div class="paragraph">
+<p>This resource uses the Data Lake Storage Gen2 Azure blob storage with hierarchical namespaces enabled.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_stream_processing_cluster"><a class="anchor" href="#_stream_processing_cluster"></a>2.6. Stream Processing cluster</h3>
+<div class="paragraph">
+<p>This cluster of CentOS VMs is responsible for:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Providing a mechanism for processing the data streams flowing through the pipeline. To this end, we deploy Apache
+Spark on all the nodes as well as YARN for workload management. The default number of VMs provisioned is 3. To adjust
+this setting, look at <code>node_count</code> variable in the Terraform script datasci_vars.tfvars</p>
+</li>
+<li>
+<p>Setting up the Consul server nodes. We primarily use the Consul Key/Value store for storing the deployment facts and
+secrets in order to simplify integrating components as well credential look up post deployment.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_alerts_event_hubs_namespace"><a class="anchor" href="#_alerts_event_hubs_namespace"></a>2.7. Alerts Event Hubs Namespace</h3>
+<div class="paragraph">
+<p>This set of Event Hubs is responsible for storing any alerts generated by the pipeline monitoring system, the analytic
+data processing jobs, etc.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grafana_server_cluster"><a class="anchor" href="#_grafana_server_cluster"></a>2.8. Grafana server cluster</h3>
+<div class="paragraph">
+<p>This container instance named &lt;pipeline-name&gt;-grafana consists of a single <code>grafana-server</code> container. This container
+is responsible for setting up the Grafana server</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grafana_be_cluster"><a class="anchor" href="#_grafana_be_cluster"></a>2.9. Grafana BE cluster</h3>
+<div class="paragraph">
+<p>This container instance named &lt;pipeline-name&gt;-grafana-be-topic-integration consists of a set of containers responsible
+for consuming messages from the EventHubs instances in the <a href="#_alerts_event_hubs_namespace">Alerts Event Hubs Namespace</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grafana_fe_cluster"><a class="anchor" href="#_grafana_fe_cluster"></a>2.10. Grafana FE cluster</h3>
+<div class="paragraph">
+<p>This container instance named &lt;pipeline-name&gt;-grafana-fe-topic-integration consists of a set of containers responsible
+for consuming messages from the EventHubs instances in the &lt;&lt;MQTT Event Hubs Namespace&gt;. All the consumed messages
+are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for PostgreSQL resource.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_prometheus_cluster"><a class="anchor" href="#_prometheus_cluster"></a>2.11. Prometheus cluster</h3>
+<div class="paragraph">
+<p>This container instance named &lt;pipeline-name&gt;-monitor consists of two containers.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>prometheus</code> container is responsible for setting up a Prometheus server</p>
+</li>
+<li>
+<p><code>consul-exporter</code> container is responsible for exporting Consul metrics in Prometheus format</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>&lt;pipeline-name&gt;</code> is the combination of <code>cluster_name</code> and <code>environment</code> variables specified during deployment
+(see <a href="https://github.com/chesapeaketechnology/data-science/documentation/asciidoc//deployment/docs/DeploymentManual.adoc">DeploymentManual</a> for details and datasci_vars.tfvars in particular)</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_data_science_infrastructure_deployment"><a class="anchor" href="#_data_science_infrastructure_deployment"></a>3. Data Science Infrastructure Deployment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use this project to deploy an instance of a data science pipeline to Azure using Terraform and Ansible.</p>
+</div>
+<div class="paragraph">
+<p>Currently, the main Terraform datasci.tf script deploys the following resources to Azure.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A Resource Group (optional)</p>
+</li>
+<li>
+<p>A Virtual Network</p>
+</li>
+<li>
+<p>A Subnet for the MQTT broker, reverse proxy, and the CentOS VM worker nodes</p>
+</li>
+<li>
+<p>A Network Security Group for worker nodes and reverse proxy</p>
+</li>
+<li>
+<p>A storage accounts for boot diagnostics</p>
+</li>
+<li>
+<p>An Event Hubs Namespace, and an Event Hub instance per specified MQTT topic</p>
+</li>
+<li>
+<p>An Azure data lake storage container</p>
+</li>
+<li>
+<p>An Azure File Share to store files for the docker containers</p>
+</li>
+<li>
+<p>A Mosquitto MQTT Broker in a Docker Container</p>
+</li>
+<li>
+<p>An MQTT-to-Event-Hubs Connector in a Docker Container</p>
+</li>
+<li>
+<p>A CentOS VM with NGINX reverse proxy</p>
+</li>
+<li>
+<p>A CentOS VM with PostgreSQL v10</p>
+</li>
+<li>
+<p>A set of CentOS VM worker nodes with Apache Spark, HDFS, YARN, Jupyter Notebook, and Consul</p>
+</li>
+<li>
+<p>A Grafana server in a Docker container</p>
+</li>
+<li>
+<p>A set of container groups for Grafana data integrations</p>
+</li>
+<li>
+<p>A set of Azure Databases for PostgreSQL server use with Grafana server</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_initial_setup"><a class="anchor" href="#_initial_setup"></a>3.1. Initial Setup</h3>
+<div class="paragraph">
+<p>There are two Vagrant scripts provided in this project. They are included to help you set up your local environment
+for either administering the data science pipeline or for contributing changes to the project.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>localdev/Vagrantfile</code> will create a Desktop Ubuntu VM with many IDEs installed and configured
+(VS Code, PyCharm, IntelliJ, etc) as well as all the packages needed to actively develop, build and test
+the data-science project. Installing all the packages (especially the Ubuntu Desktop) takes a long time.
+If you will not be developing new features for the project an admin VM may be a better option for you.
+See <a href="#_to_set_up_a_development_environment">this section</a> for details.</p>
+</li>
+<li>
+<p><code>localadmin/Vagrantfile</code> will deploy an Ubuntu VM meant for administering the data-science project. As such, it will not
+include a Desktop environment or any of the IDEs. The admin image allows an administrator to create a Linux VM and
+deploy the data-science project to the Azure cloud. It also allows the admin to ssh to the created nodes to monitor their
+status.
+See <a href="#_to_set_up_an_administrator_environment">this section</a> for details.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_to_set_up_a_development_environment"><a class="anchor" href="#_to_set_up_a_development_environment"></a>3.2. To set up a Development environment</h3>
+<div class="paragraph">
+<p>If running on Windows, it is recommended to set up a Linux VM to do all the development and deployment from. Use the steps
+below to create an Ubuntu VM with Vagrant. If running on Linux or MacOS, setting up a dedicated development environment is
+not strictly necessary but is strongly recommended in order to avoid configuration issues.</p>
+</div>
+<div class="paragraph">
+<p>To set up a development environment on a Windows host, follow the steps below.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Clone this repository. In a terminal (bash or Powershell), run <code>git clone <a href="https://github.com/chesapeaketechnology/data-science" class="bare">https://github.com/chesapeaketechnology/data-science</a></code></p>
+</li>
+<li>
+<p>Install <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a></p>
+</li>
+<li>
+<p><a href="https://www.vagrantup.com/downloads.html">Install vagrant</a></p>
+</li>
+<li>
+<p>In a terminal (bash or Powershell), run <code>vagrant plugin install vagrant-vbguest</code></p>
+</li>
+<li>
+<p>In a terminal, run <code>vagrant plugin install vagrant-disksize</code></p>
+</li>
+<li>
+<p>In a terminal, run <code>cd data-scicence/localdev</code></p>
+</li>
+<li>
+<p>In a terminal, run <code>vagrant up</code> to create and boot the VM</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Note: this may take a long time to complete (&gt; 1h)</p>
+</li>
+<li>
+<p>In case the installation fails, restart it with <code>vagrant reload --provision</code> (will require at least a few reloads)</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Login to the VM, <code>username=vagrant, pass=vagrant</code></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_to_set_up_an_administrator_environment"><a class="anchor" href="#_to_set_up_an_administrator_environment"></a>3.3. To Set up an Administrator environment</h3>
+<div class="paragraph">
+<p>To set up an administrator environment on a Windows host, follow the steps below.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Clone this repository. In a terminal (bash or Powershell), run <code>git clone <a href="https://github.com/chesapeaketechnology/data-science" class="bare">https://github.com/chesapeaketechnology/data-science</a></code></p>
+</li>
+<li>
+<p>Install <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a></p>
+</li>
+<li>
+<p><a href="https://www.vagrantup.com/downloads.html">Install vagrant</a></p>
+</li>
+<li>
+<p>In a terminal (bash or Powershell), run <code>vagrant plugin install vagrant-vbguest</code></p>
+</li>
+<li>
+<p>In a terminal, run <code>vagrant plugin install vagrant-disksize</code></p>
+</li>
+<li>
+<p>In a terminal, run <code>cd data-scicence/localadmin</code></p>
+</li>
+<li>
+<p>In a terminal, run <code>vagrant up</code> from bash/Powershell to create and boot the VM</p>
+</li>
+<li>
+<p>In a terminal, run <code>vagrant ssh</code> to login to the VM, <code>username=vagrant, pass=vagrant</code></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_optional_manual_setup"><a class="anchor" href="#_optional_manual_setup"></a>3.4. (Optional) Manual setup</h3>
+<div class="paragraph">
+<p>If running on macOS or Linux natively, you can skip creating a dedicated VM. However, if you&#8217;re planning on contributing
+to the project, you will have to set up the development and testing environment manually on your host machine.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_an_ssh_key_pair"><a class="anchor" href="#_create_an_ssh_key_pair"></a>3.5. Create an SSH Key Pair</h3>
+<div class="paragraph">
+<p>You will need an SSH key pair to provision any virtual machine on Azure. When creating a pipeline using the datasci.tf Terraform
+script, all VMs will have their <a href="https://www.ssh.com/ssh/authorized_keys">authorized_keys</a> file updated to include your public key
+so that you can log in with SSH into the VM.</p>
+</div>
+<div class="paragraph">
+<p>If you already have created an SSH key, then you can skip creating a new SSH key pair.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>⚠️ WARNING:  Currently, only private SSH keys without passphrases are supported. If your <code>id_rsa</code> private ssh key has a passphrase you will need to remove it.</p>
+</div>
+</blockquote>
+</div>
+<div class="sect3">
+<h4 id="_create_a_new_ssh_key_pair"><a class="anchor" href="#_create_a_new_ssh_key_pair"></a>3.5.1. Create a new SSH key pair</h4>
+<div class="paragraph">
+<p>Detailed instructions can be found <a href="https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html">here</a></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>From a terminal window, run <code>ssh-keygen -C &quot;&quot;</code></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_add_your_ssh_key_to_your_ssh_agent"><a class="anchor" href="#_add_your_ssh_key_to_your_ssh_agent"></a>3.5.2. Add your ssh key to your ssh agent</h4>
+<div class="sect4">
+<h5 id="_macos"><a class="anchor" href="#_macos"></a>MacOS</h5>
+<div class="paragraph">
+<p>If you&#8217;re on MacOS you may need to re-add your keys to the ssh-agent each time you re-start. You can do this by
+running the following from Terminal:</p>
+</div>
+<div class="paragraph">
+<p><code>ssh-add</code></p>
+</div>
+<div class="paragraph">
+<p>If you want these keys added to your agent persistently you can use
+the AddKeysToAgent config setting in ~/.ssh/config. For example,</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Host *
+  UseKeychain yes
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_rsa</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you use a key with a password and would like to store the password in
+Keychain you can also add <code>UseKeychain yes</code> to the config file.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="https://www.manpagez.com/man/5/ssh_config/">the ssh_config man page</a> for more information.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_install_terraform"><a class="anchor" href="#_install_terraform"></a>3.6. Install Terraform</h3>
+<div class="sect3">
+<h4 id="_linux"><a class="anchor" href="#_linux"></a>3.6.1. Linux</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>From a terminal, run <code>sudo apt install unzip</code></p>
+</li>
+<li>
+<p>Download the binary from <a href="http://terraform.io/downloads.html" class="bare">http://terraform.io/downloads.html</a></p>
+</li>
+<li>
+<p>Once downloaded, unzip the binary by running <code>unzip terraform_0.12.20_linux_amd64.zip</code></p>
+</li>
+<li>
+<p>Finally, install the terraform binary to a common directory (a directory present on your PATH environment variable) by
+running <code>sudo mv terraform /usr/local/bin</code> in a terminal</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_macos_2"><a class="anchor" href="#_macos_2"></a>3.6.2. macOS</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="https://brew.sh/">Install brew</a></p>
+</li>
+<li>
+<p><code>brew install terraform</code></p>
+</li>
+</ol>
+</div>
+<div class="sect4">
+<h5 id="_test_terraform"><a class="anchor" href="#_test_terraform"></a>Test Terraform</h5>
+<div class="listingblock">
+<div class="content">
+<pre>dino@twofatcheeks:~$ terraform
+Usage: terraform [-version] [-help] &lt;command&gt; [args]
+
+The available commands for execution are listed below.
+The most common, useful commands are shown first, followed by
+less common or more advanced commands. If you're just getting
+started with Terraform, stick with the common commands. For the
+other commands, please read the help and docs before usage.
+
+Common commands:
+    apply              Builds or changes infrastructure
+    console            Interactive console for Terraform interpolations</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_install_azure_cli"><a class="anchor" href="#_install_azure_cli"></a>3.7. Install Azure CLI</h3>
+<div class="sect3">
+<h4 id="_linux_2"><a class="anchor" href="#_linux_2"></a>3.7.1. Linux</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>curl -sL <a href="https://aka.ms/InstallAzureCLIDeb" class="bare">https://aka.ms/InstallAzureCLIDeb</a> | sudo bash</code></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_macos_3"><a class="anchor" href="#_macos_3"></a>3.7.2. macOS</h4>
+<div class="paragraph">
+<p><a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos?view=azure-cli-latest">Detailed instructions</a>
+1. <code>brew update &amp;&amp; brew install azure-cli</code></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_try_it"><a class="anchor" href="#_try_it"></a>3.7.3. Try it</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>az cloud set --name AzureCloud</code></p>
+</li>
+<li>
+<p><code>az login</code></p>
+</li>
+<li>
+<p>You&#8217;ll see output similar to this</p>
+<div class="literalblock">
+<div class="content">
+<pre>----
+[
+  {
+    "cloudName": "AzureCloud",
+    "homeTenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "id": "07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "isDefault": true,
+    "managedByTenants": [],
+    "name": "Azure subscription 1",
+    "state": "Enabled",
+    "tenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "user": {
+      "name": "&lt;username&gt;@example.com",
+      "type": "user"
+    }
+  }
+]
+----</pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>az account set --subscription=&quot;07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</code>, but use the actual ID from above</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_install_ansible"><a class="anchor" href="#_install_ansible"></a>3.8. Install Ansible</h3>
+<div class="sect3">
+<h4 id="_linux_3"><a class="anchor" href="#_linux_3"></a>3.8.1. Linux</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>sudo apt-add-repository --yes --update ppa:ansible/ansible</code></p>
+</li>
+<li>
+<p><code>sudo apt install ansible</code></p>
+</li>
+<li>
+<p>To verify, run <code>ansible --version</code>. You should see output similar to this:</p>
+<div class="literalblock">
+<div class="content">
+<pre>----
+ansible 2.9.4
+ config file = /etc/ansible/ansible.cfg
+ configured module search path = [u'/home/dino/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+ ansible python module location = /usr/lib/python2.7/dist-packages/ansible
+ executable location = /usr/bin/ansible
+ python version = 2.7.17 (default, Nov  7 2019, 10:07:09) [GCC 7.4.0]
+----</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Install pip, <code>sudo apt install python-pip</code></p>
+</li>
+<li>
+<p><code>pip install ansible[azure]</code></p>
+</li>
+<li>
+<p><code>ansible-galaxy install geerlingguy.java</code></p>
+</li>
+<li>
+<p>Disable host checking by un-commenting <code>host_key_checking = False</code> under <code>/etc/ansible/ansible.cfg</code></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_macos_4"><a class="anchor" href="#_macos_4"></a>3.8.2. macOS</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>brew install ansible</code></p>
+</li>
+<li>
+<p><code>pip3 install &#39;ansible[azure]&#39;</code></p>
+</li>
+<li>
+<p><code>ansible-galaxy install geerlingguy.java</code></p>
+</li>
+<li>
+<p>To verify, run <code>ansible --version</code></p>
+</li>
+<li>
+<p>Disable host checking by uncommenting <code>host_key_checking = False</code> under <code>/usr/local/etc/ansible/ansible.cfg</code></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_the_terraform_deployment"><a class="anchor" href="#_run_the_terraform_deployment"></a>3.9. Run the Terraform Deployment</h3>
+<div class="paragraph">
+<p>The following set of commands will deploy the data science pipeline to Azure. By default, the deployment process will create
+a new resource group, and the rest of the resources will be added under that resource group. If however, you&#8217;re deploying
+to an existing resource group, you will have to import the existing resource group to the Terraform state file.
+In a terminal, run:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>cd provision-datasci</code></p>
+</li>
+<li>
+<p><code>terraform init</code></p>
+</li>
+<li>
+<p>If deploying the pipeline resources under an existing resource group, run
+<code>terraform import azurerm_resource_group.datasci_group /subscriptions/&lt;subscription_id&gt;/resourceGroups/&lt;resource-group-name&gt;</code>
+where</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><code>&lt;subscription_id&gt;</code> is your Azure subscription that you&#8217;re working with</p>
+</li>
+<li>
+<p><code>&lt;resource-group-name&gt;</code> is the actual name of the existing resource group</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Update the Ansible vault password. This password is stored in Dashlane so request it from the repo owners and then simply copy it to <code>~/.vaultpw</code> file on your dev machine.</p>
+</li>
+<li>
+<p>Finally, run <code>terraform apply datasci.tf -var-file=datasci_vars.tfvars</code></p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>There are two variables whose defaults have to be provided for the script to work, <code>mqtt_topics</code> and <code>mqtt_users</code>.</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p><code>mqtt_topics</code> controls the created message topics. The datasci.tf script will create an Azure EventHubs instance
+for each topic and the mqtt-azure-eventub-connector will forward all messages from the MQTT broker to the EventHubs.
+To provide a list of topics to create withing the pipeline, add the following to the above command
+<code>-var=&quot;mqtt_topics&quot;=&#39;[&quot;LTE_MESSAGE&quot;, &quot;UMTS_MESSAGE&quot;, &quot;CDMA_MESSAGE&quot;, &quot;GSM_MESSAGE]&#39;</code></p>
+</li>
+<li>
+<p><code>mqtt_users</code> controls which users are provisioned passwords and given access to the MQTT broker. The passwords are
+gerated using the <code>mosquito_passwd</code> utility and are stored in Consul. To provide a list of users who will be granted access
+to the MQTT broker, add the following to the above command
+<code>-var=&quot;mqtt_users=&#39;[&quot;dino&quot;,&quot;christian&quot;]&#39;</code></p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Lastly, to ensure Terraform deployed everything correctly, log into the Azure portal and note the added resources.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_optional_tear_down_the_azure_deployment"><a class="anchor" href="#_optional_tear_down_the_azure_deployment"></a>3.10. (Optional) Tear down the Azure Deployment</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>To tear down the allocations, run <code>terraform destroy -var-file=datasci_vars.tfvars</code>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_frequently_asked_questions_faq"><a class="anchor" href="#_frequently_asked_questions_faq"></a>4. Frequently Asked Questions (FAQ)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Following are the answers to some frequently asked questions.</p>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_log_into_a_worker_node"><a class="anchor" href="#_how_do_i_log_into_a_worker_node"></a>4.1. How do I log into a worker node</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>ssh datasci_admin@&lt;vm-name&gt;.&lt;azure-cloud-url&gt;</code> where</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p><code>&lt;vm-name&gt;</code> is the Virtual Machine name (e.g. datasci-dev0)</p>
+</li>
+<li>
+<p><code>&lt;azure-cloud-url&gt;</code> is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_set_up_port_forwarding_for_an_application"><a class="anchor" href="#_how_do_i_set_up_port_forwarding_for_an_application"></a>4.2. How do I set up port forwarding for an application</h3>
+<div class="paragraph">
+<p>SSH port forwarding is a mechanism for tunneling application ports from a client to a server. The data science pipeline
+deploys a number of applications/services that have custom web interfaces. To access these applications on the worker nodes
+you will need to follow these steps.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In a terminal, run <code>ssh -N -f -L localhost:&lt;app-port&gt;:&lt;node-private-ip&gt;:&lt;app-port&gt; datasci_admin@&lt;vm-name&gt;.&lt;azure-cloud-url&gt;</code> where</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p><code>&lt;app-port&gt;</code> is the application port number (e.g. 8500 for Consul, 8088 for YARN, 9090 for Prometheus)</p>
+</li>
+<li>
+<p><code>&lt;node-private-ip&gt;</code> is the private IP address of the VM running the application</p>
+</li>
+<li>
+<p><code>&lt;vm-name&gt;</code> is the Virtual Machine name (e.g. datasci-dev0)</p>
+</li>
+<li>
+<p><code>&lt;azure-cloud-url&gt;</code> is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_check_the_status_of_spark_jobs"><a class="anchor" href="#_how_do_i_check_the_status_of_spark_jobs"></a>4.3. How do I check the status of Spark jobs</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Set up <a href="#_how_do_i_set_up_port_forwarding_for_an_application">port forwarding</a> using port 8088, and the private IP
+address of the NameNode</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>See <a href="#_how_do_i_figure_out_which_worker_node_is_the_namenode">How do I figure out which worker node is the NameNode</a></p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Open an Internet browser page at localhost:8088</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_look_up_the_mqtt_broker_passwords"><a class="anchor" href="#_how_do_i_look_up_the_mqtt_broker_passwords"></a>4.4. How do I look up the MQTT broker passwords</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Set up <a href="#_how_do_i_set_up_port_forwarding_for_an_application">port forwarding</a> using port 8500 and 'localhost' as &lt;node-private-ip&gt;</p>
+</li>
+<li>
+<p>Open an Internet browser page at localhost:8500</p>
+</li>
+<li>
+<p>Browse to the 'Key/Value' page on Consul&#8217;s web page and then look at mqtt/user/&lt;user-name&gt; key. The key&#8217;s value is the
+password for &lt;user-name&gt;</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_look_at_the_status_of_provisioned_prometheus_targets"><a class="anchor" href="#_how_do_i_look_at_the_status_of_provisioned_prometheus_targets"></a>4.5. How do I look at the status of provisioned Prometheus targets</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Set up <a href="#_how_do_i_set_up_port_forwarding_for_an_application">port forwarding</a> using port 9090, and the private IP
+address of the <code>&lt;pipeline-name&gt;-monitor</code> container group where</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><code>&lt;pipeline-name&gt;</code> is the combination of <code>cluster_name</code> and <code>environment</code> variables specified during deployment
+(see <a href="https://github.com/chesapeaketechnology/data-science/documentation/asciidoc//deployment/docs/DeploymentManual.adoc">DeploymentManual</a> for details and datasci_vars.tfvars in particular)</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Open an Internet browser page at localhost:9090</p>
+</li>
+<li>
+<p>Browse to 'Status/Targets' page to see the status of configured Prometheus targets</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_open_a_jupyter_notebook"><a class="anchor" href="#_how_do_i_open_a_jupyter_notebook"></a>4.6. How do I open a Jupyter notebook</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Look up the Jupyter admin password from Consul (at jupyter/admin/password path)</p>
+</li>
+<li>
+<p>Log in using the above password from an Internet browser at <a href="https://&lt;vm-name&gt;.&lt;azure-cloud-url&gt;:9999" class="bare">https://&lt;vm-name&gt;.&lt;azure-cloud-url&gt;:9999</a> where</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p><code>&lt;vm-name&gt;</code> is the Virtual Machine name (e.g. datasci-dev0)</p>
+</li>
+<li>
+<p><code>&lt;azure-cloud-url&gt;</code> is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_figure_out_which_worker_node_is_the_namenode"><a class="anchor" href="#_how_do_i_figure_out_which_worker_node_is_the_namenode"></a>4.7. How do I figure out which worker node is the NameNode</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log into one of the worker machines (see <a href="#_how_do_i_log_into_a_worker_node">above</a> for details)</p>
+</li>
+<li>
+<p>Look up the <code>/etc/hosts</code> file contents</p>
+</li>
+<li>
+<p>The node listed first after the localhost entries is the NameNode</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_check_the_status_of_hdfs_and_yarn"><a class="anchor" href="#_how_do_i_check_the_status_of_hdfs_and_yarn"></a>4.8. How do I check the status of HDFS and YARN</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log into one of the worker machines (see <a href="#_how_do_i_log_into_a_worker_node">above</a> for details)</p>
+</li>
+<li>
+<p>List the files currently in the datalake by running:
+<code>hadoop fs -ls abfs://&lt;datalake-container&gt;@&lt;datalake-storage-name&gt;.&lt;azure-datalake-url&gt;</code> where</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p><code>&lt;datalake-container&gt;</code> is the name of the container (e.g. datasci-dev-container)</p>
+</li>
+<li>
+<p><code>&lt;datalake-storage-name&gt;</code> is the name of the storage account (e.g. datascidevlakestorage)</p>
+</li>
+<li>
+<p><code>&lt;azure-datalake-url&gt;</code> is the URL of the datalake (e.g. dfs.core.windows.net/). This URL is
+available from Azure portal on the datalake 'Properties' page)</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Alternatively,</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In a terminal on the <a href="#_how_do_i_figure_out_which_worker_node_is_the_namenode">NameNode</a>, run <code>jps</code>.
+It should show the following output:</p>
+<div class="literalblock">
+<div class="content">
+<pre>[source]
+----
+$ ssh hadoop@cti-dev1.eastus.cloudapp.azure.com
+Last login: Mon Oct 19 19:16:54 2020 from utm1.ctic-inc.com
+[hadoop@ctidev1 ~]$ jps
+8833 Jps
+20258 ResourceManager
+20370 NodeManager
+19861 DataNode
+19725 NameNode
+20029 SecondaryNameNode
+[hadoop@ctidev1 ~]$
+----</pre>
+</div>
+</div>
+</li>
+<li>
+<p>In a terminal on a datanode (i.e. not NameNode), run <code>jps</code>. It should show the following output:</p>
+<div class="literalblock">
+<div class="content">
+<pre>[source]
+----
+$ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
+[hadoop@ctidev2 ~]$ jps
+32215 Jps
+10172 DataNode
+10333 NodeManager
+[hadoop@ctidev2 ~]$
+----</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_start_hdfs_and_yarn_services"><a class="anchor" href="#_how_do_i_start_hdfs_and_yarn_services"></a>4.9. How do I start HDFS and YARN services</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>First figure out which worker node is the HDFS NameNode</p>
+</li>
+<li>
+<p>Log into the NameNode (see <a href="#_how_do_i_log_into_a_worker_node">above</a> for details) using the <code>hadoop</code> user name</p>
+</li>
+<li>
+<p>In a terminal on the <a href="#_how_do_i_figure_out_which_worker_node_is_the_namenode">NameNode</a>, run:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><code>/usr/local/hadoop/sbin/hadoop/start-hdfs.sh</code></p>
+</li>
+<li>
+<p>followed by`/usr/local/hadoop/sbin/hadoop/start-yarn.sh`</p>
+</li>
+<li>
+<p>Check the services <a href="#_how_do_i_check_the_status_of_hdfs_and_yarn">started correctly</a></p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_access_grafana_dashboards"><a class="anchor" href="#_how_do_i_access_grafana_dashboards"></a>4.10. How do I access Grafana dashboards</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Look up the reverse proxy&#8217;s fully qualified domain name in Consul&#8217;s Key/Value store at reverseproxy/fqdn path</p>
+</li>
+<li>
+<p>Look up the Grafana admin password in Consul, or the Terraform state file</p>
+</li>
+<li>
+<p>Open an Internet browser at <a href="https://&lt;reverseproxy-fqdn&gt" class="bare">https://&lt;reverseproxy-fqdn&gt</a>; where</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><code>&lt;reverseproxy-fqdn&gt;</code> is the url looked up above</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Log into Grafana using <code>admin</code> user name, and the password looked up above</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_confirm_messages_are_flowing_from_my_device_through_the_pipeline"><a class="anchor" href="#_how_do_i_confirm_messages_are_flowing_from_my_device_through_the_pipeline"></a>4.11. How do I confirm messages are flowing from my device through the pipeline</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log into Azure portal</p>
+</li>
+<li>
+<p>Look at &lt;pipeline-name&gt;-mqtt-eventhubs-namespace resource page and look at the metrics graph, where</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p><code>&lt;pipeline-name&gt;</code> is the combination of <code>cluster_name</code> and <code>environment</code> variables specified during deployment
+(see <a href="https://github.com/chesapeaketechnology/data-science/documentation/asciidoc//deployment/docs/DeploymentManual.adoc">DeploymentManual</a> for details and datasci_vars.tfvars in particular)</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If messages are not getting to the eventhubs namespace</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Browse to the &lt;pipeline-name&gt;-mqtt Container Instance resource page</p>
+</li>
+<li>
+<p>Look at the logs of the <code>mqtt</code> container. No errors should be shown</p>
+</li>
+<li>
+<p>Look at the logs of the <code>connector</code> container. No errors should be shown</p>
+</li>
+<li>
+<p>Make sure your device is able to connect to the MQTT broker and is sending messages</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If messages are flowing to the eventhubs namespace, next check the specific EventHubs instance (topic) that you&#8217;re
+interested in</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If messages are not getting to the specific EventHub instance, make sure your sensor is actually collecting and sending
+the messages you&#8217;re expecting to see</p>
+</li>
+<li>
+<p>If messages are getting to the EventHub instance, next look at &lt;pipeline-name&gt;lake Storage Account resource page</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Browse to 'Containers/&lt;pipeline-name&gt;-container/&lt;pipeline-name&gt;-mqtt-eventhubs-namespace/&lt;message_topic&gt;'</p>
+</li>
+<li>
+<p>Browse to an avro file corresponding to the current date/time. If a recent file exists, the messages are landing
+into the data lake</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Look at the <a href="#_how_do_i_check_the_status_of_spark_jobs">Spark job status page</a></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reverse_proxy_status"><a class="anchor" href="#_reverse_proxy_status"></a>4.12. Reverse Proxy status</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In a terminal, run <code>ssh nginx_admin@&lt;pipeline-name&gt;-nginx.&lt;azure-cloud-url&gt;</code> where</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><code>&lt;pipeline-name&gt;</code> is the combination of <code>cluster_name</code> and <code>environment</code> variables specified during deployment
+(see <a href="https://github.com/chesapeaketechnology/data-science/documentation/asciidoc//deployment/docs/DeploymentManual.adoc">DeploymentManual</a> for details and datasci_vars.tfvars in particular)</p>
+</li>
+<li>
+<p><code>&lt;azure-cloud-url&gt;</code> is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph text-center">
+<p>&#169; Copyright 2020 CTI</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2020-11-06 16:17:14 -0500
+</div>
+</div>
+</body>
+</html>
