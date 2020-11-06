@@ -3,103 +3,90 @@ import org.asciidoctor.gradle.jvm.pdf.AsciidoctorPdfTask
 import org.kordamp.gradle.livereload.LiveReloadTask
 
 plugins {
-  id 'com.github.ben-manes.versions' version '0.14.0'
-  id 'org.asciidoctor.jvm.gems' version '3.1.0'
-  id 'org.asciidoctor.jvm.convert' version '3.1.0'
-  id 'org.asciidoctor.jvm.pdf' version '3.1.0'
-  id 'org.kordamp.gradle.livereload' version '0.2.1' apply false
-  id 'maven-publish'
-  id 'nu.studer.credentials' version '1.0.7'
+    id 'com.github.ben-manes.versions' version '0.14.0'
+    id 'org.asciidoctor.jvm.gems' version '3.1.0'
+    id 'org.asciidoctor.jvm.convert' version '3.1.0'
+    id 'org.asciidoctor.jvm.pdf' version '3.1.0'
+    id 'org.kordamp.gradle.livereload' version '0.2.1' apply false
+    id 'maven-publish'
+    id 'nu.studer.credentials' version '1.0.7'
 }
 
 defaultTasks 'build' // If no task is given, default to 'build'
 
 wrapper {
-  gradleVersion = '6.3'
+    gradleVersion = '6.3'
 }
 
 subprojects {
-  apply plugin: 'org.asciidoctor.jvm.gems'
-  apply plugin: 'org.asciidoctor.jvm.convert'
-  apply plugin: 'org.asciidoctor.jvm.pdf'
+    apply plugin: 'org.asciidoctor.jvm.gems'
+    apply plugin: 'org.asciidoctor.jvm.convert'
+    apply plugin: 'org.asciidoctor.jvm.pdf'
 
-  dependencies {
-    asciidoctorGems 'rubygems:rouge:3.15.0'
-  }
-
-  repositories {
-    mavenCentral()
-    jcenter()
-    ruby {
-      gems()
-    }
-  }
-
-  asciidoctorj {
-    requires 'rouge'
-    attributes 'allow-uri-read': '',
-      'source-highlighter': 'rouge',
-      'rouge-style': 'neo.forest',
-      'currentyear': '2020',
-      'imagesdir': 'images'
-  }
-
-  task convertOnlineHtml(type: AsciidoctorTask) {
-    dependsOn asciidoctorGemsPrepare
-
-    resources {
-      from("${projectDir}/images") {
-        include '**'
-        into 'images'
-      }
+    dependencies {
+        asciidoctorGems 'rubygems:rouge:3.15.0'
     }
 
-    baseDir file("${projectDir}/docs")
-    sourceDir file("${projectDir}/docs")
-    outputDir file("${projectDir}/build/online")
-  }
-
-  task convertOnlinePdf(type: AsciidoctorPdfTask) {
-    dependsOn asciidoctorGemsPrepare
-
-    def customThemeDir = new File("${rootProject.projectDir}/modules/${project.name}/themes/pdf-theme.yml")
-    def customFontsDir = new File("${rootProject.projectDir}/modules/${project.name}/fonts/")
-    def themeToUse
-
-    //Checks for custom font & theme folders, otherwise uses defaults.
-    if (customFontsDir.exists()) {
-      fontsDir = customFontsDir
-    } else {
-      fontsDir = new File("${rootProject.projectDir}/resources/fonts/")
-    }
-
-    if (customThemeDir.exists()) {
-      themeToUse = customThemeDir
-    } else {
-      themeToUse = new File("${rootProject.projectDir}/resources/themes/pdf-theme.yml")
+    repositories {
+        mavenCentral()
+        jcenter()
+        ruby {
+            gems()
+        }
     }
 
     asciidoctorj {
-      modules.pdf.version '1.5.2'
-      attributes 'pdf-style': themeToUse,
-              'imagesdir': '../images'
+        requires 'rouge'
+        attributes 'allow-uri-read': '',
+                'source-highlighter': 'rouge',
+                'rouge-style': 'neo.forest',
+                'currentyear': '2020',
+                'imagesdir': 'images'
     }
 
-    baseDir file("${projectDir}/docs")
-    sourceDir file("${projectDir}/docs")
-    outputDir file("${projectDir}/build/online")
-  }
+    task convertOnlineHtml(type: AsciidoctorTask) {
+        dependsOn asciidoctorGemsPrepare
 
-  task convert {
-    dependsOn convertOnlineHtml
-    dependsOn convertOnlinePdf
-  }
+        resources {
+            from("${projectDir}/images") {
+                include '**'
+                into 'images'
+            }
+        }
 
-  task liveReload(type: LiveReloadTask) {
-    docRoot "${projectDir}/build"
-  }
+        baseDir file("${projectDir}")
+        sourceDir file("${projectDir}")
+        outputDir file("${projectDir}/build/online")
+    }
 
-  build {
-    dependsOn convert
-  }
+    task convertOnlinePdf(type: AsciidoctorPdfTask) {
+        dependsOn asciidoctorGemsPrepare
+
+        fontsDir = new File("${rootProject.projectDir}/resources/fonts/")
+
+        def themeToUse = new File("${rootProject.projectDir}/resources/themes/pdf-theme.yml")
+
+        asciidoctorj {
+            modules.pdf.version '1.5.2'
+            attributes 'pdf-style': themeToUse,
+                    'imagesdir': '../images'
+        }
+
+        baseDir file("${projectDir}")
+        sourceDir file("${projectDir}")
+        outputDir file("${projectDir}/build/online")
+    }
+
+    task convert {
+        dependsOn convertOnlineHtml
+        dependsOn convertOnlinePdf
+    }
+
+    task liveReload(type: LiveReloadTask) {
+        docRoot "${projectDir}/build"
+    }
+
+    build {
+        dependsOn convert
+    }
 }

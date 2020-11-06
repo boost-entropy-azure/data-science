@@ -1,9 +1,7 @@
-:toc:
-// settings
-:uri-org: https://github.com/chesapeaketechnology/data-science/
-:doc-path: documentation/modules/
 
-= Frequently Asked Questions
+== Frequently Asked Questions (FAQ)
+Following are the answers to some frequently asked questions.
+
 
 === How do I log into a worker node
 . `ssh datasci_admin@<vm-name>.<azure-cloud-url>` where
@@ -11,7 +9,7 @@
 ... `<azure-cloud-url>` is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)
 
 === How do I set up port forwarding for an application
-SSh port forwarding is a mechanism for tunneling application ports from a client to a server. The data science pipeline
+SSH port forwarding is a mechanism for tunneling application ports from a client to a server. The data science pipeline
 deploys a number of applications/services that have custom web interfaces. To access these applications on the worker nodes
 you will need to follow these steps.
 
@@ -24,6 +22,7 @@ you will need to follow these steps.
 === How do I check the status of Spark jobs
 . Set up <<How do I set up port forwarding for an application, port forwarding>> using port 8088, and the private IP
 address of the NameNode
+.. See <<How do I figure out which worker node is the NameNode>>
 . Open an Internet browser page at localhost:8088
 
 === How do I look up the MQTT broker passwords
