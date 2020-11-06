@@ -7,6 +7,7 @@
 A detailed documentation on deploying an Azure-hosted instance of the data science pipeline is available
 {uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[here]
 
+{uri-org}{doc-path}/administration/docs/AdministrationManual.adoc[Administration Guide]
 {uri-org}{doc-path}/faq/docs/FAQ.adoc[FAQ]
 
 == Change Log
