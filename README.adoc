@@ -4,11 +4,7 @@
 
 = Data Science Pipeline
 
-{uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[Deployment Guide]
-
-{uri-org}{doc-path}/administration/docs/AdministrationManual.adoc[Administration Guide]
-
-{uri-org}{doc-path}/faq/docs/FAQ.adoc[FAQ]
+The Data Science Pipeline Documentation can be found https://chesapeaketechnology.github.io/data-science/[here].
 
 == Change Log
 
