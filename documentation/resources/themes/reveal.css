@@ -1,0 +1,1094 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,800&display=swap');
+
+/**
+ * White theme for reveal.js. This is the opposite of the 'black' theme.
+ * By Hakim El Hattab, http://hakim.se
+ */
+section.has-dark-background, section.has-dark-background h1, section.has-dark-background h2, section.has-dark-background h3, section.has-dark-background h4, section.has-dark-background h5, section.has-dark-background h6 {
+  color: #fff;
+}
+
+/* GLOBAL STYLES */
+body {
+  background: #fff;
+}
+
+.reveal {
+  font-family: "Open Sans", Helvetica, sans-serif;
+  font-size: 42px;
+  font-weight: normal;
+  color: #555;
+}
+
+::selection {
+  color: #fff;
+  background: #98bdef;
+  text-shadow: none;
+}
+
+::-moz-selection {
+  color: #fff;
+  background: #98bdef;
+  text-shadow: none;
+}
+
+.reveal .slides section,
+.reveal .slides section > section {
+  line-height: 1.3;
+  font-weight: inherit;
+}
+
+/* HEADERS */
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  margin: 0 0 20px 0;
+  color: #222;
+  font-family: "Open Sans", Helvetica, sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-shadow: none;
+  word-wrap: break-word;
+}
+
+.reveal h1,
+.reveal section.slide-start-title > h2 {
+  font-size: 2.5em;
+}
+
+.reveal h2 {
+  /* was 1.6 */
+  font-size: 1.3em;
+}
+
+.reveal h3 {
+  font-size: 1.3em;
+}
+
+.reveal h4 {
+  /* was 1 */
+  font-size: 1.3em;
+}
+
+.reveal h1,
+.reveal section.slide-start-title > h2 {
+  text-shadow: none;
+}
+
+/* OTHER */
+.reveal p {
+  margin: .25em 0;
+  line-height: 1.3;
+}
+
+/* Ensure certain elements are never larger than the slide itself */
+.reveal img,
+.reveal video,
+.reveal iframe {
+  max-width: 95%;
+  max-height: 95%;
+}
+
+.reveal strong,
+.reveal b {
+  font-weight: bold;
+}
+
+.reveal em {
+  font-style: italic;
+}
+
+.reveal ol,
+.reveal dl,
+.reveal ul {
+  display: inline-block;
+  text-align: left;
+}
+
+.reveal ol {
+  margin-left: 1.75em
+}
+
+.reveal ul li ol {
+  margin-left: 1.5em
+}
+
+.reveal dl dd {
+  margin-left: 1.125em
+}
+
+.reveal ol {
+  list-style-type: decimal;
+}
+
+.reveal ul {
+  list-style-type: disc;
+}
+
+.reveal ul ul {
+  list-style-type: square;
+}
+
+.reveal ul ul ul {
+  list-style-type: circle;
+}
+
+.reveal ul ul,
+.reveal ul ol,
+.reveal ol ol,
+.reveal ol ul {
+  display: block;
+  margin-left: 40px;
+}
+
+.reveal dt {
+  font-weight: bold;
+}
+
+.reveal dd {
+  margin-left: 40px;
+}
+
+.reveal blockquote {
+  display: block;
+  position: relative;
+  width: 70%;
+  margin: 20px auto;
+  padding: 5px;
+  font-style: italic;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.reveal blockquote p:first-child,
+.reveal blockquote p:last-child {
+  display: inline-block;
+}
+
+.reveal q {
+  font-style: italic;
+}
+
+.reveal pre {
+  display: block;
+  position: relative;
+  width: 90%;
+  margin: 20px auto;
+  text-align: left;
+  font-size: 0.55em;
+  font-family: monospace;
+  line-height: 1.2em;
+  word-wrap: break-word;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.reveal code {
+  font-family: monospace;
+  text-transform: none;
+}
+
+.reveal pre code {
+  display: block;
+  padding: 5px;
+  overflow: auto;
+  max-height: 400px;
+  word-wrap: normal;
+}
+
+.reveal table {
+  margin: auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.reveal table th {
+  font-weight: bold;
+}
+
+.reveal table th,
+.reveal table td {
+  text-align: left;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  border-bottom: 1px solid;
+}
+
+.reveal table th[align="center"],
+.reveal table td[align="center"] {
+  text-align: center;
+}
+
+.reveal table th[align="right"],
+.reveal table td[align="right"] {
+  text-align: right;
+}
+
+.reveal table tbody tr:last-child th,
+.reveal table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.reveal sup {
+  vertical-align: super;
+  font-size: smaller;
+}
+
+.reveal sub {
+  vertical-align: sub;
+  font-size: smaller;
+}
+
+.reveal small {
+  display: inline-block;
+  font-size: 0.6em;
+  line-height: 1.2em;
+  vertical-align: top;
+}
+
+.reveal small * {
+  vertical-align: top;
+}
+
+/* LINKS */
+.reveal a {
+  color: #2a76dd;
+  text-decoration: none;
+  -webkit-transition: color .15s ease;
+  -moz-transition: color .15s ease;
+  transition: color .15s ease;
+}
+
+.reveal a:hover {
+  color: #6ca0e8;
+  text-shadow: none;
+  border: none;
+}
+
+.reveal .roll span:after {
+  color: #fff;
+  background: #1a53a1;
+}
+
+/* IMAGES */
+.reveal section img {
+  margin: 15px 0;
+  padding: 20px;
+}
+
+.reveal section img.plain {
+  border: 0;
+  box-shadow: none;
+}
+
+.reveal a img {
+  -webkit-transition: all .15s linear;
+  -moz-transition: all .15s linear;
+  transition: all .15s linear;
+}
+
+.reveal a:hover img {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #2a76dd;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
+}
+
+/* NAVIGATION CONTROLS */
+.reveal .controls {
+  color: #2a76dd;
+}
+
+/* PROGRESS BAR */
+.reveal .progress {
+  background: linear-gradient(to right, #6fb9ed, #70c9aa);
+  color: #db96f799;
+  height: 10px;
+}
+
+.reveal .progress span {
+  -webkit-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
+  -moz-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
+  transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
+}
+
+/* PRINT BACKGROUND */
+@media print {
+  .backgrounds {
+    background-color: #fff;
+  }
+}
+
+/**
+ * NEO4J
+ */
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: #595959;
+  font-size: 18px;
+}
+
+.reveal .slides > section {
+  padding: 10px 0 20px 0px;
+}
+
+.reveal .slides section {
+  text-align: start;
+}
+
+.reveal .slide-number > a {
+  top: -25px;
+  color: #666666;
+  left: 5px;
+  text-decoration: none;
+}
+
+.reveal .slide-number {
+  position: absolute;
+  display: block;
+  left: 0;
+  bottom: 0;
+  z-index: 31;
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 1;
+  color: #fff;
+  background: none;
+  width: 100%;
+  padding-left: 5px;
+  padding-bottom: 2px;
+}
+
+.reveal .controls {
+  color: #666;
+  bottom: 25px;
+}
+
+.reveal h1 {
+  color: white;
+  display: flex;
+  text-transform: none;
+  font-weight: 800;
+  margin-top: 12rem;
+}
+
+.reveal div.paragraph {
+  padding-bottom: 0.1em;
+}
+
+.reveal div.ulist {
+  padding-left: 2rem;
+  margin-bottom: 1.25rem;
+}
+
+.reveal p {
+  padding-bottom: 0.5rem;
+}
+
+.reveal h2 {
+  text-transform: none;
+  color: #666666;
+  font-weight: 700;
+}
+
+
+.is-full {
+  width: 100%;
+  clear: both;
+}
+
+.is-half {
+  width: 50%;
+}
+
+.is-half.left > .content {
+  padding-right: 0.5em;
+}
+
+.is-half.right > .content {
+  padding-left: 0.5em;
+}
+
+.is-one-third {
+  width: 30%;
+}
+
+.is-two-thirds {
+  width: 70%;
+}
+
+.is-one-quarter {
+  width: 25%;
+}
+
+.is-three-quarters {
+  width: 75%;
+}
+
+.is-full {
+  width: 100%;
+  clear: both;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.reveal .is-two-thirds pre {
+  width: 100%;
+}
+
+.two-columns > .content {
+  display: flex;
+}
+
+.two-columns > .content > *:not(:last-child) {
+  margin-right: 2em;
+}
+
+.two-columns > .content > * {
+  flex: 1;
+}
+
+.reveal em {
+  font-style: italic;
+}
+
+.reveal code {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+  padding: .2em .4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(27, 31, 35, .05);
+  border-radius: 3px;
+}
+
+pre.rouge .n, pre.rouge .na, pre.rouge .nb, pre.rouge .nc, pre.rouge .nd, pre.rouge .ne, pre.rouge .nx, pre.rouge .nt {
+  background-color: transparent;
+}
+
+.reveal ul > li > p {
+  line-height: 1;
+}
+
+.keyseq {
+  color: rgba(51, 51, 51, 0.8)
+}
+
+kbd:not(.keyseq) {
+  display: inline-block;
+  color: rgba(0, 0, 0, 0.8);
+  font-size: .75em;
+  line-height: 1.4;
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 0.1em #fff inset;
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 0.1em #fff inset;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 0.1em #fff inset;
+  margin: -0.15em 0.15em 0 0.15em;
+  padding: 0.2em 0.6em 0.2em 0.5em;
+  vertical-align: middle;
+  white-space: nowrap
+}
+
+.keyseq kbd:first-child {
+  margin-left: 0
+}
+
+.keyseq kbd:last-child {
+  margin-right: 0
+}
+
+.reveal kbd {
+  font-family: monospace, serif;
+  font-size: 1em;
+}
+
+.reveal section.summary > h2,
+.reveal section.title > h2,
+.reveal section.student-exercise > h2,
+.reveal section.slide-title > h2 {
+  margin-top: 6rem;
+}
+
+.reveal section.slide-start-title > h2 {
+  font-weight: 800;
+  margin-top: 12rem;
+}
+
+/* backgrounds */
+.reveal section.title,
+.reveal section.summary,
+.reveal section.quiz,
+.reveal section.slide-title,
+.reveal section.student-exercise,
+.reveal section.bg-purple,
+.reveal section.has-purple-background,
+.reveal section.has-green-background,
+.reveal section.has-gold-background,
+.reveal section.title > h2,
+.reveal section.summary > h2,
+.reveal section.quiz > h2,
+.reveal section.slide-title > h2,
+.reveal section.student-exercise > h2,
+.reveal section.bg-purple > h2,
+.reveal section.has-purple-background > h2,
+.reveal section.has-green-background > h2,
+.reveal section.has-gold-background > h2 {
+  color: white;
+}
+
+/* add a grayscale logo (on the right) */
+.slide-background::after {
+  content: '';
+  width: 100%;
+  height: 8vh;
+  max-height: 65px;
+  display: flex;
+  position: fixed;
+  bottom: calc(12px + 1vh);
+  right: 1vw;
+  background: url(../images/neo4j-logo-grayscale.png) no-repeat;
+  background-size: contain;
+  background-position-x: right;
+}
+
+/* add a white logo (on the right) */
+.slide-background.title::after,
+.slide-background.summary::after,
+.slide-background.quiz::after,
+.slide-background.slide-title::after,
+.slide-background.student-exercise::after,
+.slide-background.has-puzzle-background::after,
+.slide-background.has-team-background::after {
+  content: '';
+  width: 100%;
+  height: 10vh;
+  max-height: 80px;
+  display: flex;
+  position: fixed;
+  bottom: calc(12px + 1vh);
+  right: 1vw;
+  background: url(../images/neo4j-logo-white.png) no-repeat;
+  background-size: contain;
+  background-position-x: right;
+}
+
+/* remove logo (already present on the background image) */
+.slide-background.slide-section-title:not(.has-team-background):not(.has-puzzle-background)::after,
+.slide-background.has-node-background::after {
+  background: none;
+}
+
+/* section title */
+.reveal section.quiz,
+.reveal section.slide-section-title {
+  height: 100%;
+}
+
+.reveal section.quiz > h2,
+.reveal section.slide-section-title > h2 {
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+}
+
+/* half color */
+.slide-background.half.left.gold > .slide-background-content::before {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 50%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(61deg, #70b9f0ff 0%, #e2b944ff 100%);
+}
+
+.slide-background.half.right.gold > .slide-background-content::before {
+  position: absolute;
+  content: "";
+  margin-left: 50%;
+  height: 100%;
+  width: 50%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(61deg, #70b9f0ff 0%, #e2b944ff 100%);
+}
+
+.slide-background.half.left.purple > .slide-background-content::before {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 50%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(61deg, #70b9f0ff 0%, #db96f7ff 100%);
+}
+
+.slide-background.half.right.purple > .slide-background-content::before {
+  position: absolute;
+  content: "";
+  margin-left: 50%;
+  height: 100%;
+  width: 50%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(61deg, #70b9f0ff 0%, #db96f7ff 100%);
+}
+
+.slide-background.half.left.green > .slide-background-content::before {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 50%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(61deg, #70b9f0 0%, #71cd9cff 100%);
+}
+
+.slide-background.half.right.green > .slide-background-content::before {
+  position: absolute;
+  content: "";
+  margin-left: 50%;
+  height: 100%;
+  width: 50%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(61deg, #70b9f0 0%, #71cd9cff 100%);
+}
+
+.slide-background.half.right::after {
+  content: '';
+  width: 100%;
+  height: 8vh;
+  max-height: 65px;
+  display: flex;
+  position: fixed;
+  bottom: calc(12px + 1vh);
+  right: 1vw;
+  background: url(../images/neo4j-logo-white.png) no-repeat;
+  background-size: contain;
+  background-position-x: right;
+}
+
+/* backgrounds */
+.has-dark-background,
+.has-dark-background h1,
+.has-dark-background h2,
+.has-dark-background h3,
+.has-dark-background h4,
+.has-dark-background h5,
+.has-dark-background h6 {
+  color: #fff;
+}
+
+/* backward-compatible section title */
+.slide-background.slide-section-title > .slide-background-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(81deg, #70b9f0 0%, #71cd9cff 100%);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.slide-background.slide-section-title > .slide-background-content::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../images/title-section-transparent-background.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+/* backward-compatible title */
+.slide-background.title > .slide-background-content::before,
+.slide-background.student-exercise > .slide-background-content::before,
+.slide-background.summary > .slide-background-content::before,
+.slide-background.slide-title > .slide-background-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../images/puzzle-background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: brightness(0.75);
+}
+
+.slide-background.title > .slide-background-content::after,
+.slide-background.student-exercise > .slide-background-content::after,
+.slide-background.summary > .slide-background-content::after,
+.slide-background.slide-title > .slide-background-content::after {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(350deg, #70b9f099 0%, #70b9f066 33%, #71cd9c66 66%, #71cd9c99 100%);
+}
+
+/* background color before */
+.slide-background.has-purple-background > .slide-background-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(81deg, #72b9f1 0%, #da96f9 100%);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.slide-background.summary > .slide-background-content::before,
+.slide-background.has-green-background > .slide-background-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(81deg, #70b9f0 0%, #71cd9cff 100%);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.slide-background.student-exercise > .slide-background-content::before,
+.slide-background.has-gold-background > .slide-background-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(81deg, #70b9f0ff 0%, #e2b944ff 100%);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+/* background transparent color after */
+.slide-background.summary > .slide-background-content::after,
+.slide-background.has-puzzle-background > .slide-background-content::after,
+.slide-background.has-puzzle-background.has-green-background > .slide-background-content::after,
+.slide-background.has-team-background.has-green-background > .slide-background-content::after {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(350deg, #70b9f099 0%, #70b9f066 33%, #71cd9c66 66%, #71cd9c99 100%);
+}
+
+.slide-background.quiz > .slide-background-content::after,
+.slide-background.has-puzzle-background.has-purple-background > .slide-background-content::after,
+.slide-background.has-team-background.has-purple-background > .slide-background-content::after {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(350deg, #70b9f099 0%, #70b9f066 33%, #db96f766 66%, #db96f799 100%);
+}
+
+.slide-background.has-puzzle-background.has-gold-background > .slide-background-content::after,
+.slide-background.student-exercise > .slide-background-content::after,
+.slide-background.has-team-background.has-gold-background > .slide-background-content::after {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(29deg, #70b9f099 0%, #70b9f066 33%, #e2b94466 66%, #e2b94499 100%);
+}
+
+/* background image before */
+.slide-background.summary > .slide-background-content::before,
+.slide-background.quiz > .slide-background-content::before,
+.slide-background.has-puzzle-background > .slide-background-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../images/puzzle-background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: brightness(0.75);
+}
+
+.slide-background.student-exercise > .slide-background-content::before,
+.slide-background.has-team-background > .slide-background-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../images/team-background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: brightness(0.75);
+}
+
+/* background image after */
+.slide-background.has-node-background > .slide-background-content::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../images/title-section-transparent-background.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+/* listing blocks */
+.reveal .listingblock pre code {
+  font-size: 1em;
+  line-height: 1.3em;
+}
+
+.reveal .listingblock.big pre code {
+  font-size: 1.0em;
+}
+
+/* unused, style is now by default */
+.reveal section .imageblock.light img {
+  background: none;
+  box-shadow: none;
+}
+
+.reveal section .imageblock.border img {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.reveal img[src*=".svg"] {
+  max-height: initial;
+  max-width: initial;
+}
+
+.reveal .listingblock.fit pre code {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.reveal .listingblock.fit pre {
+  width: 100%;
+}
+
+.reveal .listingblock.fit > .content {
+  text-align: center;
+  width: fit-content;
+  margin: auto;
+}
+
+.reveal p:last-child {
+  padding-bottom: 0;
+}
+
+.reveal div.paragraph.slide-tooltip {
+  position: absolute;
+  bottom: 125px;
+  right: 50px;
+  font-size: 1.25rem;
+  background-color: #ffe599;
+  padding: 0.5em;
+  width: 170px;
+}
+
+.reveal div.paragraph.slide-tooltip > p {
+  padding: 0;
+  margin: 0;
+}
+
+.reveal :not(pre) > code {
+  padding: .2rem .4rem;
+}
+
+.reveal div.ulist.none {
+  padding-left: 0;
+}
+
+.reveal ul.none, ol.none, ul.no-bullet, ol.no-bullet, ol.unnumbered, ul.unstyled, ol.unstyled {
+  list-style-type: none
+}
+
+.reveal ul.none {
+  margin-left: 0;
+}
+
+/* quiz */
+.reveal .checklist.answers {
+  padding-left: 0;
+}
+
+.reveal .checklist.answers li > p:first-child > .fa-square-o:first-child, .checklist.answers li > p:first-child > .fa-check-square-o:first-child {
+  width: 1.25em;
+  font-size: .8em;
+  position: relative;
+  bottom: .125em
+}
+
+.reveal .checklist.answers li > p:first-child > input[type="checkbox"]:first-child {
+  margin-right: .25em
+}
+
+.reveal .checklist.answers > ul {
+  margin-left: 0;
+  list-style-type: none;
+}
+
+.reveal .checklist.answers code {
+  font-size: 0.55em;
+  line-height: 1.5em;
+  border: 4px solid transparent;
+  margin-left: 0.5rem;
+}
+
+.reveal .checklist.answers li p {
+  display: flex;
+  align-items: center;
+}
+
+.reveal .checklist.answers li p span.text {
+  font-size: .8em;
+  margin-left: 0.5rem;
+  border: 4px solid transparent;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.reveal div.paragraph.statement {
+  font-size: 0.7em;
+}
+
+span.underline {
+  text-decoration: underline;
+}
+
+.reveal ul span.fragment.ok.visible + span.text {
+  border: 4px solid #75ac3c;
+  font-weight: 600;
+}
+
+span.fragment.check {
+  position: absolute;
+  left: 0.25rem;
+}
+
+.videoblock.center {
+  display: flex;
+  justify-content: center;
+}
+
+.reveal .slides > section.present, .reveal .slides > section > section.present {
+  height: 100%;
+}
+
+.listingblock.center {
+  position: absolute;
+  top: 0;
+  height: calc(100% - 6vh);
+  width: 100%;
+}
+
+.listingblock.center > .content {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.listingblock.syntax > .content > pre {
+  background-color: #eaf1f8;
+}
+
+.reveal .listingblock.syntax > .content > pre > code {
+  background-color: transparent;
+}
+
+/* admonition */
+.reveal .admonitionblock {
+  font-size: 0.7em;
+}
+
+.reveal .admonitionblock .slide-title {
+  font-weight: bold;
+}
+
+/* hljs */
+.hljs {
+  color: #333333;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-tag {
+  color: #859900;
+}
+
+.hljs-number {
+  color: #2aa198;
+}
+
+.hljs-string {
+  color: #b58900;
+}
+
+.hljs-comment {
+  color: #75787b;
+}
+
+/* modifiers */
+.reveal .small {
+  font-size: 0.75em;
+}
+
+/* print */
+@media print {
+  .slide-background::after {
+    position: absolute;
+  }
+  .slide-background.title::after,
+  .slide-background.student-exercise::after,
+  .slide-background.summary::after,
+  .slide-background.quiz::after,
+  .slide-background.slide-title::after,
+  .slide-background.has-puzzle-background::after,
+  .slide-background.has-team-background::after {
+    position: absolute;
+  }
+}
+

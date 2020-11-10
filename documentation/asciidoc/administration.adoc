@@ -1,14 +1,12 @@
-:uri-org: https://github.com/chesapeaketechnology/data-science/
-:doc-path: documentation/modules/
 
-= Administering the data science pipeline
+== Administering the Data Science Pipeline
 
 Data Science Pipeline Overview
 
 The core purpose of this project is to create a cloud-based framework enabling the analysis of sensor data. A high-level
 diagram of the pipeline components is shown below.
 
-image::../images/DataSciencePipeline.png[Pipeline Diagram]
+image::DataSciencePipeline.png[Pipeline Diagram]
 
 === Sensors
 These devices are present and sensing the world around them. The data they collect contains useful information, and extracting
@@ -71,6 +69,7 @@ are indexed and stored in the dbs<pipeline-name>-data Azure Database for Postgre
 
 === Prometheus cluster
 This container instance named <pipeline-name>-monitor consists of two containers.
+
 . `prometheus` container is responsible for setting up a Prometheus server
 . `consul-exporter` container is responsible for exporting Consul metrics in Prometheus format
 

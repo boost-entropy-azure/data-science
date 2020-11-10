@@ -1,5 +1,4 @@
-:toc:
-= Data Science Infrastructure Deployment
+== Data Science Infrastructure Deployment
 
 Use this project to deploy an instance of a data science pipeline to Azure using Terraform and Ansible.
 
@@ -22,7 +21,7 @@ Currently, the main Terraform datasci.tf script deploys the following resources 
 - A set of container groups for Grafana data integrations
 - A set of Azure Databases for PostgreSQL server use with Grafana server
 
-== Initial Setup
+=== Initial Setup
 There are two Vagrant scripts provided in this project. They are included to help you set up your local environment
 for either administering the data science pipeline or for contributing changes to the project.
 
@@ -159,28 +158,28 @@ https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos?view=azure-cl
 
 ==== Try it
 
-. `az cloud set --name AzureUSGovernment`
+. `az cloud set --name AzureCloud`
 . `az login`
 . You'll see output similar to this
 
-----
-[
-  {
-    "cloudName": "AzureUSGovernment",
-    "homeTenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    "id": "07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    "isDefault": true,
-    "managedByTenants": [],
-    "name": "Azure subscription 1",
-    "state": "Enabled",
-    "tenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    "user": {
-      "name": "dtufekcic@cti.onmicrosoft.us",
-      "type": "user"
-    }
-  }
-]
-----
+    ----
+    [
+      {
+        "cloudName": "AzureCloud",
+        "homeTenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "id": "07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "isDefault": true,
+        "managedByTenants": [],
+        "name": "Azure subscription 1",
+        "state": "Enabled",
+        "tenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "user": {
+          "name": "<username>@example.com",
+          "type": "user"
+        }
+      }
+    ]
+    ----
 
 . `az account set --subscription=&quot;07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;`, but use the actual ID from above
 
@@ -192,14 +191,14 @@ https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos?view=azure-cl
 . `sudo apt install ansible`
 . To verify, run `ansible --version`. You should see output similar to this:
 
-----
+    ----
     ansible 2.9.4
      config file = /etc/ansible/ansible.cfg
      configured module search path = [u'/home/dino/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
      ansible python module location = /usr/lib/python2.7/dist-packages/ansible
      executable location = /usr/bin/ansible
      python version = 2.7.17 (default, Nov  7 2019, 10:07:09) [GCC 7.4.0]
-----
+    ----
 
 . Install pip, `sudo apt install python-pip`
 . `pip install ansible[azure]`
@@ -214,7 +213,7 @@ https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos?view=azure-cl
 . To verify, run `ansible --version`
 . Disable host checking by uncommenting `host_key_checking = False` under `/usr/local/etc/ansible/ansible.cfg`
 
-== Run the Terraform Deployment
+=== Run the Terraform Deployment
 The following set of commands will deploy the data science pipeline to Azure. By default, the deployment process will create
 a new resource group, and the rest of the resources will be added under that resource group. If however, you're deploying
 to an existing resource group, you will have to import the existing resource group to the Terraform state file.
@@ -241,6 +240,6 @@ to the MQTT broker, add the following to the above command
 `-var=&quot;mqtt_users=&#39;[&quot;dino&quot;,&quot;christian&quot;]&#39;`
 . Lastly, to ensure Terraform deployed everything correctly, log into the Azure portal and note the added resources.
 
-== (Optional) Tear down the Azure Deployment
+=== (Optional) Tear down the Azure Deployment
 
 . To tear down the allocations, run `terraform destroy -var-file=datasci_vars.tfvars`.
