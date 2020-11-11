@@ -14,6 +14,13 @@ that information is what this pipeline enables. Note that the data-centric analy
 sensor data is not in the scope of this project. Instead, all we provide are the building blocks we found useful for extracting
 information out of the massive sensor data we collect.
 
+Integration of devices is done through a device gateway. The primary device gateway used by this pipeline is an
+MQTT broker. The specific messages sent from the device into the MQTT broker, and then processed by the backend
+consumers is up to the implementation of this pipeline, but it is recommended to use a tool such as AsyncAPI to document
+the message schema. For example, the https://messaging.networksurvey.app/[Network Survey Messaging API definition] can
+be used with this pipeline. Devices send JSON messages that follow the Network Survey Messaging schema to the MQTT
+broker, and then any consumers can also follow the schema to process the JSON messages.
+
 === Reverse Proxy (NGINX Gateway)
 This is the gateway for all the sensors to authenticate against and send their messages to. The reverse proxy accepts
 connections from devices and passes them onto a Mosquitto MQTT broker.
