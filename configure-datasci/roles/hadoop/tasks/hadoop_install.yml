@@ -50,13 +50,13 @@
     timeout: 600
   changed_when: False
 
-# - name: Import hadoop PGP keys
-#   shell: gpg --import {{ hadoop_keys_tmp }}
-#   changed_when: False
+- name: Import hadoop PGP keys
+  shell: gpg --import {{ hadoop_keys_tmp }}
+  changed_when: False
 
-# - name: Verify hadoop binary package archive authenticity
-#   shell: gpg --verify {{ hadoop_sig_tmp }} {{ hadoop_bin_tmp }}
-#   changed_when: False
+- name: Verify hadoop binary package archive authenticity
+  shell: gpg --verify {{ hadoop_sig_tmp }} {{ hadoop_bin_tmp }}
+  changed_when: False
 
 - name: Extract downloaded hadoop archive
   unarchive:
