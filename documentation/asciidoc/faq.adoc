@@ -92,8 +92,8 @@ It should show the following output:
 . First figure out which worker node is the HDFS NameNode
 . Log into the NameNode (see <<How do I log into a worker node, above>> for details) using the `hadoop` user name
 . In a terminal on the <<How do I figure out which worker node is the NameNode, NameNode>>, run:
-.. `/usr/local/hadoop/sbin/hadoop/start-hdfs.sh`
-.. followed by`/usr/local/hadoop/sbin/hadoop/start-yarn.sh`
+.. `/usr/local/hadoop/sbin/start-dfs.sh`
+.. followed by `/usr/local/hadoop/sbin/start-yarn.sh`
 .. Check the services <<How do I check the status of HDFS and YARN, started correctly>>
 
 === How do I access Grafana dashboards

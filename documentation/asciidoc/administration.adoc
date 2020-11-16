@@ -18,8 +18,8 @@ Integration of devices is done through a device gateway. The primary device gate
 MQTT broker. The specific messages sent from the device into the MQTT broker, and then processed by the backend
 consumers is up to the implementation of this pipeline, but it is recommended to use a tool such as AsyncAPI to document
 the message schema. For example, the https://messaging.networksurvey.app/[Network Survey Messaging API definition] can
-be used with this pipeline. Devices send JSON messages that follow the Network Survey Messaging schema to the MQTT
-broker, and then any consumers can also follow the schema to process the JSON messages.
+be used with this pipeline. Devices send JSON messages to the MQTT broker that follow the Network Survey Messaging
+schema, and then any consumers can also follow the schema to process the JSON messages.
 
 === Reverse Proxy (NGINX Gateway)
 This is the gateway for all the sensors to authenticate against and send their messages to. The reverse proxy accepts
