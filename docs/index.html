@@ -532,8 +532,8 @@ information out of the massive sensor data we collect.</p>
 MQTT broker. The specific messages sent from the device into the MQTT broker, and then processed by the backend
 consumers is up to the implementation of this pipeline, but it is recommended to use a tool such as AsyncAPI to document
 the message schema. For example, the <a href="https://messaging.networksurvey.app/">Network Survey Messaging API definition</a> can
-be used with this pipeline. Devices send JSON messages that follow the Network Survey Messaging schema to the MQTT
-broker, and then any consumers can also follow the schema to process the JSON messages.</p>
+be used with this pipeline. Devices send JSON messages to the MQTT broker that follow the Network Survey Messaging
+schema, and then any consumers can also follow the schema to process the JSON messages.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1412,10 +1412,10 @@ $ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p><code>/usr/local/hadoop/sbin/hadoop/start-hdfs.sh</code></p>
+<p><code>/usr/local/hadoop/sbin/start-dfs.sh</code></p>
 </li>
 <li>
-<p>followed by`/usr/local/hadoop/sbin/hadoop/start-yarn.sh`</p>
+<p>followed by <code>/usr/local/hadoop/sbin/start-yarn.sh</code></p>
 </li>
 <li>
 <p>Check the services <a href="#_how_do_i_check_the_status_of_hdfs_and_yarn">started correctly</a></p>
