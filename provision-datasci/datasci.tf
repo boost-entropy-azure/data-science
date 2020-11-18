@@ -60,7 +60,7 @@ resource "azurerm_network_security_group" "datasci_nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "*"
+    source_address_prefix      = chomp(data.http.myip.body)
     destination_address_prefix = "*"
   }
 
@@ -142,7 +142,7 @@ resource "azurerm_virtual_machine" "datasci_node" {
   location              = azurerm_resource_group.datasci_group.location
   resource_group_name   = azurerm_resource_group.datasci_group.name
   network_interface_ids = [element(azurerm_network_interface.datasci_nic.*.id, count.index)]
-  vm_size               = "Standard_DS1_v2"
+  vm_size               = "Standard_B2ms"
 
   tags = var.default_tags
 
