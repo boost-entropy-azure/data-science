@@ -18,6 +18,14 @@
 - name: Copy private key into place
   template:
     src: "~/.ssh/id_rsa"
+    dest: "/home/{{ hadoop_user }}/.ssh/id_rsa"
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group}}"
+    mode: 0600
+
+- name: Copy private key into place as hadoop_rsa
+  template:
+    src: "~/.ssh/id_rsa"
     dest: "/home/{{ hadoop_user }}/.ssh/hadoop_rsa"
     owner: "{{ hadoop_user }}"
     group: "{{ hadoop_group}}"
@@ -170,3 +178,29 @@
     dest: "{{ hadoop_home }}/etc/hadoop/hadoop-env.sh"
     regexp: "^export HADOOP_OPTIONAL_TOOLS="
     line: "export HADOOP_OPTIONAL_TOOLS='hadoop-azure,hadoop-azure-datalake'"
+
+- name: Add hadoop and YARN services to systemd
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+  with_items:
+    - {src: "namenode.service.j2", dest: "/etc/systemd/system/namenode.service"}
+    - {src: "secondarynamenode.service.j2", dest: "/etc/systemd/system/secondarynamenode.service"}
+    - {src: "datanode.service.j2", dest: "/etc/systemd/system/datanode.service"}
+    - {src: "nodemanager.service.j2", dest: "/etc/systemd/system/nodemanager.service"}
+    - {src: "resourcemanager.service.j2", dest: "/etc/systemd/system/resourcemanager.service"}
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Enable DataNode services to start at boot
+  systemd:
+    name: "{{ item.name }}"
+    enabled: yes
+    masked: no
+  with_items:
+    - { name: datanode }
+    - { name: nodemanager }

@@ -1,0 +1,19 @@
+[Unit]
+Description=Resource Manager service
+After=syslog.target network.target remote-fs.target nss-lookup.target network-online.target
+Requires=network-online.target
+
+[Service]
+User={{ hadoop_user }}
+Group={{ hadoop_group }}
+Type=forking
+ExecStart={{ hadoop_home }}/sbin/yarn-daemon.sh start resourcemanager
+WorkingDirectory=/home/hadoop/
+Environment=JAVA_HOME={{ java_home }}
+Environment=HADOOP_HOME={{ hadoop_home }}
+TimeoutStartSec=120
+RestartSec=180
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

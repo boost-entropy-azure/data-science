@@ -93,10 +93,10 @@
     - name: "Azure deployment role"
       include_tasks: "roles/azure-deployment-facts/tasks/main.yml"
 
-- name: "Start hadoop on one of the nodes"
+- name: "Start hadoop on one of the nodes (NameNode)"
   hosts: "{{ groups['nodes'][0] }}"
   remote_user: hadoop
-  tasks:      
+  tasks:
     - name: "Format namenode"
       shell: hadoop namenode -format -force -nonInteractive
 
@@ -105,3 +105,17 @@
 
     - name: "Start Yarn"
       shell: start-yarn.sh
+
+- name: "Set up NameNode services to start at boot"
+  hosts: "{{ groups['nodes'][0] }}"
+  become: yes
+  tasks:
+    - name: Enable NameNode services and ensure they are not masked
+      systemd:
+        name: "{{ item.name }}"
+        enabled: yes
+        masked: no
+      with_items:
+        - { name: namenode }
+        - { name: secondarynamenode }
+        - { name: resourcemanager }
