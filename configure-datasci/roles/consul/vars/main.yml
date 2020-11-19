@@ -1,6 +1,6 @@
 ---
 # vars file for consul-server
-consul_version: 1.8.0
+consul_version: 1.8.5
 consul_zip_file: consul_{{ consul_version }}_linux_amd64.zip
 consul_install_dir: /usr/local/bin
 consul_config_dir: /etc/consul
