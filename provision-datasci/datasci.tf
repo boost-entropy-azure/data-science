@@ -625,7 +625,6 @@ module "grafana" {
   subnet_end_address   = "10.0.1.255"
   consul_server        = azurerm_network_interface.datasci_nic[0].ip_configuration[0].private_ip_address
   prometheus_server    = module.status-monitor.prometheus_ip_address
-  consul_share_name    = azurerm_storage_share.consul_config.name
   consul_account_name  = azurerm_storage_account.datasci.name
   consul_account_key   = azurerm_storage_account.datasci.primary_access_key
   system_topic_settings = {

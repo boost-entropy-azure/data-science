@@ -1,5 +1,5 @@
 spark:
-  version: 2.4.5
+  version: 3.0.1
   hadoop_version: without-hadoop
   hadoop_home: /usr/local/hadoop
   java_home: ""
