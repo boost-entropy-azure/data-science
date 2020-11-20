@@ -8,6 +8,10 @@ data "archive_file" "default" {
   output_path = "${path.module}/${random_id.default.hex}.zip"
 }
 
+data "http" "myip" {
+  url = "http://ipecho.net/plain"
+}
+
 # Create nginx public IP address
 resource "azurerm_public_ip" "nginx_ip" {
   name                = join("-", ["pip", var.cluster_name, var.environment, var.sub_cluster_name])
@@ -63,7 +67,7 @@ resource "azurerm_network_security_group" "nginx_nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "*"
+    source_address_prefix      = chomp(data.http.myip.body)
     destination_address_prefix = "*"
   }
 

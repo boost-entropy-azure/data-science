@@ -33,6 +33,12 @@
     path: "{{ install_temp_dir }}"
     state: directory
 
+- name: create event log directories
+  file:
+    path: "{{ spark.eventlog_dir }}"
+    state: directory
+    mode: "1777"
+
 - name: stop spark
   shell: "sbin/stop-all.sh"
   args:
