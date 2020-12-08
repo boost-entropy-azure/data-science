@@ -8,14 +8,14 @@ java_home: ""
 # Use this selector to use a mirror for a "current" version or an "archived" one
 hadoop_mirror_selector: "current"
 hadoop_mirror:
-  current: https://downloads.apache.org/hadoop/common/
+  current: http://archive.apache.org/dist/hadoop/common
   archive: http://archive.apache.org/dist/hadoop/common
 hadoop_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=hadoop/common/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz"
 hadoop_bin_tmp: "/tmp/hadoop-{{ hadoop_version }}.tar.gz"
 
 hadoop_sig_mirror_selector: "{{ hadoop_mirror_selector }}"
 hadoop_sig_mirror:
-  current: https://archive.apache.org/dist/hadoop/common/
+  current: https://archive.apache.org/dist/hadoop/common
   archive: https://downloads.apache.org/hadoop/common/
 hadoop_sig_url: "{{ hadoop_sig_mirror[hadoop_sig_mirror_selector] }}/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz.asc"
 hadoop_keys_url: "https://downloads.apache.org/hadoop/common/KEYS"

@@ -155,7 +155,7 @@ resource "azurerm_virtual_machine" "nginx_node" {
     publisher = "OpenLogic"
     offer     = "CentOS"
     sku       = "7.7"
-    version   = "latest"
+    version   = "7.7.2020100800"
   }
 
   os_profile {

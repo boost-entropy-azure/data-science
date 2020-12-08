@@ -157,7 +157,7 @@ resource "azurerm_virtual_machine" "datasci_node" {
     publisher = "OpenLogic"
     offer     = "CentOS"
     sku       = "7.7"
-    version   = "latest"
+    version   = "7.7.2020100800"
   }
 
   os_profile {
@@ -429,7 +429,7 @@ module "mqtt-broker-conf" {
 
 # Create subnet for use with containers
 resource "azurerm_subnet" "mqtt_subnet" {
-  name                 = join("-", ["snet", var.cluster_name, var.environment, "mqtt"])
+  name                 = "mqtt_broker_subnet"
   resource_group_name  = azurerm_resource_group.datasci_group.name
   virtual_network_name = azurerm_virtual_network.datasci_net.name
   address_prefix       = "10.0.4.0/24"
@@ -475,7 +475,7 @@ resource "azurerm_container_group" "datasci_mqtt" {
   # MQTT Broker
   container {
     name   = "mqtt"
-    image  = "chesapeaketechnology/mqtt-consul:0.3"
+    image  = "chesapeaketechnology/mqtt-consul:0.4"
     cpu    = "1.0"
     memory = "1.5"
 
@@ -612,7 +612,7 @@ module "worker-node" {
 }
 
 module "grafana" {
-  source               = "github.com/chesapeaketechnology/terraform-datasci-grafana-cluster?ref=v0.10"
+  source               = "github.com/chesapeaketechnology/terraform-datasci-grafana-cluster?ref=v1.0"
   grafana_depends_on   = [azurerm_virtual_network.datasci_net.id]
   location             = azurerm_resource_group.datasci_group.location
   resource_group_name  = azurerm_resource_group.datasci_group.name
