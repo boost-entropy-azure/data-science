@@ -8,6 +8,15 @@ The Data Science Pipeline Documentation can be found https://chesapeaketechnolog
 
 == Change Log
 
+=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.3.0[0.3.0] - 2020-12-09
+* Added documentation on Administration, Deployment, and FAQ.
+* Improved the resiliency of the Spark worker nodes by auto-starting hadoop and yarn on reboot.
+* Updated Spark to 3.0.
+* Locked down SSH access to the VMs.
+* Grafana now stores its information in Consul.
+* Updated existing and added new Grafana Dashboards.
+
+
 === https://github.com/chesapeaketechnology/data-science/releases/tag/v0.2.2[0.2.2] - 2020-10-29
 * Disable anonymous access to the Mosquitto MQTT broker
 * Synchronize Event Hubs creation with creation of their access rules
