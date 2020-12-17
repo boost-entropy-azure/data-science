@@ -13,17 +13,23 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "resource_group" {
-  name     = join("-", [var.environment, "TFStates"])
+  name     = var.tfstate_resource_group_name
   location = var.location
 
   tags = merge(
     var.default_tags,
-    { "Environment" = join("-", [var.environment, "TFStates"]) }
+    {
+      "IaC_Managed" = "Yes",
+    }
   )
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_storage_account" "tfstate_account" {
-  name                     = lower(join("", [var.environment, "tfstate"]))
+  name                     = substr(lower(join("", [var.environment, "tfstatedata001"])), 0, 23)
   resource_group_name      = azurerm_resource_group.resource_group.name
   location                 = azurerm_resource_group.resource_group.location
   account_kind             = var.storageacct_kind
@@ -40,12 +46,15 @@ resource "azurerm_storage_account" "tfstate_account" {
   }
   tags = merge(
     var.default_tags,
-    { "Environment" = join("-", [var.environment, "TFStates"]) }
+    {
+      "IaC_Managed" = "Yes",
+      "Purpose"     = "Terraform State"
+    }
   )
 }
 
 resource "azurerm_storage_container" "tfstate_container" {
-  name = lower(join("-", [var.environment, "tfstates"]))
-
+  #name = lower(join("-", [var.environment, "tfstates"]))
+  name                 = "remote-tfstates"
   storage_account_name = azurerm_storage_account.tfstate_account.name
 }

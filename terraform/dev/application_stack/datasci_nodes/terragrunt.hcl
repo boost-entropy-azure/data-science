@@ -76,7 +76,7 @@ inputs = {
 }
 
 terraform {
-  source = "github.com/chesapeaketechnology/terraform-datasci-modules.git//mod-azure-datasci-nodes?ref=v0.0.3"
+  source = "github.com/chesapeaketechnology/terraform-datasci-modules.git//mod-azure-datasci-nodes?ref=v0.0.4"
 }
 
 # Temporary

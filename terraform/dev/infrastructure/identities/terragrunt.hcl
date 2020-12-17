@@ -18,6 +18,7 @@ dependency "resource_groups" {
 
 inputs = {
   resource_group_name = dependency.resource_groups.outputs.resource_group_name
+  sp_password         = "${get_env("ARM_CLIENT_SECRET")}"
 }
 
 generate "required_provider" {
@@ -56,6 +57,11 @@ variable "resource_group_name" {
   description = "Resource Group Name"
   type        = string
   default     = "rgdefault"
+}
+variable "sp_password" {
+  type        = string
+  description = "Azure Service Principal Cred"
+  default     = "000-000-000-000"
 }
 variable "principal_pword_expiry" {
   type        = string

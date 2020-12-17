@@ -1,3 +1,9 @@
+variable "tfstate_resource_group_name" {
+  description = "Resource Group Name"
+  type        = string
+  default     = "OOB-TFStates"
+}
+
 variable "environment" {
   description = "Environment Name"
   type        = string
@@ -13,7 +19,8 @@ variable "default_tags" {
   description = "Default tags"
   type        = map(any)
   default = {
-    IaC = "True"
+    Department = "Monkey"
+    PoC        = "LiveStream"
   }
 }
 

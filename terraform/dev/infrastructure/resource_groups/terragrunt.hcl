@@ -3,7 +3,7 @@ include {
 }
 
 #skip = true
-#prevent_destroy = true
+prevent_destroy = true
 
 generate "required_provider" {
   path      = "__required_provider.tf"

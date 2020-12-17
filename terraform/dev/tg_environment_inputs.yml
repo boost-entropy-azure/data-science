@@ -3,7 +3,7 @@
 location: "eastus"
 
 # Data Science Global Variables
-environment: "kbs"
+environment: "dev"
 cluster_name: "datasci"
 department: "LiveStream"
 poc: "Monkey"
@@ -12,24 +12,7 @@ admin_username: "datasciadmin"
 # Node Information
 node_count: 3
 ansible_pwfile: "~/.vaultpw"
-
 # MQTT Data
 mqtt_topics: ["test1", "test2"]
-mqtt_users: ["admin1", "admin2"]
+mqtt_users: ["user1", "user2"]
 alert_topics: ["alert_message"]
-
-
-# From datasci_vars.tfvars
-# location           = "East US"
-# environment        = "dev"
-# cluster_name       = "datasci"
-# node_count         = 3
-# admin_username     = "datasci_admin"
-
-# ansible_pwfile     = "~/.vaultpw"
-
-# default_tags = {
-#   Department  = "Monkey"
-#   PoC         = "LiveStream"
-#   Environment = "DEV"
-# }

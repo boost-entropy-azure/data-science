@@ -21,7 +21,7 @@ dependency "network" {
   config_path = find_in_parent_folders("network")
 
   mock_outputs = {
-    network_subnet_data_id = "mockid"
+    network_subnet_data_id = "/subscriptions/000000-0000-0000-0000-000000000000/resourceGroups/mockid"
   }
 }
 

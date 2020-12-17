@@ -16,7 +16,7 @@ Only execute and save this data **ONCE**. This does not have a remote state itse
 
 ## Description
 
-Along with preventing sensitive state data from residing within Git, remote backends allows for multiple administrators to manage and Terraform's environments with limited risk of locking or untracked delta changes.
+Along with preventing sensitive state data from residing within Git, remote backends allows for multiple administrators to manage Terraform's environments with limited risk of locking or untracked delta changes.
 
 For this deployment, and as a best practice, this Terraform state should remain disconnected from the overall infrastructure state, so this module should be executed once per account and not imported into the primary infrastructure states. This simply adds another level of protection within Terraform's states.
 

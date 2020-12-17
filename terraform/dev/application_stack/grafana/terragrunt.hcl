@@ -54,9 +54,9 @@ dependency "eventhubs_alert" {
   config_path = "../eventhubs_alert"
 
   mock_outputs = {
-    eventhubs_alert_topic_primary_key               = "mockkey"
+    eventhubs_alert_topic_primary_key               = ["mockkey"]
     eventhubs_alert_namespace_fqn                   = "mockfqn"
-    eventhubs_alert_topic_shared_access_policy_name = "mockpolicyname"
+    eventhubs_alert_topic_shared_access_policy_name = ["mockpolicyname"]
   }
 }
 
@@ -64,9 +64,9 @@ dependency "eventhubs_mqtt" {
   config_path = "../eventhubs_mqtt"
 
   mock_outputs = {
-    eventhubs_mqtt_topic_primary_key               = "mockkey"
+    eventhubs_mqtt_topic_primary_key               = ["mockkey"]
     eventhubs_mqtt_namespace_fqn                   = "mockfqn"
-    eventhubs_mqtt_topic_shared_access_policy_name = "mockpolicyname"
+    eventhubs_mqtt_topic_shared_access_policy_name = ["mockpolicyname"]
   }
 }
 
@@ -83,7 +83,7 @@ terraform {
 }
 
 inputs = {
-  #grafana_depends_on  = "prometheus"
+  grafana_depends_on = "prometheus"
   #consul_share_name   = dependency.storage.outputs.storage_share_consul_config
   resource_group_name  = dependency.resource_groups.outputs.resource_group_name
   grafana_admin_user   = yamldecode(file("${find_in_parent_folders("tg_environment_inputs.yml")}"))["admin_username"]
@@ -122,7 +122,12 @@ variable "mqtt_topics" {
 variable "mqtt_users" {
   type        = list(string)
   description = "The list of users that should be allowed connection to the MQTT Broker"
-  default     = ["default1", "default2"]
+  default     = ["user1", "user2"]
+}
+variable "alert_topics" {
+  type        = list(string)
+  description = "The list of alert topics"
+  default     = ["alert_message"]
 }
 EOF
 }
