@@ -156,3 +156,5 @@ tags
 ## Ignore Terragrunt generated files
 **__*.tf
 **inventory.yml
+
+**config.json

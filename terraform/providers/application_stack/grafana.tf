@@ -36,3 +36,13 @@ module "grafana" {
     eventhub_shared_access_policies = module.eventhubs_mqtt.topic_shared_access_policy_name
   }
 }
+
+output "grafana_admin_password" {
+  value     = module.grafana.grafana_admin_password
+  sensitive = true
+}
+
+output "grafana_admin_user" {
+  value     = module.grafana.grafana_admin_user
+  sensitive = false
+}
