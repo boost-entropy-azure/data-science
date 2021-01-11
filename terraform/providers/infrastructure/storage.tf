@@ -1,5 +1,5 @@
 #### Dependencies ####
-# - resource_group.tf
+# - Resource Group
 # - network.tf
 # - data.tf
 
@@ -132,11 +132,6 @@ resource "azurerm_storage_share_directory" "broker_config" {
 #   }
 # }
 
-
-output "storage_account_facts" {
-  value = azurerm_storage_account.lake_storage_account
-}
-
 output "storage_account_facts_primary_dfs_endpoint" {
   value = azurerm_storage_account.lake_storage_account.primary_dfs_endpoint
 }
@@ -145,16 +140,8 @@ output "storage_account_id" {
   value = azurerm_storage_account.lake_storage_account.id
 }
 
-output "storage_account_boot_storage_facts" {
-  value = azurerm_storage_account.boot_storage
-}
-
 output "storage_account_boot_storage_primary_blob_endpoint" {
   value = azurerm_storage_account.boot_storage.primary_blob_endpoint
-}
-
-output "mqtt_storage_account_facts" {
-  value = azurerm_storage_account.mqtt_storage_account
 }
 
 output "mqtt_storage_account_name" {
@@ -212,3 +199,16 @@ output "storage_share_mqtt_broker_name" {
 output "storage_share_directory_mqtt_broker_name" {
   value = azurerm_storage_share_directory.broker_config.name
 }
+
+
+# output "storage_account_facts" {
+#   value = azurerm_storage_account.lake_storage_account
+# }
+
+# output "mqtt_storage_account_facts" {
+#   value = azurerm_storage_account.mqtt_storage_account
+# }
+
+# output "storage_account_boot_storage_facts" {
+#   value = azurerm_storage_account.boot_storage
+# }

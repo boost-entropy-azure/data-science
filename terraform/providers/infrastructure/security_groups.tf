@@ -1,5 +1,5 @@
 #### Dependencies ####
-# - resource_group.tf
+# - Resource Group
 # - network.tf
 # - data.tf
 

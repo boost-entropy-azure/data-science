@@ -77,28 +77,3 @@ resource "azurerm_linux_virtual_machine" "datasci_node" {
     storage_account_uri = var.storage_account_boot_storage_primary_blob_endpoint
   }
 }
-
-output "clouddata" {
-  value = local.cloud_data
-}
-
-
-
-## Updated lines 106-108, need to validate non-breaking
-# module "worker-node" {
-#   source         = "./modules/worker-node-ansible"
-#   user           = var.admin_username
-#   envs           = [
-#     join("=", ["inventory", "${local.inventory}"]),
-#     join("=", ["resource_group", azurerm_resource_group.datasci_group.name]),
-#     join("=", ["namespaces", join(",", [
-#       join("-", [var.cluster_name, var.environment, "mqtt-eventhubs-namespace"]),
-#       join("-", [var.cluster_name, var.environment, "alert-eventhubs-namespace"])])
-#     ]),
-#     join("=", ["azure_cloud_name", var.azure_cloud_name]),
-#     join("=", ["azure_datalake_container", azurerm_template_deployment.datasci_container.name]),
-#     join("=", ["azure_datalake_endpoint", azurerm_storage_account.datasci_lake_storage.primary_dfs_endpoint])
-#   ]
-#   arguments      = [join("", ["--user=", var.admin_username]), "--vault-password-file", var.ansible_pwfile]
-#   playbook       = "../configure-datasci/datasci_play.yml"
-# }

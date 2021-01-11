@@ -1,3 +1,9 @@
+
+variable "manage_resource_group" {
+  description = "Manage the resource Group"
+  type        = string
+  default     = "False"
+}
 variable "resource_group_name" {
   description = "Resource Group Name"
   type        = string
@@ -33,7 +39,7 @@ variable "cluster_name" {
 variable "node_count" {
   type        = number
   description = "Number of Virtual Machine nodes to provision"
-  default     = 1
+  default     = 3
 }
 
 variable "sp_password" {
@@ -65,4 +71,3 @@ variable "network_subnet_data_id" {
   type        = string
   default     = "networkid"
 }
-

@@ -24,11 +24,13 @@ variable "network_profile_id" {
 }
 
 variable "storage_account_name" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "storage_account_key" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 # variable "worker_node_ips" {

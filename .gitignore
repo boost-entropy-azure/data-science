@@ -156,8 +156,3 @@ tags
 ## Ignore Terragrunt generated files
 **__*.tf
 **inventory.yml
-
-
-## Temp
-*dep.dev_tg/*
-*dep.*

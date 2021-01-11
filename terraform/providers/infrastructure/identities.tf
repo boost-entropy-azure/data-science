@@ -1,5 +1,5 @@
 #### Dependencies ####
-# - resource_group.tf
+# - Resource Group
 
 provider "azuread" {
 }

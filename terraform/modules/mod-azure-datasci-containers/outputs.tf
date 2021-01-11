@@ -1,5 +1,6 @@
 output "datasci_containers_group" {
-  value = azurerm_container_group.datasci_mqtt
+  value     = azurerm_container_group.datasci_mqtt
+  sensitive = true
 }
 
 output "datasci_containers_mqtt_server" {

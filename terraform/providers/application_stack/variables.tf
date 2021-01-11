@@ -33,7 +33,7 @@ variable "cluster_name" {
 variable "node_count" {
   type        = number
   description = "Number of Virtual Machine nodes to provision"
-  default     = 1
+  default     = 3
 }
 
 variable "sp_password" {
@@ -84,7 +84,7 @@ variable "tfstate_resource_group_name" {
 variable "remotestate_key" {
   description = "Remote state storage key"
   type        = string
-  default     = "infrastructure"
+  default     = "infrastructure.tfstate"
 }
 
 variable "state_container" {
@@ -117,4 +117,10 @@ variable "remotestate_subscription_id" {
 variable "remotestate_tenant_id" {
   description = "Remote state tenant id"
   type        = string
+}
+
+variable "admin_username" {
+  type        = string
+  description = "Admin user"
+  default     = "datasci_admin"
 }

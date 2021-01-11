@@ -42,12 +42,14 @@ variable "volume_storage_account_name" {
   type        = string
   description = "Storage account for container volume"
   default     = "volume_storage_account_name"
+  sensitive   = true
 }
 
 variable "volume_storage_account_key" {
   type        = string
   description = "Storage Account key for container volume"
   default     = "volume_storage_account_key"
+  sensitive   = true
 }
 
 variable "mqtt_users" {
@@ -83,11 +85,13 @@ variable "share_name_mqttconsulgateway" {
 variable "storage_account_name" {
   type        = string
   description = "storage_account_name"
+  sensitive   = true
 }
 
 variable "storage_account_key" {
   type        = string
   description = "storage_account_key"
+  sensitive   = true
 }
 
 variable "mqtt_broker_share_name" {

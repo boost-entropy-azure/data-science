@@ -117,13 +117,14 @@ locals {
     - yum install git epel-release -y
     - yum clean all -y
     - yum install ansible -y
-    - git clone https://github.com/shrapk2/ans-datasci-wip.git
-    - pushd ans-datasci-wip
-    - ansible-playbook -i "localhost, " ./postgres_play.yml -e ansible_connection=local ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))}
+    - git clone https://github.com/chesapeaketechnology/ansible-datasci-roles.git
+    - pushd ansible-datasci-roles
+    - ansible-playbook -i "localhost, " ./factnode.yml -e ansible_connection=local ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))}
   EOF
 
 }
 
 output "cloud_init" {
-  value = local.cloudinit_data
+  value     = local.cloudinit_data
+  sensitive = true
 }

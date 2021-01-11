@@ -3,6 +3,16 @@ provider "azurerm" {
   features {}
 }
 
+resource "random_id" "default" {
+  byte_length = 8
+}
+
+data "archive_file" "default" {
+  type        = "zip"
+  source_dir  = path.module
+  output_path = "/tmp/${random_id.default.hex}.zip"
+}
+
 resource "azurerm_container_group" "datasci_mqtt" {
   name                = join("-", [var.cluster_name, var.environment, "mqtt"])
   resource_group_name = var.resource_group_name
@@ -126,31 +136,43 @@ resource "azurerm_container_group" "datasci_mqtt" {
   }
 }
 
-
-
-## BROKER CONFIG MERGE
-
 # Mosquitto MQTT Broker Config
 resource "local_file" "mosquitto_config_file" {
+
+  depends_on = [
+    data.archive_file.default
+  ]
+
   content = templatefile("${path.module}/mosquitto.conf.tmpl",
     {
       future_use = "sample_var"
   })
-  filename = "${path.module}/mosquitto.conf"
+  filename = "/tmp/mosquitto.conf"
 }
 
 resource "null_resource" "upload_mosquitto_config_file" {
 
-  depends_on = [local_file.mosquitto_config_file]
+  depends_on = [
+    local_file.mosquitto_config_file,
+    data.archive_file.default
+  ]
+
+  triggers = {
+    signature = data.archive_file.default.output_md5
+  }
 
   provisioner "local-exec" {
-
-    command = "az storage file upload --share-name ${var.mqtt_broker_share_name} --account-name ${var.storage_account_name} --account-key ${var.storage_account_key} --source ${local_file.mosquitto_config_file.filename}  --path config/mosquitto.conf"
+    command = "az storage file upload --share-name ${var.mqtt_broker_share_name} --account-name ${var.storage_account_name} --account-key ${var.storage_account_key} --source ${local_file.mosquitto_config_file.filename}  --path config/mosquitto.conf;rm -f ${local_file.mosquitto_config_file.filename}"
   }
 }
 
 # MQTT Connector
 resource "local_file" "mosquitto_connector_file" {
+
+  depends_on = [
+    data.archive_file.default
+  ]
+
   content = templatefile("${path.module}/mqtt-connector.conf.tmpl",
     {
       mqtt_server               = "tcp://${azurerm_container_group.datasci_mqtt.ip_address}:1883"
@@ -160,41 +182,67 @@ resource "local_file" "mosquitto_connector_file" {
       mqtt_eventhubs_batch_size = var.mqtt_eventhubs_batch_size
       mqtt_scheduled_interval   = var.mqtt_scheduled_interval
   })
-  filename = "${path.module}/mqtt-connector.conf"
+  filename = "/tmp/mqtt-connector.conf"
 }
 
 resource "null_resource" "upload_mosquitto_connector_file" {
 
-  depends_on = [local_file.mosquitto_connector_file]
+  depends_on = [
+    local_file.mosquitto_connector_file,
+    data.archive_file.default
+  ]
+
+  triggers = {
+    signature = data.archive_file.default.output_md5
+  }
 
   provisioner "local-exec" {
 
-    command = "az storage file upload --share-name ${var.mqtt_config_share_name} --account-name ${var.storage_account_name} --account-key ${var.storage_account_key} --source ${local_file.mosquitto_connector_file.filename}"
+    command = "az storage file upload --share-name ${var.mqtt_config_share_name} --account-name ${var.storage_account_name} --account-key ${var.storage_account_key} --source ${local_file.mosquitto_connector_file.filename};rm -f ${local_file.mosquitto_connector_file.filename}"
   }
 }
 
 # Consul
 resource "local_file" "consul_config_file" {
+
+  depends_on = [
+    data.archive_file.default
+  ]
+
   content = templatefile("${path.module}/config.json.tmpl",
     {
       container_address = azurerm_container_group.datasci_mqtt.ip_address
       consul_server     = var.consul_server
   })
-  filename = "${path.module}/config.json"
+  filename = "/tmp/config.json"
 }
 
 resource "null_resource" "upload_consul_config_file" {
 
-  depends_on = [local_file.consul_config_file]
+  depends_on = [
+    local_file.consul_config_file,
+    data.archive_file.default
+  ]
+
+  triggers = {
+    signature = data.archive_file.default.output_md5
+  }
 
   provisioner "local-exec" {
 
-    command = "az storage file upload --share-name ${var.consul_config_share_name} --account-name ${var.storage_account_name} --account-key ${var.storage_account_key} --source ${local_file.consul_config_file.filename}"
+    command = "az storage file upload --share-name ${var.consul_config_share_name} --account-name ${var.storage_account_name} --account-key ${var.storage_account_key} --source ${local_file.consul_config_file.filename};rm -f ${local_file.mosquitto_connector_file.filename}"
   }
 }
 
 # Logging Directory
 resource "null_resource" "create_log_dir" {
+  depends_on = [
+    data.archive_file.default
+  ]
+
+  triggers = {
+    signature = data.archive_file.default.output_md5
+  }
 
   provisioner "local-exec" {
 

@@ -2,7 +2,7 @@ data "terraform_remote_state" "infrastructure" {
   backend = "azurerm"
 
   config = {
-    key                  = "${var.environment}/${var.remotestate_key}.tfstate"
+    key                  = "${var.environment}/${var.remotestate_key}"
     resource_group_name  = var.tfstate_resource_group_name
     storage_account_name = var.remotestate_storage_account_name
     container_name       = var.state_container

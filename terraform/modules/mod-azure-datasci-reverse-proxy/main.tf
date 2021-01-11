@@ -147,10 +147,10 @@ locals {
     - yum install ansible -y
     - mkdir -p /opt/ansible_plays
     - pushd /opt/ansible_plays
-    - git clone https://github.com/shrapk2/ans-datasci-wip.git
-    - pushd ans-datasci-wip
+    - git clone https://github.com/chesapeaketechnology/ansible-datasci-roles.git
+    - pushd ansible-datasci-roles
     - ansible-galaxy install -r ./nginx_requirements.yml
-    - ansible-playbook -i "localhost, " ./nginx_play.yml -e ansible_connection=local ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))}
+    - ansible-playbook -i "localhost, " ./nginx.yml -e ansible_connection=local ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))}
   EOF
 }
 

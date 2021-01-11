@@ -44,12 +44,12 @@ runcmd:
   #bootstrap playbook something ans-prv-${ans_role}
   - mkdir -p /opt/ansible_plays
   - pushd /opt/ansible_plays
-  - git clone https://github.com/shrapk2/ans-datasci-wip.git
+  - git clone https://github.com/chesapeaketechnology/ansible-datasci-roles.git
   - |
     cat <<EOF > /etc/cron.hourly/${ans_role}
     #!/bin/bash
     if [ "$(hostname -s)" = vm-${cluster_name}-${environment}0 ]; then
-        pushd /opt/ansible_plays/ans-datasci-wip
+        pushd /opt/ansible_plays/ansible-datasci-roles
         git pull
         sudo -u ${admin_user} -- bash -c "ansible-galaxy install -r ./${ans_role}_requirements.yml; python3 $(which ansible-playbook) -i /etc/ansible/azure_rm.yml -l tag_ansible_role_${ans_role} ./${ans_role}.yml -e target_server_group=tag_ansible_role_${ans_role}"
     else
@@ -57,13 +57,6 @@ runcmd:
     fi
     EOF
   - bash /etc/cron.hourly/${ans_role}
-  #- pushd ans-datasci-wip
-  #- pushd ans-prv-${ans_role}
-  #- sudo -u ${admin_user} -- bash -c "ansible-playbook -i /etc/ansible/azure_rm.yml -l tag_ansible_role_datascinode ./datasci_play.yml -e ansible_connection=local -e @/opt/ansible_plays/vars_${cluster_name}.yml"
-  # move to an AT or cron job, guessing this creates chicken/egg with write_files
-  #- sudo -u ${admin_user} -- bash -c "ansible-playbook -i /etc/ansible/azure_rm.yml -l tag_ansible_role_${ans_role} ./${ans_role}.yml -e target_server_group=tag_ansible_role_${ans_role}"
-
-#plugin: azure.azcollection.azure_rm
 
 write_files:
   - content: |

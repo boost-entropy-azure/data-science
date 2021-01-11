@@ -1,10 +1,10 @@
 #### Dependencies ####
-# - infrastructure/resource_group.tf
+# - Resource Group
 # - infrastructure/storage.tf
 # - data.tf
 
-module "mqtt_eventhubs" {
-  source              = "github.com/chesapeaketechnology/terraform-datasci-modules.git//mod-azure-datasci-eventhubs?ref=v0.0.13"
+module "eventhubs_mqtt" {
+  source              = "../../modules/mod-azure-datasci-eventhubs"
   namespace_name      = join("-", [var.cluster_name, var.environment, "mqtt-eventhubs"])
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -14,8 +14,8 @@ module "mqtt_eventhubs" {
   default_tags        = var.default_tags
 }
 
-module "alert_eventhubs" {
-  source              = "github.com/chesapeaketechnology/terraform-datasci-modules.git//mod-azure-datasci-eventhubs?ref=v0.0.13"
+module "eventhubs_alert" {
+  source              = "../../modules/mod-azure-datasci-eventhubs"
   namespace_name      = join("-", [var.cluster_name, var.environment, "alert-eventhubs"])
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -26,30 +26,32 @@ module "alert_eventhubs" {
   default_tags        = var.default_tags
 }
 
-output "eventhubs_alert_topic_primary_key" {
-  value = module.alert_eventhubs.topic_primary_key
-}
+# output "eventhubs_alert_topic_primary_key" {
+#   value     = module.eventhubs_alert.topic_primary_key
+#   sensitive = true
+# }
 
-output "eventhubs_alert_namespace_fqn" {
-  value = module.alert_eventhubs.namespace_fqn
-}
+# output "eventhubs_alert_namespace_fqn" {
+#   value = module.eventhubs_alert.namespace_fqn
+# }
 
-output "eventhubs_alert_topic_shared_access_policy_name" {
-  value = module.alert_eventhubs.topic_shared_access_policy_name
-}
+# output "eventhubs_alert_topic_shared_access_policy_name" {
+#   value = module.eventhubs_alert.topic_shared_access_policy_name
+# }
 
-output "eventhubs_mqtt_namespace_connection_string" {
-  value = module.mqtt_eventhubs.namespace_connection_string
-}
+# output "eventhubs_mqtt_namespace_connection_string" {
+#   value = module.eventhubs_mqtt.namespace_connection_string
+# }
 
-output "eventhubs_mqtt_topic_primary_key" {
-  value = module.mqtt_eventhubs.topic_primary_key
-}
+# output "eventhubs_mqtt_topic_primary_key" {
+#   value     = module.eventhubs_mqtt.topic_primary_key
+#   sensitive = true
+# }
 
-output "eventhubs_mqtt_namespace_fqn" {
-  value = module.mqtt_eventhubs.namespace_fqn
-}
+# output "eventhubs_mqtt_namespace_fqn" {
+#   value = module.eventhubs_mqtt.namespace_fqn
+# }
 
-output "eventhubs_mqtt_topic_shared_access_policy_name" {
-  value = module.mqtt_eventhubs.topic_shared_access_policy_name
-}
+# output "eventhubs_mqtt_topic_shared_access_policy_name" {
+#   value = module.eventhubs_mqtt.topic_shared_access_policy_name
+# }

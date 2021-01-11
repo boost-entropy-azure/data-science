@@ -2,6 +2,7 @@
 # - None
 
 resource "azurerm_resource_group" "resource_group" {
+  count    = var.manage_resource_group == "True" ? 1 : 0
   name     = join("-", ["rg", var.cluster_name, var.environment])
   location = var.location
   lifecycle {
@@ -12,5 +13,8 @@ resource "azurerm_resource_group" "resource_group" {
 }
 
 output "resource_group_name" {
-  value = azurerm_resource_group.resource_group.name
+  depends_on = [
+    azurerm_resource_group.resource_group,
+  ]
+  value = azurerm_resource_group.resource_group.*.name
 }
