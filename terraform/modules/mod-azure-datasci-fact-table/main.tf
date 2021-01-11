@@ -119,6 +119,7 @@ locals {
     - yum install ansible -y
     - git clone https://github.com/chesapeaketechnology/ansible-datasci-roles.git
     - pushd ansible-datasci-roles
+    - ansible-galaxy install -r ./factnode_requirements.yml
     - ansible-playbook -i "localhost, " ./factnode.yml -e ansible_connection=local ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))}
   EOF
 
