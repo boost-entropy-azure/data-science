@@ -117,6 +117,8 @@ locals {
     - yum install git epel-release -y
     - yum clean all -y
     - yum install ansible -y
+    - mkdir -p /opt/ansible_plays
+    - pushd /opt/ansible_plays
     - git clone https://github.com/chesapeaketechnology/ansible-datasci-roles.git
     - pushd ansible-datasci-roles
     - ansible-galaxy install -r ./factnode_requirements.yml

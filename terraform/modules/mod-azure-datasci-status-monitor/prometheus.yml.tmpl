@@ -10,8 +10,13 @@ scrape_configs:
       static_configs:
       - targets: ['localhost:9090']
 
-    - job_name: 'datasci_nodes'
+    - job_name: 'all_nodes'
       consul_sd_configs:
       - server: '${consul_server_ip}:8500'
         services:
           - 'node_exporter'
+
+    # NGINX monitoring
+    - job_name: 'reverse-proxy'
+      static_configs:
+      - targets: ['{{ reverse_proxy_ip }}:9113']
