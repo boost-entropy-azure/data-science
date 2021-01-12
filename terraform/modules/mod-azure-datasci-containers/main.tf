@@ -177,7 +177,7 @@ resource "local_file" "mosquitto_connector_file" {
     {
       mqtt_server               = "tcp://${azurerm_container_group.datasci_mqtt.ip_address}:1883"
       mqtt_topics               = join(",", var.mqtt_topics)
-      mqtt_admin                = var.mqtt_admin
+      admin_username            = var.admin_username
       mqtt_eventhubs_connection = var.namespace_connection_string
       mqtt_eventhubs_batch_size = var.mqtt_eventhubs_batch_size
       mqtt_scheduled_interval   = var.mqtt_scheduled_interval
