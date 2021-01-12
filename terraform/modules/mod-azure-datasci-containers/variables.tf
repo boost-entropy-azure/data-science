@@ -109,11 +109,6 @@ variable "consul_config_share_name" {
   description = "consul_config_share_name"
 }
 
-variable "mqtt_admin" {
-  type        = string
-  description = "mqtt_admin"
-}
-
 variable "namespace_connection_string" {
   type        = string
   description = "namespace_connection_string"

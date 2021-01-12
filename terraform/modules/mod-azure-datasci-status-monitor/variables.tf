@@ -24,13 +24,11 @@ variable "network_profile_id" {
 }
 
 variable "storage_account_name" {
-  type      = string
-  sensitive = true
+  type = string
 }
 
 variable "storage_account_key" {
-  type      = string
-  sensitive = true
+  type = string
 }
 
 # variable "worker_node_ips" {
@@ -39,12 +37,12 @@ variable "storage_account_key" {
 # }
 
 variable "mqtt_server_ip" {
-  type = string
+  type        = string
   description = "MQTT server private IP address"
 }
 
 variable "reverse_proxy_ip" {
-  type = string
+  type        = string
   description = "NGINX server private IP address"
 }
 

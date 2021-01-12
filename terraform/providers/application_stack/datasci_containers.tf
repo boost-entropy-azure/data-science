@@ -13,7 +13,7 @@ module "datasci_containers" {
   environment               = var.environment
   cluster_name              = var.cluster_name
   default_tags              = var.default_tags
-  mqtt_admin                = var.admin_username
+  admin_username            = var.admin_username
   mqtt_topics               = var.mqtt_topics
   mqtt_users                = var.mqtt_users
   mqtt_eventhubs_batch_size = "10"
