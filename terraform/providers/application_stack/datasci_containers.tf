@@ -15,6 +15,7 @@ module "datasci_containers" {
   default_tags              = var.default_tags
   mqtt_admin                = var.admin_username
   mqtt_topics               = var.mqtt_topics
+  mqtt_users                = var.mqtt_users
   mqtt_eventhubs_batch_size = "10"
   mqtt_scheduled_interval   = "500"
 
