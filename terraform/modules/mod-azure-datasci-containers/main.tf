@@ -58,7 +58,7 @@ resource "azurerm_container_group" "datasci_mqtt" {
   # MQTT to Event Hub Connector
   container {
     name   = "connector"
-    image  = "chesapeaketechnology/mqtt-azure-event-hub-connector:0.1.3"
+    image  = "chesapeaketechnology/mqtt-azure-event-hub-connector:0.1.4"
     cpu    = "1"
     memory = "1.5"
 

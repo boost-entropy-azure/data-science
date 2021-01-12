@@ -38,15 +38,15 @@ variable "storage_account_key" {
 #   description = "List of worker nodes private IPs"
 # }
 
-# variable "mqtt_server_ip" {
-#   type = string
-#   description = "MQTT server private IP address"
-# }
+variable "mqtt_server_ip" {
+  type = string
+  description = "MQTT server private IP address"
+}
 
-# variable "reverse_proxy_ip" {
-#   type = string
-#   description = "NGINX server private IP address"
-# }
+variable "reverse_proxy_ip" {
+  type = string
+  description = "NGINX server private IP address"
+}
 
 variable "consul_server_ip" {
   type        = string

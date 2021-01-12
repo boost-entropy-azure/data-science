@@ -4,12 +4,21 @@
 # - data.tf
 
 ### STORAGE ACCOUNTS
+resource "random_integer" "randomStorageNumber" {
+  min = 2
+  max = 5
+
+  keepers = {
+    # Generate a new integer each time we switch to a new listener ARN
+    resource_group = var.resource_group_name
+  }
+}
 
 # datasci_lake_storage
 resource "azurerm_storage_account" "lake_storage_account" {
   resource_group_name      = var.resource_group_name
   location                 = var.location
-  name                     = join("", [var.cluster_name, var.environment, "lake"])
+  name                     = join("", [var.cluster_name, var.environment, "lake", random_integer.randomStorageNumber.result])
   account_kind             = "StorageV2"
   account_replication_type = "LRS"
   account_tier             = "Standard"
