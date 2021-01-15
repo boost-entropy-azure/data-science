@@ -30,14 +30,14 @@ runcmd:
   # end bug workaround
   - yum install epel-release -y
   - yum install git python2-pip python3 python3-pip libselinux-python3 libselinux-python -y
-  - yum install java-1.8.0-openjdk python2-pip -y
+  #  - yum install java-1.8.0-openjdk python2-pip -y
   - rpm --import https://packages.microsoft.com/keys/microsoft.asc
   - yum install azure-cli -y
   - pip2 uninstall cryptography -y --no-input
   - pip2 install pyOpenSSL -U --no-input
-  - pip2 install 'ansible[azure]' -U --no-input
-  - pip2 install azure-mgmt-compute -U --no-input
-  - pip2 install msrestazure -U --no-input
+  # - pip2 install 'ansible[azure]' -U --no-input
+  # - pip2 install azure-mgmt-compute -U --no-input
+  # - pip2 install msrestazure -U --no-input
   - pip3 install ansible -U --no-input
   - pip3 install azure-mgmt-compute -U --no-input
   - pip3 install msrestazure -U --no-input
@@ -46,17 +46,17 @@ runcmd:
   - pushd /opt/ansible_plays
   - git clone https://github.com/chesapeaketechnology/ansible-datasci-roles.git
   - |
-    cat <<EOF > /etc/cron.hourly/${ans_role}
+    cat <<EOF > /opt/ansible_plays/${ans_role}
     #!/bin/bash
     if [ "$(hostname -s)" = vm-${cluster_name}-${environment}0 ]; then
         pushd /opt/ansible_plays/ansible-datasci-roles
         git pull
-        sudo -u ${admin_user} -- bash -c "ansible-galaxy install -r ./${ans_role}_requirements.yml; python3 $(which ansible-playbook) -i /etc/ansible/azure_rm.yml -l tag_ansible_role_${ans_role} ./${ans_role}.yml -e target_server_group=tag_ansible_role_${ans_role}"
+        sudo -u ${admin_user} -- bash -c "python3 $(which ansible-galaxy) install -r ./${ans_role}_requirements.yml; python3 $(which ansible-playbook) -i /etc/ansible/azure_rm.yml -l tag_ansible_role_${ans_role} ./${ans_role}.yml -e target_server_group=tag_ansible_role_${ans_role}"
     else
         echo "Not master, exiting."
     fi
     EOF
-  - bash /etc/cron.hourly/${ans_role}
+  - bash /opt/ansible_plays/${ans_role}
 
 write_files:
   - content: |
