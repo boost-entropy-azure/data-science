@@ -10,6 +10,7 @@ terraform {
 provider "azurerm" {
   features {}
   disable_terraform_partner_id = true
+  skip_provider_registration   = true
 }
 
 resource "azurerm_resource_group" "resource_group" {
