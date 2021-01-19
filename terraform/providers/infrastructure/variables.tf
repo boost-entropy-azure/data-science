@@ -1,8 +1,8 @@
 
 variable "manage_resource_group" {
   description = "Manage the resource Group"
-  type        = string
-  default     = "False"
+  type        = bool
+  default     = false
 }
 variable "resource_group_name" {
   description = "Resource Group Name"
@@ -70,4 +70,10 @@ variable "network_subnet_data_id" {
   description = "Data Network Subnet Id"
   type        = string
   default     = "networkid"
+}
+
+variable "source_from_vault" {
+  type        = bool
+  description = "Pull source information from Azure Vault"
+  default     = false
 }

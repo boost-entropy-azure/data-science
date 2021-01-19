@@ -29,6 +29,8 @@ resource "local_file" "prometheus_config_file" {
   content = templatefile("${path.module}/prometheus.yml.tmpl",
     {
       consul_server_ip = var.consul_server_ip
+      reverse_proxy_ip = var.reverse_proxy_ip
+      mqtt_server_ip   = var.mqtt_server_ip
       #automation_principal_appid           = var.automation_principal_appid
       #automation_principal_password        = var.automation_principal_password
       #automation_principal_tenant          = var.automation_principal_tenant

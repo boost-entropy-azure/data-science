@@ -176,7 +176,7 @@ resource "local_file" "mosquitto_connector_file" {
   content = templatefile("${path.module}/mqtt-connector.conf.tmpl",
     {
       mqtt_server               = "tcp://${azurerm_container_group.datasci_mqtt.ip_address}:1883"
-      mqtt_topics               = join(",", var.mqtt_topics)
+      mqtt_topics               = join("\",\"", var.mqtt_topics)
       admin_username            = var.admin_username
       mqtt_eventhubs_connection = var.namespace_connection_string
       mqtt_eventhubs_batch_size = var.mqtt_eventhubs_batch_size

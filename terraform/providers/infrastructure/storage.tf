@@ -25,12 +25,26 @@ resource "azurerm_storage_account" "lake_storage_account" {
   is_hns_enabled           = true
 
   tags = var.default_tags
+}
 
-  network_rules {
-    default_action             = "Deny"
-    ip_rules                   = ["127.0.0.1", chomp(data.http.myip.body)]
-    virtual_network_subnet_ids = [azurerm_subnet.subnet_data.id]
-  }
+resource "azurerm_storage_account_network_rules" "lake_storage_account_rules" {
+  count                = var.source_from_vault ? 0 : 1
+  resource_group_name  = var.resource_group_name
+  storage_account_name = azurerm_storage_account.lake_storage_account.name
+
+  default_action             = "Deny"
+  ip_rules                   = ["127.0.0.1", chomp(data.http.myip.0.body)]
+  virtual_network_subnet_ids = [azurerm_subnet.subnet_data.id]
+}
+
+resource "azurerm_storage_account_network_rules" "lake_storage_account_rules_with_vault" {
+  count                = var.source_from_vault ? length(local.remote_ips) : 0
+  resource_group_name  = var.resource_group_name
+  storage_account_name = azurerm_storage_account.lake_storage_account.name
+
+  default_action             = "Deny"
+  ip_rules                   = concat(["127.0.0.1"], local.remote_ips)
+  virtual_network_subnet_ids = [azurerm_subnet.subnet_data.id]
 }
 
 ## Node Storage

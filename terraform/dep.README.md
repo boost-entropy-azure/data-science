@@ -1,8 +1,8 @@
 # Data Science Core Infrastructure Deploy
 
-This repo can be used to deploy a data science infrastructure in Azure using Terragrunt, Terraform, and Ansible.
+This repo can be used to deploy a data science infrastructure in Azure using Terraform, Cloud-Init, and Ansible.
 
-Currently, this Terraform configuration deploys the following resources to Azure
+Currently, this Terraform configuration deploys the following resources to Azure:
 
 - A Resource Group
 - A Virtual Network
@@ -17,14 +17,10 @@ Currently, this Terraform configuration deploys the following resources to Azure
 - A MQTT to Event Hubs Connector in a Docker Container
 - A VM with Apache Spark, and Jupyter Notebook
 
-> More to follow.
-
 ## Dependencies
 
 - HashiCorp [Terraform](https://www.terraform.io/downloads.html)
   - Version >= v0.13.4
-- Gruntworks [Terragrunt](https://github.com/gruntwork-io/terragrunt/releases)
-  - Version >= v0.25.3
 - Ansible
   - Version >= v2.8
 - Azure CLI
@@ -44,6 +40,7 @@ Order of dependencies:
   5. Identities
 
 - Application Stack:
+
   1. Eventhubs - Alert
   2. Eventhubs - MQTT
   3. DataSci - Nodes
@@ -56,102 +53,198 @@ Order of dependencies:
 ## Directory Structure
 
 ```bash
-├── CHANGELOG.md
-├── LICENSE.md
-├── README.md
-├── dev
-│   ├── application_stack
-│   ├── infrastructure
-│   ├── terragrunt.hcl
-│   ├── tg_environment_inputs.yml
-│   └── tg_environment_variables.hcl [deprecated]
-└── prod
-    └── terragrunt.hcl
+├── modules
+│   ├── README.md
+│   ├── mod-azure-datasci-containers
+│   ├── mod-azure-datasci-eventhubs
+│   ├── mod-azure-datasci-fact-table
+│   ├── mod-azure-datasci-grafana
+│   ├── mod-azure-datasci-nodes
+│   ├── mod-azure-datasci-reverse-proxy
+│   └── mod-azure-datasci-status-monitor
+├── providers
+│   ├── application_stack
+│   │   ├── backend.tf
+│   │   ├── data.tf
+│   │   ├── datasci_containers.tf
+│   │   ├── datasci_nodes.tf
+│   │   ├── eventhubs.tf
+│   │   ├── fact_table.tf
+│   │   ├── grafana.tf
+│   │   ├── providers_override.tf
+│   │   ├── required_provider.tf
+│   │   ├── reverse_proxy.tf
+│   │   ├── status_monitor.tf
+│   │   └── variables.tf
+│   └── infrastructure
+│       ├── backend.tf
+│       ├── data.tf
+│       ├── datasci-container.json
+│       ├── identities.tf
+│       ├── locals.tf
+│       ├── network.tf
+│       ├── providers.tf
+│       ├── resource_group.tf
+│       ├── security_groups.tf
+│       ├── storage.tf
+│       └── variables.tf
+└── remote-state-bootstrap
+    ├── README.md
+    ├── main.tf
+    ├── outputs.tf
+    └── variables.tf
 ```
 
-## Terragrunt HCL
+## Overview
 
-Each environment contains a `terragrunt.hcl` at the top level (as well as child levels), this ensures that all the dependent Terraform states are mapped correctly, as well as pushes variables/artifacts down throughout all the child provisioners/modules. Terragrunt uses the "Don't Repeat Yourself (DRY)" philosophy, and we're trying to replicate that here.
+The Data Science deployment is broken into 2 parts, the infrastructure and application stack. Each part maintains it's own Terraform remote state in order to minimize the blast radius of destructive changes.
 
-For any variables, such as environment, user, etc., define those at the top level `<environment>/terragrunt.hcl`. This generates the below files on every child Terraform folder at runtime:
+Ideally, these states will reside outside of the Azure Resource Groups Terraform is managing. To assist with this, another Terraform module is provided under `./terraform/remote-state-boostrap` to create those necessary dependencies.
 
-- \_\_backend.tf
-- \_\_provider.tf
-- \_\_variables.tf
+The high level workflow of deploying the pipeline is a follows:
 
-These files are added under `.gitignore`, so they won't be committed to the repository, as Terragrunt regenerates at runtime. This keeps the overall Data Science repository clean, while allowing for easy environment navigation and precise state data adjustments.
+1. Create Azure storage for remote state
+2. Deploy Infrastructure (`./terraform/providers/infrastructure`)
+3. Deploy Application Stack (`./terraform/providers/application_stack`)
 
-## Environment Terraform Variables
+The `infrastructure` components are broken into resource-defined Terraform files and the `application stack` components are deployed via modules, located in this same repository under `./terraform/modules`. This increases the ability to push changes and modifications without multiple Git repositories and versioning. Note, as the development team or project grows, this methodology is subject to change to enhance protection of the data and integrity of the deployments.
 
-- Defined globally under `tg_environment_variables.hcl`
-  - Avoids the need to define a `variables.tf` file for every module, instead Terragrunt creates this file.
-  - Simply add them to the `hcl` file node and Terragrunt will automate generation of the `variables.tf` per state.
+### Ansible/Cloud-Init
 
-## Environment Inputs
+To avoid prolonged execution times and minimize `null_resource` call outs as recommended by HashiCorp, all of the Ansible-based provisioning and configuration management is initiated via Cloud-Init. This allows for Ansible changes to be managed and updated outside of the Terraform state.
 
-- Defined under `tg_environment_inputs.yml` or per-module at `inputs.yml`. Per-module inputs override Global, although this should be used sparing to avoid complicated dependency debugging.
+Cloud-Init and Ansible execution can be reviewed from within the Azure Portal for each Virtual Machine here: `Boot diagnostics` -> `Serial Log`
+
+## Environment Variables
+
+In order to facilitate an automated means of deployment, as well as protect sensitive variables, the following environment variables need to be defined for a successful deployment. In order for Terraform to consume them during any operations, the environment variable must be prefixed with `TF_VAR_<variable_name>`.
+
+```bash
+## Set Pipeline Environment Variables
+export WORKING_DIR="/opt/repos"
+export TF_VAR_environment="dev"
+export TF_VAR_cluster_name="datasci"
+export TF_VAR_resource_group_name="rg-datasci-dev"
+export TF_VAR_tfstate_resource_group_name="rg-datasci-oob"
+export TF_VAR_state_container="remote-tfstates"
+export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}' $(echo ${TF_VAR_environment^^}))
+export TF_VAR_alert_topics='["alert_message"]'
+export TF_VAR_mqtt_topics='["comma","separated","list"]'
+export TF_VAR_mqtt_users='["comma","separated","list"]'
+# Azure Account Credentials
+export ARM_ENVIRONMENT="public"
+export ARM_CLIENT_ID="azure-serviceprincipal-client-id"
+export ARM_CLIENT_SECRET="azure-serviceprincipal-secret"
+export ARM_SUBSCRIPTION_ID="azure-subscription-id"
+export ARM_TENANT_ID="azure-tenant-id"
+# Remote State Azure Account Credentials (if in different resource group than assets...and it should be! If not, just source the ARM ENVs)
+export TF_VAR_remotestate_client_id="azure-serviceprincipal-client-id"
+export TF_VAR_remotestate_client_secret="azure-serviceprincipal-secret"
+export TF_VAR_remotestate_subscription_id="${ARM_SUBSCRIPTION_ID}"
+export TF_VAR_remotestate_tenant_id="${ARM_TENANT_ID}"
+export TF_VAR_remotestate_storage_account_name="tfstatedataacct01"
+export TF_VAR_sp_password="${ARM_CLIENT_SECRET}"
+```
+
+### Special Environment Variables
+
+In some scenarios, secrets and resources are pre-provisioned by the upstream management team. In these cases, and to prevent unnecessary fallout, a few boolean values are defined to influence Terraform's reach. Currently, there are 2 such use cases: Resource Group and Source IPs.
+
+#### Resource Group
+
+In order to avoid Terraform managing or destroying the Azure Resource Group for the pipeline, the variable `manage_resource_group` is set to `False` by default. This prevents Terraform from attempting to manage the parent resource group. So long as the `resource_group_name` variable is defined and the operating account has access, this doesn't affect the functionality of the pipeline deployment.
+
+#### Azure Key Vault
+
+In order to enhance the security of the pipeline, by default Terraform will determine the local workstation IP and pass that as the only "source address" that can reach the Data Science environment.
+
+To complement this feature within a shared state and automation, Azure Key Vault lookups were added. The default behavior is to simply `curl https://ipecho.net/plain` and add that IP as the source.
+
+However, set this variable `source_from_vault=true`, and Terraform will perform lookups to an Azure Key Vault.
+
+With the lookup enabled, Terraform expects a few additional variables:
+
+```bash
+source_from_vault -> Boolean to true
+azure_keyvault_resource_group_name -> Resource Group of Key Vault
+azure_keyvault_name -> Azure Key Vault Name
+azure_keyvault_secret1 -> CSV Secret to Lookup
+```
+
+Sample environment deploy:
+
+```bash
+export TF_VAR_source_from_vault=true
+export TF_VAR_azure_keyvault_resource_group_name=""
+export TF_VAR_azure_keyvault_name=""
+export TF_VAR_azure_keyvault_secret1=""
+```
+
+On the Azure Key Vault side, the `azure_keyvault_secret1` secret is expected to be in a comma separated value format: `1.1.1.1,2.2.2.2,3.3.3.3`. If it is not, Terraform will have parsing errors.
 
 ## Execution
 
-- To deploy an entire environment, execute this command: `terragrunt apply-all --terragrunt-working-dir dev/`
-  - With `dev/'` aligning to the proper folder path in the above tree.
-- To develop and test individual components, drill into the desired component directory and execute: `terragrunt apply`
-  - Can also deploy at the top level, specifying the working directory: `terragrunt apply --terragrunt-working-dir dev/infrastructure/resource_groups/`
+- With the appropriate variables set, execute this command to deploy the infrastructure:
 
-### Terragrunt Gotchas
+  ```bash
+  cd ${WORKING_DIR}/data-science/terraform/providers/infrastructure:
+  terraform init \
+    -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
+    -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
+    -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
+    -backend-config="container_name=${TF_VAR_state_container}" \
+    -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
+    -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
+    -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
+    -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
+  terraform plan
+  terraform apply
+  ```
 
-The variables are passed via parent imports from Terragrunt's HCL files, so raw `terraform <action>` commands will result in undefined variables or missing inputs. Running `terragrunt <action>` avoids these issues, as Terragrunt will enumerate through parent directories to determine these values.
+- Execute this command to deploy the applcation stack:
 
-For example, these will provide the same result:
+  ```bash
+  cd ${WORKING_DIR}/data-science/terraform/providers/application_stack
+  terraform init \
+    -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
+    -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
+    -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
+    -backend-config="container_name=${TF_VAR_state_container}" \
+    -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
+    -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
+    -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
+    -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
+  terraform plan
+  terraform apply
+  ```
 
-```bash
-> pwd
-pvr-azure-datasci-core
-> terragrunt apply --terragrunt-working-dir dev/infrastructure/resource_groups/
-## OR ##
-> pwd
-pvr-azure-datasci-core/dev/infrastructure/resource_groups
-> terragrunt apply
-```
+- Once deployed, the outputs below will assist in accessing or managing the environment:
+
+  ```bash
+  terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure output -json | jq -r '.automation_account_ssh_private.value'
+  terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json |jq -r '.datasci_node_public_ips.value'
+  terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json |jq -r '.grafana_admin_password.value.result'
+  ```
 
 ## Destruction
 
 Destruction of assets will not be an automated process. Tread with caution, as this is permanent and **WILL** result in data loss.
 
-To remove an environment in it's entirety: `terragrunt destroy --terragrunt-working-dir dev/infrastructure/resource_groups/`
+To remove an environment:
 
-> Azure removes all dependent objects within the defined Resource Group
+1. Infrastructure: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure destroy`
+2. Application Stack: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack destroy`
 
 NOTE: Based on the Terraform bootstrap process, running this destroy **WILL NOT** remove the Terraform state data or storage container, as that is (and should be) provisioned outside of the main infrastructure states to ensure environment safety.
 
-To remove a specific component, operates the same as the above `apply` examples:
+## Operations
+
+After the environment is deployed and SSH access is needed into the nodes, these are couple sample commands that can help access various services:
 
 ```bash
-> pwd
-pvr-azure-datasci-core
-> terragrunt destroy --terragrunt-working-dir /dev/application_stack/datasci_nodes
-## OR ##
-> pwd
-pvr-azure-datasci-core/dev/application_stack/datasci_nodes
-> terragrunt destroy
+#
+CONSUL='8500'
+PROMETHEUS='9090'
+PROMETHEUS_IP='xxx.xxx.xxx.xxx'
+ssh -L $CONSUL:localhost:$CONSUL -L $PROMETHEUS:$PROMETHEUS_IP:$PROMETHEUS -i /path/to/terraform_gen_pubkey admin_username@xxx.xxx.xxx.xxx
 ```
-
-NOTE: Due to interlocking dependencies that can get quite complicated throughout the full stack, ensure all dependent modules are updated after a destroy/re-create. (i.e, IP addresses change)
-
-Highly simplified example of that particular workflow:
-
-```bash
-> pwd
-pvr-azure-datasci-core
-> terragrunt destroy --terragrunt-working-dir /dev/application_stack/datasci_nodes
-> terragrunt apply --terragrunt-working-dir /dev/application_stack/datasci_nodes
-> terragrunt apply-all --terragrunt-working-dir /dev/application_stack/
-# This would only update/redeploy assets effected by changes in the datasci_nodes module
-```
-
-## Feature Requests/Action Items
-
-TODO: Need to discuss environment provisioning; the Vagrant dependencies are removed (and moved to another repository for "dev machine")
-TODO: Better handle VM creation between duplicating modules (use tagging->mapped to Ansible roles??)
-TODO: Clean up variable declarations between Terragrunt and upstream modules
-TODO: Test SSH access using dynamic key
