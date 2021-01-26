@@ -2,9 +2,20 @@
 == Frequently Asked Questions (FAQ)
 Following are the answers to some frequently asked questions.
 
+=== How do I log into the DevOps Docker container
+. In a terminal, run `docker run -dit --name <devops-container-name> shrapk2/devops:latest /bin/bash` to download the latest container image
+. Log into the newly downloaded container by running `docker exec -0 -it datasci /bin/bash`
+
+=== How do I get the ssh key for the deployed VM nodes
+. Log into the <<How do I log into the DevOps Docker container, DevOps container>>
+. From the infrastructure subfolder of the project (i.e. `<working_dir>/data-science/terraform/providers/infrastructure`) run `terraform output -json | jq -r '.automation_account_ssh_private.value'` where
+... `<working_dir>` is the folder you cloned the datasci repo into
 
 === How do I log into a worker node
-. `ssh datasci_admin@<vm-name>.<azure-cloud-url>` where
+. Get the <<How do I get the ssh key for the deployed VM nodes, ssh keys>> for the deployed worker node
+. Save the key in a file and remember its name and location (eg. /home/datasci_admin/keys/datasci-dev.rsa)
+. From a terminal, `ssh  -i <ssh-key> datasci_admin@<vm-name>.<azure-cloud-url>` where
+... `<ssh-key>` is the full file name of the key from step 2
 ... `<vm-name>` is the Virtual Machine name (e.g. datasci-dev0)
 ... `<azure-cloud-url>` is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)
 
@@ -98,10 +109,10 @@ It should show the following output:
 
 === How do I access Grafana dashboards
 . Look up the reverse proxy's fully qualified domain name in Consul's Key/Value store at reverseproxy/fqdn path
-. Look up the Grafana admin password in Consul, or the Terraform state file
+. Look up the Grafana admin name and password in Consul
 . Open an Internet browser at https://<reverseproxy-fqdn> where
 .. `<reverseproxy-fqdn>` is the url looked up above
-. Log into Grafana using `admin` user name, and the password looked up above
+. Log into Grafana using the user name and the password looked up above
 
 === How do I confirm messages are flowing from my device through the pipeline
 . Log into Azure portal
