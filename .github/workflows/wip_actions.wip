@@ -24,7 +24,7 @@ jobs:
   linter:
     runs-on: ubuntu-latest
     container:
-      image: shrapk2/devops
+      image: chesapeaketechnology/devops
 
     steps:
       - name: Navigate to the proper directory
@@ -36,7 +36,7 @@ jobs:
   # development_deploy:
   #   environment: development
   #   needs: linter
-  #   runs-on: shrapk2/devops
+  #   runs-on: chesapeaketechnology/devops
   #   env:
   #     ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   #     ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -61,4 +61,4 @@ jobs:
   #   needs:
   #     - linter
   #     - development_deploy
-  #   runs-on: shrapk2/devops
+  #   runs-on: chesapeaketechnology/devops

@@ -25,7 +25,7 @@ Currently, the main Terraform datasci.tf script deploys the following resources 
 The data-science project is meant to be deployed from a DevOps Docker container which includes all the needed tools pre-installed and configured. To get started,
 
 . `Install Docker` by following directions http://docs.docker.com/engine/install[here]
-. In a terminal, run `docker run -dit --name datasci shrapk2/devops:latest /bin/bash` to download the container image
+. In a terminal, run `docker run -dit --name datasci chesapeaketechnology/devops:latest /bin/bash` to download the container image
 . Log into the newly downloaded container by running `docker exec -u 0 -it datasci /bin/bash`
 . Set the needed environment variables as shown in the example below.
 
