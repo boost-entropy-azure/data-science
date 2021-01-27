@@ -461,31 +461,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_data_science_infrastructure_deployment">3. Data Science Infrastructure Deployment</a>
 <ul class="sectlevel2">
 <li><a href="#_initial_setup">3.1. Initial Setup</a></li>
-<li><a href="#_to_set_up_a_development_environment">3.2. To set up a Development environment</a></li>
-<li><a href="#_to_set_up_an_administrator_environment">3.3. To Set up an Administrator environment</a></li>
-<li><a href="#_optional_manual_setup">3.4. (Optional) Manual setup</a></li>
-<li><a href="#_create_an_ssh_key_pair">3.5. Create an SSH Key Pair</a></li>
-<li><a href="#_install_terraform">3.6. Install Terraform</a></li>
-<li><a href="#_install_azure_cli">3.7. Install Azure CLI</a></li>
-<li><a href="#_install_ansible">3.8. Install Ansible</a></li>
-<li><a href="#_run_the_terraform_deployment">3.9. Run the Terraform Deployment</a></li>
-<li><a href="#_optional_tear_down_the_azure_deployment">3.10. (Optional) Tear down the Azure Deployment</a></li>
 </ul>
 </li>
 <li><a href="#_frequently_asked_questions_faq">4. Frequently Asked Questions (FAQ)</a>
 <ul class="sectlevel2">
-<li><a href="#_how_do_i_log_into_a_worker_node">4.1. How do I log into a worker node</a></li>
-<li><a href="#_how_do_i_set_up_port_forwarding_for_an_application">4.2. How do I set up port forwarding for an application</a></li>
-<li><a href="#_how_do_i_check_the_status_of_spark_jobs">4.3. How do I check the status of Spark jobs</a></li>
-<li><a href="#_how_do_i_look_up_the_mqtt_broker_passwords">4.4. How do I look up the MQTT broker passwords</a></li>
-<li><a href="#_how_do_i_look_at_the_status_of_provisioned_prometheus_targets">4.5. How do I look at the status of provisioned Prometheus targets</a></li>
-<li><a href="#_how_do_i_open_a_jupyter_notebook">4.6. How do I open a Jupyter notebook</a></li>
-<li><a href="#_how_do_i_figure_out_which_worker_node_is_the_namenode">4.7. How do I figure out which worker node is the NameNode</a></li>
-<li><a href="#_how_do_i_check_the_status_of_hdfs_and_yarn">4.8. How do I check the status of HDFS and YARN</a></li>
-<li><a href="#_how_do_i_start_hdfs_and_yarn_services">4.9. How do I start HDFS and YARN services</a></li>
-<li><a href="#_how_do_i_access_grafana_dashboards">4.10. How do I access Grafana dashboards</a></li>
-<li><a href="#_how_do_i_confirm_messages_are_flowing_from_my_device_through_the_pipeline">4.11. How do I confirm messages are flowing from my device through the pipeline</a></li>
-<li><a href="#_reverse_proxy_status">4.12. Reverse Proxy status</a></li>
+<li><a href="#_how_do_i_log_into_the_devops_docker_container">4.1. How do I log into the DevOps Docker container</a></li>
+<li><a href="#_how_do_i_get_the_ssh_key_for_the_deployed_vm_nodes">4.2. How do I get the ssh key for the deployed VM nodes</a></li>
+<li><a href="#_how_do_i_log_into_a_worker_node">4.3. How do I log into a worker node</a></li>
+<li><a href="#_how_do_i_set_up_port_forwarding_for_an_application">4.4. How do I set up port forwarding for an application</a></li>
+<li><a href="#_how_do_i_check_the_status_of_spark_jobs">4.5. How do I check the status of Spark jobs</a></li>
+<li><a href="#_how_do_i_look_up_the_mqtt_broker_passwords">4.6. How do I look up the MQTT broker passwords</a></li>
+<li><a href="#_how_do_i_look_at_the_status_of_provisioned_prometheus_targets">4.7. How do I look at the status of provisioned Prometheus targets</a></li>
+<li><a href="#_how_do_i_open_a_jupyter_notebook">4.8. How do I open a Jupyter notebook</a></li>
+<li><a href="#_how_do_i_figure_out_which_worker_node_is_the_namenode">4.9. How do I figure out which worker node is the NameNode</a></li>
+<li><a href="#_how_do_i_check_the_status_of_hdfs_and_yarn">4.10. How do I check the status of HDFS and YARN</a></li>
+<li><a href="#_how_do_i_start_hdfs_and_yarn_services">4.11. How do I start HDFS and YARN services</a></li>
+<li><a href="#_how_do_i_access_grafana_dashboards">4.12. How do I access Grafana dashboards</a></li>
+<li><a href="#_how_do_i_confirm_messages_are_flowing_from_my_device_through_the_pipeline">4.13. How do I confirm messages are flowing from my device through the pipeline</a></li>
+<li><a href="#_reverse_proxy_status">4.14. Reverse Proxy status</a></li>
 </ul>
 </li>
 </ul>
@@ -732,434 +725,138 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 <div class="sect2">
 <h3 id="_initial_setup"><a class="anchor" href="#_initial_setup"></a>3.1. Initial Setup</h3>
 <div class="paragraph">
-<p>There are two Vagrant scripts provided in this project. They are included to help you set up your local environment
-for either administering the data science pipeline or for contributing changes to the project.</p>
+<p>The data-science project is meant to be deployed from a DevOps Docker container which includes all the needed tools pre-installed and configured. To get started,</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><code>localdev/Vagrantfile</code> will create a Desktop Ubuntu VM with many IDEs installed and configured
-(VS Code, PyCharm, IntelliJ, etc) as well as all the packages needed to actively develop, build and test
-the data-science project. Installing all the packages (especially the Ubuntu Desktop) takes a long time.
-If you will not be developing new features for the project an admin VM may be a better option for you.
-See <a href="#_to_set_up_a_development_environment">this section</a> for details.</p>
+<p><code>Install Docker</code> by following directions <a href="http://docs.docker.com/engine/install">here</a></p>
 </li>
 <li>
-<p><code>localadmin/Vagrantfile</code> will deploy an Ubuntu VM meant for administering the data-science project. As such, it will not
-include a Desktop environment or any of the IDEs. The admin image allows an administrator to create a Linux VM and
-deploy the data-science project to the Azure cloud. It also allows the admin to ssh to the created nodes to monitor their
-status.
-See <a href="#_to_set_up_an_administrator_environment">this section</a> for details.</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_to_set_up_a_development_environment"><a class="anchor" href="#_to_set_up_a_development_environment"></a>3.2. To set up a Development environment</h3>
-<div class="paragraph">
-<p>If running on Windows, it is recommended to set up a Linux VM to do all the development and deployment from. Use the steps
-below to create an Ubuntu VM with Vagrant. If running on Linux or MacOS, setting up a dedicated development environment is
-not strictly necessary but is strongly recommended in order to avoid configuration issues.</p>
-</div>
-<div class="paragraph">
-<p>To set up a development environment on a Windows host, follow the steps below.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Clone this repository. In a terminal (bash or Powershell), run <code>git clone <a href="https://github.com/chesapeaketechnology/data-science" class="bare">https://github.com/chesapeaketechnology/data-science</a></code></p>
+<p>In a terminal, run <code>docker run -dit --name datasci chesapeaketechnology/devops:latest /bin/bash</code> to download the container image</p>
 </li>
 <li>
-<p>Install <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a></p>
+<p>Log into the newly downloaded container by running <code>docker exec -u 0 -it datasci /bin/bash</code></p>
 </li>
 <li>
-<p><a href="https://www.vagrantup.com/downloads.html">Install vagrant</a></p>
-</li>
-<li>
-<p>In a terminal (bash or Powershell), run <code>vagrant plugin install vagrant-vbguest</code></p>
-</li>
-<li>
-<p>In a terminal, run <code>vagrant plugin install vagrant-disksize</code></p>
-</li>
-<li>
-<p>In a terminal, run <code>cd data-scicence/localdev</code></p>
-</li>
-<li>
-<p>In a terminal, run <code>vagrant up</code> to create and boot the VM</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Note: this may take a long time to complete (&gt; 1h)</p>
-</li>
-<li>
-<p>In case the installation fails, restart it with <code>vagrant reload --provision</code> (will require at least a few reloads)</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Login to the VM, <code>username=vagrant, pass=vagrant</code></p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_to_set_up_an_administrator_environment"><a class="anchor" href="#_to_set_up_an_administrator_environment"></a>3.3. To Set up an Administrator environment</h3>
-<div class="paragraph">
-<p>To set up an administrator environment on a Windows host, follow the steps below.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Clone this repository. In a terminal (bash or Powershell), run <code>git clone <a href="https://github.com/chesapeaketechnology/data-science" class="bare">https://github.com/chesapeaketechnology/data-science</a></code></p>
-</li>
-<li>
-<p>Install <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a></p>
-</li>
-<li>
-<p><a href="https://www.vagrantup.com/downloads.html">Install vagrant</a></p>
-</li>
-<li>
-<p>In a terminal (bash or Powershell), run <code>vagrant plugin install vagrant-vbguest</code></p>
-</li>
-<li>
-<p>In a terminal, run <code>vagrant plugin install vagrant-disksize</code></p>
-</li>
-<li>
-<p>In a terminal, run <code>cd data-scicence/localadmin</code></p>
-</li>
-<li>
-<p>In a terminal, run <code>vagrant up</code> from bash/Powershell to create and boot the VM</p>
-</li>
-<li>
-<p>In a terminal, run <code>vagrant ssh</code> to login to the VM, <code>username=vagrant, pass=vagrant</code></p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_optional_manual_setup"><a class="anchor" href="#_optional_manual_setup"></a>3.4. (Optional) Manual setup</h3>
-<div class="paragraph">
-<p>If running on macOS or Linux natively, you can skip creating a dedicated VM. However, if you&#8217;re planning on contributing
-to the project, you will have to set up the development and testing environment manually on your host machine.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_create_an_ssh_key_pair"><a class="anchor" href="#_create_an_ssh_key_pair"></a>3.5. Create an SSH Key Pair</h3>
-<div class="paragraph">
-<p>You will need an SSH key pair to provision any virtual machine on Azure. When creating a pipeline using the datasci.tf Terraform
-script, all VMs will have their <a href="https://www.ssh.com/ssh/authorized_keys">authorized_keys</a> file updated to include your public key
-so that you can log in with SSH into the VM.</p>
-</div>
-<div class="paragraph">
-<p>If you already have created an SSH key, then you can skip creating a new SSH key pair.</p>
-</div>
-<div class="quoteblock">
-<blockquote>
-<div class="paragraph">
-<p>⚠️ WARNING:  Currently, only private SSH keys without passphrases are supported. If your <code>id_rsa</code> private ssh key has a passphrase you will need to remove it.</p>
-</div>
-</blockquote>
-</div>
-<div class="sect3">
-<h4 id="_create_a_new_ssh_key_pair"><a class="anchor" href="#_create_a_new_ssh_key_pair"></a>3.5.1. Create a new SSH key pair</h4>
-<div class="paragraph">
-<p>Detailed instructions can be found <a href="https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html">here</a></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>From a terminal window, run <code>ssh-keygen -C &quot;&quot;</code></p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_add_your_ssh_key_to_your_ssh_agent"><a class="anchor" href="#_add_your_ssh_key_to_your_ssh_agent"></a>3.5.2. Add your ssh key to your ssh agent</h4>
-<div class="sect4">
-<h5 id="_macos"><a class="anchor" href="#_macos"></a>MacOS</h5>
-<div class="paragraph">
-<p>If you&#8217;re on MacOS you may need to re-add your keys to the ssh-agent each time you re-start. You can do this by
-running the following from Terminal:</p>
-</div>
-<div class="paragraph">
-<p><code>ssh-add</code></p>
-</div>
-<div class="paragraph">
-<p>If you want these keys added to your agent persistently you can use
-the AddKeysToAgent config setting in ~/.ssh/config. For example,</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>Host *
-  UseKeychain yes
-  AddKeysToAgent yes
-  IdentityFile ~/.ssh/id_rsa</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you use a key with a password and would like to store the password in
-Keychain you can also add <code>UseKeychain yes</code> to the config file.</p>
-</div>
-<div class="paragraph">
-<p>See <a href="https://www.manpagez.com/man/5/ssh_config/">the ssh_config man page</a> for more information.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_install_terraform"><a class="anchor" href="#_install_terraform"></a>3.6. Install Terraform</h3>
-<div class="sect3">
-<h4 id="_linux"><a class="anchor" href="#_linux"></a>3.6.1. Linux</h4>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>From a terminal, run <code>sudo apt install unzip</code></p>
-</li>
-<li>
-<p>Download the binary from <a href="http://terraform.io/downloads.html" class="bare">http://terraform.io/downloads.html</a></p>
-</li>
-<li>
-<p>Once downloaded, unzip the binary by running <code>unzip terraform_0.12.20_linux_amd64.zip</code></p>
-</li>
-<li>
-<p>Finally, install the terraform binary to a common directory (a directory present on your PATH environment variable) by
-running <code>sudo mv terraform /usr/local/bin</code> in a terminal</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_macos_2"><a class="anchor" href="#_macos_2"></a>3.6.2. macOS</h4>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><a href="https://brew.sh/">Install brew</a></p>
-</li>
-<li>
-<p><code>brew install terraform</code></p>
-</li>
-</ol>
-</div>
-<div class="sect4">
-<h5 id="_test_terraform"><a class="anchor" href="#_test_terraform"></a>Test Terraform</h5>
-<div class="listingblock">
-<div class="content">
-<pre>dino@twofatcheeks:~$ terraform
-Usage: terraform [-version] [-help] &lt;command&gt; [args]
-
-The available commands for execution are listed below.
-The most common, useful commands are shown first, followed by
-less common or more advanced commands. If you're just getting
-started with Terraform, stick with the common commands. For the
-other commands, please read the help and docs before usage.
-
-Common commands:
-    apply              Builds or changes infrastructure
-    console            Interactive console for Terraform interpolations</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_install_azure_cli"><a class="anchor" href="#_install_azure_cli"></a>3.7. Install Azure CLI</h3>
-<div class="sect3">
-<h4 id="_linux_2"><a class="anchor" href="#_linux_2"></a>3.7.1. Linux</h4>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><code>curl -sL <a href="https://aka.ms/InstallAzureCLIDeb" class="bare">https://aka.ms/InstallAzureCLIDeb</a> | sudo bash</code></p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_macos_3"><a class="anchor" href="#_macos_3"></a>3.7.2. macOS</h4>
-<div class="paragraph">
-<p><a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos?view=azure-cli-latest">Detailed instructions</a>
-1. <code>brew update &amp;&amp; brew install azure-cli</code></p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_try_it"><a class="anchor" href="#_try_it"></a>3.7.3. Try it</h4>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><code>az cloud set --name AzureCloud</code></p>
-</li>
-<li>
-<p><code>az login</code></p>
-</li>
-<li>
-<p>You&#8217;ll see output similar to this</p>
+<p>Set the needed environment variables as shown in the example below.</p>
 <div class="literalblock">
 <div class="content">
-<pre>----
-[
-  {
-    "cloudName": "AzureCloud",
-    "homeTenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    "id": "07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    "isDefault": true,
-    "managedByTenants": [],
-    "name": "Azure subscription 1",
-    "state": "Enabled",
-    "tenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    "user": {
-      "name": "&lt;username&gt;@example.com",
-      "type": "user"
-    }
-  }
-]
-----</pre>
+<pre>[source]
+---
+## Set Pipeline Environment Variables
+export WORKING_DIR="/home/data-science"
+export TF_VAR_environment="dev"
+export TF_VAR_cluster_name="datasci"
+export TF_VAR_resource_group_name="rg-datasci-dev"
+export TF_VAR_tfstate_resource_group_name="rg-datasci-oob"
+export TF_VAR_state_container="remote-tfstates"
+export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}' $(echo ${TF_VAR_environment^^}))
+export TF_VAR_alert_topics='["alert_message"]'
+export TF_VAR_mqtt_topics='["comma","separated","list"]'
+export TF_VAR_mqtt_users='["comma","separated","list"]'
+# Azure Account Credentials
+export ARM_ENVIRONMENT="public"
+export ARM_CLIENT_ID="azure-serviceprincipal-client-id"
+export ARM_CLIENT_SECRET="azure-serviceprincipal-secret"
+export ARM_SUBSCRIPTION_ID="azure-subscription-id"
+export ARM_TENANT_ID="azure-tenant-id"
+# Remote State Azure Account Credentials (if in different resource group than assets...and it should be! If not, just source the ARM ENVs)
+export TF_VAR_remotestate_client_id="azure-serviceprincipal-client-id"
+export TF_VAR_remotestate_client_secret="azure-serviceprincipal-secret"
+export TF_VAR_remotestate_subscription_id="${ARM_SUBSCRIPTION_ID}"
+export TF_VAR_remotestate_tenant_id="${ARM_TENANT_ID}"
+export TF_VAR_remotestate_storage_account_name="${TF_VAR_environment}tfstatedata0001"
+export TF_VAR_sp_password="${ARM_CLIENT_SECRET}"
+---</pre>
 </div>
 </div>
 </li>
 <li>
-<p><code>az account set --subscription=&quot;07c2619d-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</code>, but use the actual ID from above</p>
-</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_install_ansible"><a class="anchor" href="#_install_ansible"></a>3.8. Install Ansible</h3>
-<div class="sect3">
-<h4 id="_linux_3"><a class="anchor" href="#_linux_3"></a>3.8.1. Linux</h4>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><code>sudo apt-add-repository --yes --update ppa:ansible/ansible</code></p>
-</li>
-<li>
-<p><code>sudo apt install ansible</code></p>
-</li>
-<li>
-<p>To verify, run <code>ansible --version</code>. You should see output similar to this:</p>
+<p>This step should only be done if this is the first time you&#8217;re deploying the data-science repo to your environment or if you&#8217;re re-deploying to an existing environment following a complete destruction of the environment (i.e. the Terraform remote state storage account does not have any state information on the environment you&#8217;re about to deploy)</p>
 <div class="literalblock">
 <div class="content">
-<pre>----
-ansible 2.9.4
- config file = /etc/ansible/ansible.cfg
- configured module search path = [u'/home/dino/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
- ansible python module location = /usr/lib/python2.7/dist-packages/ansible
- executable location = /usr/bin/ansible
- python version = 2.7.17 (default, Nov  7 2019, 10:07:09) [GCC 7.4.0]
-----</pre>
+<pre>[source]
+---
+cd ${WORKING_DIR}/data-science/terraform/remote-state-bootstrap
+unset ARM_CLIENT_ID
+unset ARM_CLIENT_SECRET
+export ARM_CLIENT_ID="${TF_VAR_remotestate_client_id}"
+export ARM_CLIENT_SECRET="${TF_VAR_remotestate_client_secret}"
+terraform init
+terraform plan
+terraform import azurerm_resource_group.resource_group /subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/${TF_VAR_tfstate_resource_group_name}
+terraform apply -auto-approve
+# OCD optional cleanup (is ignored by Git via .gitignore)
+rm -fr ./.terraform *.tfstate*
+unset ARM_CLIENT_ID
+unset ARM_CLIENT_SECRET
+echo "SET THE PROPER VARS AGAIN FOR ARM_CLIENT_ID &amp; ARM_CLIENT_SECRET"
+---</pre>
 </div>
 </div>
 </li>
 <li>
-<p>Install pip, <code>sudo apt install python-pip</code></p>
-</li>
-<li>
-<p><code>pip install ansible[azure]</code></p>
-</li>
-<li>
-<p><code>ansible-galaxy install geerlingguy.java</code></p>
-</li>
-<li>
-<p>Disable host checking by un-commenting <code>host_key_checking = False</code> under <code>/etc/ansible/ansible.cfg</code></p>
-</li>
-</ol>
+<p>Log into Azure</p>
+<div class="literalblock">
+<div class="content">
+<pre>[source]
+---
+az account clear
+az login --service-principal --username ${ARM_CLIENT_ID} --tenant ${ARM_TENANT_ID} --password ${ARM_CLIENT_SECRET}
+---</pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_macos_4"><a class="anchor" href="#_macos_4"></a>3.8.2. macOS</h4>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><code>brew install ansible</code></p>
 </li>
 <li>
-<p><code>pip3 install &#39;ansible[azure]&#39;</code></p>
+<p>Change your working directory to match the WORKING_DIR setting from step 4 by running <code>cd $WORKING_DIR</code></p>
 </li>
 <li>
-<p><code>ansible-galaxy install geerlingguy.java</code></p>
+<p>Clone the datasci-repo by running <code>git clone <a href="https://github.com/chesapeaketechnology/data-science" class="bare">https://github.com/chesapeaketechnology/data-science</a></code></p>
 </li>
 <li>
-<p>To verify, run <code>ansible --version</code></p>
-</li>
-<li>
-<p>Disable host checking by uncommenting <code>host_key_checking = False</code> under <code>/usr/local/etc/ansible/ansible.cfg</code></p>
-</li>
-</ol>
+<p>Deploy the infrastructure resources of the project</p>
+<div class="literalblock">
+<div class="content">
+<pre>[source]
+---
+cd ${WORKING_DIR}/data-science/terraform/providers/infrastructure
+terraform init \
+  -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
+  -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
+  -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
+  -backend-config="container_name=${TF_VAR_state_container}" \
+  -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
+  -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
+  -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
+  -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
+terraform plan
+terraform apply
+---</pre>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_run_the_terraform_deployment"><a class="anchor" href="#_run_the_terraform_deployment"></a>3.9. Run the Terraform Deployment</h3>
-<div class="paragraph">
-<p>The following set of commands will deploy the data science pipeline to Azure. By default, the deployment process will create
-a new resource group, and the rest of the resources will be added under that resource group. If however, you&#8217;re deploying
-to an existing resource group, you will have to import the existing resource group to the Terraform state file.
-In a terminal, run:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><code>cd provision-datasci</code></p>
 </li>
 <li>
-<p><code>terraform init</code></p>
-</li>
-<li>
-<p>If deploying the pipeline resources under an existing resource group, run
-<code>terraform import azurerm_resource_group.datasci_group /subscriptions/&lt;subscription_id&gt;/resourceGroups/&lt;resource-group-name&gt;</code>
-where</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p><code>&lt;subscription_id&gt;</code> is your Azure subscription that you&#8217;re working with</p>
-</li>
-<li>
-<p><code>&lt;resource-group-name&gt;</code> is the actual name of the existing resource group</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Update the Ansible vault password. This password is stored in Dashlane so request it from the repo owners and then simply copy it to <code>~/.vaultpw</code> file on your dev machine.</p>
-</li>
-<li>
-<p>Finally, run <code>terraform apply datasci.tf -var-file=datasci_vars.tfvars</code></p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>There are two variables whose defaults have to be provided for the script to work, <code>mqtt_topics</code> and <code>mqtt_users</code>.</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p><code>mqtt_topics</code> controls the created message topics. The datasci.tf script will create an Azure EventHubs instance
-for each topic and the mqtt-azure-eventub-connector will forward all messages from the MQTT broker to the EventHubs.
-To provide a list of topics to create withing the pipeline, add the following to the above command
-<code>-var=&quot;mqtt_topics&quot;=&#39;[&quot;LTE_MESSAGE&quot;, &quot;UMTS_MESSAGE&quot;, &quot;CDMA_MESSAGE&quot;, &quot;GSM_MESSAGE]&#39;</code></p>
-</li>
-<li>
-<p><code>mqtt_users</code> controls which users are provisioned passwords and given access to the MQTT broker. The passwords are
-gerated using the <code>mosquito_passwd</code> utility and are stored in Consul. To provide a list of users who will be granted access
-to the MQTT broker, add the following to the above command
-<code>-var=&quot;mqtt_users=&#39;[&quot;dino&quot;,&quot;christian&quot;]&#39;</code></p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Lastly, to ensure Terraform deployed everything correctly, log into the Azure portal and note the added resources.</p>
-</li>
-</ol>
+<p>Deploy the application resources of the project</p>
+<div class="literalblock">
+<div class="content">
+<pre>[source]
+---
+cd ${WORKING_DIR}/data-science/terraform/providers/application_stack
+terraform init \
+  -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
+  -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
+  -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
+  -backend-config="container_name=${TF_VAR_state_container}" \
+  -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
+  -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
+  -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
+  -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
+terraform plan
+terraform apply
+---</pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_optional_tear_down_the_azure_deployment"><a class="anchor" href="#_optional_tear_down_the_azure_deployment"></a>3.10. (Optional) Tear down the Azure Deployment</h3>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>To tear down the allocations, run <code>terraform destroy -var-file=datasci_vars.tfvars</code>.</p>
 </li>
 </ol>
 </div>
@@ -1173,13 +870,55 @@ to the MQTT broker, add the following to the above command
 <p>Following are the answers to some frequently asked questions.</p>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_log_into_a_worker_node"><a class="anchor" href="#_how_do_i_log_into_a_worker_node"></a>4.1. How do I log into a worker node</h3>
+<h3 id="_how_do_i_log_into_the_devops_docker_container"><a class="anchor" href="#_how_do_i_log_into_the_devops_docker_container"></a>4.1. How do I log into the DevOps Docker container</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><code>ssh datasci_admin@&lt;vm-name&gt;.&lt;azure-cloud-url&gt;</code> where</p>
+<p>In a terminal, run <code>docker run -dit --name &lt;devops-container-name&gt; chesapeaketechnology/devops:latest /bin/bash</code> to download the latest container image</p>
+</li>
+<li>
+<p>Log into the newly downloaded container by running <code>docker exec -u 0 -it datasci /bin/bash</code></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_get_the_ssh_key_for_the_deployed_vm_nodes"><a class="anchor" href="#_how_do_i_get_the_ssh_key_for_the_deployed_vm_nodes"></a>4.2. How do I get the ssh key for the deployed VM nodes</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log into the <a href="#_how_do_i_log_into_the_devops_docker_container">DevOps container</a></p>
+</li>
+<li>
+<p>From the infrastructure subfolder of the project (i.e. <code>&lt;working_dir&gt;/data-science/terraform/providers/infrastructure</code>) run <code>terraform output -json | jq -r '.automation_account_ssh_private.value'</code> where</p>
 <div class="olist lowerroman">
 <ol class="lowerroman" type="i">
+<li>
+<p><code>&lt;working_dir&gt;</code> is the folder you cloned the datasci repo into</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_i_log_into_a_worker_node"><a class="anchor" href="#_how_do_i_log_into_a_worker_node"></a>4.3. How do I log into a worker node</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Get the <a href="#_how_do_i_get_the_ssh_key_for_the_deployed_vm_nodes">ssh keys</a> for the deployed worker node</p>
+</li>
+<li>
+<p>Save the key in a file and remember its name and location (eg. /home/datasci_admin/keys/datasci-dev.rsa)</p>
+</li>
+<li>
+<p>From a terminal, <code>ssh  -i &lt;ssh-key&gt; datasci_admin@&lt;vm-name&gt;.&lt;azure-cloud-url&gt;</code> where</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p><code>&lt;ssh-key&gt;</code> is the full file name of the key from step 2</p>
+</li>
 <li>
 <p><code>&lt;vm-name&gt;</code> is the Virtual Machine name (e.g. datasci-dev0)</p>
 </li>
@@ -1193,7 +932,7 @@ to the MQTT broker, add the following to the above command
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_set_up_port_forwarding_for_an_application"><a class="anchor" href="#_how_do_i_set_up_port_forwarding_for_an_application"></a>4.2. How do I set up port forwarding for an application</h3>
+<h3 id="_how_do_i_set_up_port_forwarding_for_an_application"><a class="anchor" href="#_how_do_i_set_up_port_forwarding_for_an_application"></a>4.4. How do I set up port forwarding for an application</h3>
 <div class="paragraph">
 <p>SSH port forwarding is a mechanism for tunneling application ports from a client to a server. The data science pipeline
 deploys a number of applications/services that have custom web interfaces. To access these applications on the worker nodes
@@ -1224,7 +963,7 @@ you will need to follow these steps.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_check_the_status_of_spark_jobs"><a class="anchor" href="#_how_do_i_check_the_status_of_spark_jobs"></a>4.3. How do I check the status of Spark jobs</h3>
+<h3 id="_how_do_i_check_the_status_of_spark_jobs"><a class="anchor" href="#_how_do_i_check_the_status_of_spark_jobs"></a>4.5. How do I check the status of Spark jobs</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1245,7 +984,7 @@ address of the NameNode</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_look_up_the_mqtt_broker_passwords"><a class="anchor" href="#_how_do_i_look_up_the_mqtt_broker_passwords"></a>4.4. How do I look up the MQTT broker passwords</h3>
+<h3 id="_how_do_i_look_up_the_mqtt_broker_passwords"><a class="anchor" href="#_how_do_i_look_up_the_mqtt_broker_passwords"></a>4.6. How do I look up the MQTT broker passwords</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1262,7 +1001,7 @@ password for &lt;user-name&gt;</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_look_at_the_status_of_provisioned_prometheus_targets"><a class="anchor" href="#_how_do_i_look_at_the_status_of_provisioned_prometheus_targets"></a>4.5. How do I look at the status of provisioned Prometheus targets</h3>
+<h3 id="_how_do_i_look_at_the_status_of_provisioned_prometheus_targets"><a class="anchor" href="#_how_do_i_look_at_the_status_of_provisioned_prometheus_targets"></a>4.7. How do I look at the status of provisioned Prometheus targets</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1287,7 +1026,7 @@ address of the <code>&lt;pipeline-name&gt;-monitor</code> container group where<
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_open_a_jupyter_notebook"><a class="anchor" href="#_how_do_i_open_a_jupyter_notebook"></a>4.6. How do I open a Jupyter notebook</h3>
+<h3 id="_how_do_i_open_a_jupyter_notebook"><a class="anchor" href="#_how_do_i_open_a_jupyter_notebook"></a>4.8. How do I open a Jupyter notebook</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1310,7 +1049,7 @@ address of the <code>&lt;pipeline-name&gt;-monitor</code> container group where<
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_figure_out_which_worker_node_is_the_namenode"><a class="anchor" href="#_how_do_i_figure_out_which_worker_node_is_the_namenode"></a>4.7. How do I figure out which worker node is the NameNode</h3>
+<h3 id="_how_do_i_figure_out_which_worker_node_is_the_namenode"><a class="anchor" href="#_how_do_i_figure_out_which_worker_node_is_the_namenode"></a>4.9. How do I figure out which worker node is the NameNode</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1326,7 +1065,7 @@ address of the <code>&lt;pipeline-name&gt;-monitor</code> container group where<
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_check_the_status_of_hdfs_and_yarn"><a class="anchor" href="#_how_do_i_check_the_status_of_hdfs_and_yarn"></a>4.8. How do I check the status of HDFS and YARN</h3>
+<h3 id="_how_do_i_check_the_status_of_hdfs_and_yarn"><a class="anchor" href="#_how_do_i_check_the_status_of_hdfs_and_yarn"></a>4.10. How do I check the status of HDFS and YARN</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1398,7 +1137,7 @@ $ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_start_hdfs_and_yarn_services"><a class="anchor" href="#_how_do_i_start_hdfs_and_yarn_services"></a>4.9. How do I start HDFS and YARN services</h3>
+<h3 id="_how_do_i_start_hdfs_and_yarn_services"><a class="anchor" href="#_how_do_i_start_hdfs_and_yarn_services"></a>4.11. How do I start HDFS and YARN services</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1427,14 +1166,14 @@ $ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_access_grafana_dashboards"><a class="anchor" href="#_how_do_i_access_grafana_dashboards"></a>4.10. How do I access Grafana dashboards</h3>
+<h3 id="_how_do_i_access_grafana_dashboards"><a class="anchor" href="#_how_do_i_access_grafana_dashboards"></a>4.12. How do I access Grafana dashboards</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
 <p>Look up the reverse proxy&#8217;s fully qualified domain name in Consul&#8217;s Key/Value store at reverseproxy/fqdn path</p>
 </li>
 <li>
-<p>Look up the Grafana admin password in Consul, or the Terraform state file</p>
+<p>Look up the Grafana admin name and password in Consul</p>
 </li>
 <li>
 <p>Open an Internet browser at <a href="https://&lt;reverseproxy-fqdn&gt" class="bare">https://&lt;reverseproxy-fqdn&gt</a>; where</p>
@@ -1447,13 +1186,13 @@ $ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
 </div>
 </li>
 <li>
-<p>Log into Grafana using <code>admin</code> user name, and the password looked up above</p>
+<p>Log into Grafana using the user name and the password looked up above</p>
 </li>
 </ol>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_how_do_i_confirm_messages_are_flowing_from_my_device_through_the_pipeline"><a class="anchor" href="#_how_do_i_confirm_messages_are_flowing_from_my_device_through_the_pipeline"></a>4.11. How do I confirm messages are flowing from my device through the pipeline</h3>
+<h3 id="_how_do_i_confirm_messages_are_flowing_from_my_device_through_the_pipeline"><a class="anchor" href="#_how_do_i_confirm_messages_are_flowing_from_my_device_through_the_pipeline"></a>4.13. How do I confirm messages are flowing from my device through the pipeline</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1522,7 +1261,7 @@ into the data lake</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reverse_proxy_status"><a class="anchor" href="#_reverse_proxy_status"></a>4.12. Reverse Proxy status</h3>
+<h3 id="_reverse_proxy_status"><a class="anchor" href="#_reverse_proxy_status"></a>4.14. Reverse Proxy status</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1550,7 +1289,7 @@ into the data lake</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-11-10 09:07:35 -0500
+Last updated 2021-01-26 13:53:03 -0800
 </div>
 </div>
 </body>

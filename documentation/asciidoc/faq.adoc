@@ -3,7 +3,7 @@
 Following are the answers to some frequently asked questions.
 
 === How do I log into the DevOps Docker container
-. In a terminal, run `docker run -dit --name <devops-container-name> shrapk2/devops:latest /bin/bash` to download the latest container image
+. In a terminal, run `docker run -dit --name <devops-container-name> chesapeaketechnology/devops:latest /bin/bash` to download the latest container image
 . Log into the newly downloaded container by running `docker exec -u 0 -it datasci /bin/bash`
 
 === How do I get the ssh key for the deployed VM nodes
