@@ -21,7 +21,7 @@ Currently, the main Terraform datasci.tf script deploys the following resources 
 - A set of container groups for Grafana data integrations
 - A set of Azure Databases for PostgreSQL server use with Grafana server
 
-=== Initial Setup
+=== Step-by-step Guide
 The data-science project is meant to be deployed from a DevOps Docker container which includes all the needed tools pre-installed and configured. To get started,
 
 . `Install Docker` by following directions http://docs.docker.com/engine/install[here]

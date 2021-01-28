@@ -135,7 +135,7 @@ into the data lake
 . Look at the <<How do I check the status of Spark jobs, Spark job status page>>
 
 === Reverse Proxy status
-. In a terminal, run `ssh nginx_admin@<pipeline-name>-nginx.<azure-cloud-url>` where
+. In a terminal, run `ssh datasci_admin@<pipeline-name>-nginx.<azure-cloud-url>` where
 .. `<pipeline-name>` is the combination of `cluster_name` and `environment` variables specified during deployment
 (see {uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[DeploymentManual] for details and datasci_vars.tfvars in particular)
 .. `<azure-cloud-url>` is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)
