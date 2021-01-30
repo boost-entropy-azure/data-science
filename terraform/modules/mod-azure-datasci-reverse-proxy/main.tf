@@ -143,14 +143,15 @@ locals {
   #cloud-config
   runcmd:
     - yum install git epel-release -y
+    - yum install python2-pip python3 python3-pip libselinux-python3 libselinux-python -y
     - yum clean all -y
-    - yum install ansible -y
+    - pip3 install ansible -U --no-input
     - mkdir -p /opt/ansible_plays
     - pushd /opt/ansible_plays
     - git clone https://github.com/chesapeaketechnology/ansible-datasci-roles.git
     - pushd ansible-datasci-roles
-    - ansible-galaxy install -r ./nginx_requirements.yml
-    - ansible-playbook -i "localhost, " ./nginx.yml -e ansible_connection=local ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))}
+    - /usr/local/bin/ansible-galaxy install -r ./nginx_requirements.yml
+    - /usr/local/bin/ansible-playbook -i "localhost, " ./nginx.yml -e ansible_connection=local ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))}
   EOF
 }
 
