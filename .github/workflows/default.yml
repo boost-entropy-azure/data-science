@@ -1,0 +1,38 @@
+name: Lint Terraform Providers
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches-ignore:
+      - master
+      - develop
+
+# Notes on what this workflow touches
+# JOB_RUNNER: "ubuntu-latest"
+# JOB_CONTAINER: "chesapeaketechnology/devops:latest"
+# TF_WORKING_DIR: "./terraform/providers"
+# DEPLOYMENT_ENVIRONMENT: "any"
+
+jobs:
+  TF-Validation:
+    runs-on: ubuntu-latest
+    container:
+      image: chesapeaketechnology/devops:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      - name: Terraform Validation - Infrastructure
+        working-directory: ./terraform/providers/infrastructure
+        run: |
+          terraform fmt -check
+          terraform init -backend=false
+          terraform validate
+      - name: Terraform Validation - Application Stack
+        working-directory: ./terraform/providers/application_stack
+        run: |
+          terraform fmt -check
+          terraform init -backend=false
+          terraform validate
