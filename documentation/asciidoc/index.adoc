@@ -2,7 +2,7 @@
 :imagesdir: ./images
 :sectnums:
 :sectanchors:
-:uri-org: https://github.com/chesapeaketechnology/data-science/
+:uri-org: http://chesapeaketechnology.github.io/data-science/
 :doc-path: documentation/asciidoc/
 
 = Data Science Documentation
@@ -22,4 +22,4 @@ include::deployment.adoc[]
 include::faq.adoc[]
 
 [.text-center]
-(C) Copyright 2020 CTI
+(C) Copyright 2021 CTI

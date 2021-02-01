@@ -652,7 +652,7 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 <td class="content">
 <div class="paragraph">
 <p><code>&lt;pipeline-name&gt;</code> is the combination of <code>cluster_name</code> and <code>environment</code> variables specified during deployment
-(see <a href="https://github.com/chesapeaketechnology/data-science/documentation/asciidoc//deployment/docs/DeploymentManual.adoc">DeploymentManual</a> for details and datasci_vars.tfvars in particular)</p>
+(see <a href="#_step_by_step_guide">Deployment Section</a> for details and <code>TF_VAR_cluster_name</code> and <code>TF_VAR_environment</code> in particular)</p>
 </div>
 </td>
 </tr>
@@ -910,7 +910,7 @@ terraform apply
 <p>Get the <a href="#_how_do_i_get_the_ssh_key_for_the_deployed_vm_nodes">ssh keys</a> for the deployed worker node</p>
 </li>
 <li>
-<p>Save the key in a file and remember its name and location (eg. /home/datasci_admin/keys/datasci-dev.rsa)</p>
+<p>Save the key in a file and remember its name and location (e.g. /home/datasci_admin/keys/datasci-dev.rsa)</p>
 </li>
 <li>
 <p>From a terminal, <code>ssh  -i &lt;ssh-key&gt; datasci_admin@&lt;vm-name&gt;.&lt;azure-cloud-url&gt;</code> where</p>
@@ -1011,7 +1011,7 @@ address of the <code>&lt;pipeline-name&gt;-monitor</code> container group where<
 <ol class="loweralpha" type="a">
 <li>
 <p><code>&lt;pipeline-name&gt;</code> is the combination of <code>cluster_name</code> and <code>environment</code> variables specified during deployment
-(see <a href="https://github.com/chesapeaketechnology/data-science/documentation/asciidoc//deployment/docs/DeploymentManual.adoc">DeploymentManual</a> for details and datasci_vars.tfvars in particular)</p>
+(see <a href="#_step_by_step_guide">Deployment Section</a> for details and <code>TF_VAR_cluster_name</code> and <code>TF_VAR_environment</code> in particular)</p>
 </li>
 </ol>
 </div>
@@ -1144,7 +1144,7 @@ $ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
 <p>First figure out which worker node is the HDFS NameNode</p>
 </li>
 <li>
-<p>Log into the NameNode (see <a href="#_how_do_i_log_into_a_worker_node">above</a> for details) using the <code>hadoop</code> user name</p>
+<p>Log into the NameNode (see <a href="#_how_do_i_log_into_a_worker_node">above</a> for details) using the <code>hadoop</code> username</p>
 </li>
 <li>
 <p>In a terminal on the <a href="#_how_do_i_figure_out_which_worker_node_is_the_namenode">NameNode</a>, run:</p>
@@ -1186,7 +1186,7 @@ $ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
 </div>
 </li>
 <li>
-<p>Log into Grafana using the user name and the password looked up above</p>
+<p>Log into Grafana using the username, and the password looked up above</p>
 </li>
 </ol>
 </div>
@@ -1204,7 +1204,7 @@ $ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
 <ol class="lowerroman" type="i">
 <li>
 <p><code>&lt;pipeline-name&gt;</code> is the combination of <code>cluster_name</code> and <code>environment</code> variables specified during deployment
-(see <a href="https://github.com/chesapeaketechnology/data-science/documentation/asciidoc//deployment/docs/DeploymentManual.adoc">DeploymentManual</a> for details and datasci_vars.tfvars in particular)</p>
+(see <a href="#_step_by_step_guide">Deployment Section</a> for details and <code>TF_VAR_cluster_name</code> and <code>TF_VAR_environment</code> in particular)</p>
 </li>
 </ol>
 </div>
@@ -1270,7 +1270,7 @@ into the data lake</p>
 <ol class="loweralpha" type="a">
 <li>
 <p><code>&lt;pipeline-name&gt;</code> is the combination of <code>cluster_name</code> and <code>environment</code> variables specified during deployment
-(see <a href="https://github.com/chesapeaketechnology/data-science/documentation/asciidoc//deployment/docs/DeploymentManual.adoc">DeploymentManual</a> for details and datasci_vars.tfvars in particular)</p>
+(see <a href="#_step_by_step_guide">Deployment Section</a> for details and <code>TF_VAR_cluster_name</code> and <code>TF_VAR_environment</code> in particular)</p>
 </li>
 <li>
 <p><code>&lt;azure-cloud-url&gt;</code> is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)</p>
@@ -1281,7 +1281,7 @@ into the data lake</p>
 </ol>
 </div>
 <div class="paragraph text-center">
-<p>&#169; Copyright 2020 CTI</p>
+<p>&#169; Copyright 2021 CTI</p>
 </div>
 </div>
 </div>
@@ -1289,7 +1289,7 @@ into the data lake</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-01-26 13:53:03 -0800
+Last updated 2021-02-01 11:39:07 -0800
 </div>
 </div>
 </body>
