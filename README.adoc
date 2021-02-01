@@ -1,5 +1,5 @@
 // settings
-:uri-org: https://github.com/chesapeaketechnology/data-science/
+:uri-org: http://chesapeaketechnology.github.io/data-science/
 :doc-path: blob/master/documentation/modules/
 
 = Data Science Pipeline
@@ -7,6 +7,12 @@
 The Data Science Pipeline Documentation can be found https://chesapeaketechnology.github.io/data-science/[here].
 
 == Change Log
+
+=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.4.0[0.4.0] - 2021-01-29
+* Added Terraform remote state
+* Separated infrastructure resources from application resources
+* Moved Ansible playbooks to separate repository
+* Created a DevOps Docker container
 
 === https://github.com/chesapeaketechnology/data-science/releases/tag/v0.3.0[0.3.0] - 2020-12-09
 * Added documentation on Administration, Deployment, and FAQ.

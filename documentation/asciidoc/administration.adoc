@@ -83,5 +83,5 @@ This container instance named <pipeline-name>-monitor consists of two containers
 [NOTE]
 ====
 `<pipeline-name>` is the combination of `cluster_name` and `environment` variables specified during deployment
-(see {uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[DeploymentManual] for details and datasci_vars.tfvars in particular)
+(see <<Step-by-step Guide, Deployment Section>> for details and `TF_VAR_cluster_name` and `TF_VAR_environment` in particular)
 ====

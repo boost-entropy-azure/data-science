@@ -13,7 +13,7 @@ Following are the answers to some frequently asked questions.
 
 === How do I log into a worker node
 . Get the <<How do I get the ssh key for the deployed VM nodes, ssh keys>> for the deployed worker node
-. Save the key in a file and remember its name and location (eg. /home/datasci_admin/keys/datasci-dev.rsa)
+. Save the key in a file and remember its name and location (e.g. /home/datasci_admin/keys/datasci-dev.rsa)
 . From a terminal, `ssh  -i <ssh-key> datasci_admin@<vm-name>.<azure-cloud-url>` where
 ... `<ssh-key>` is the full file name of the key from step 2
 ... `<vm-name>` is the Virtual Machine name (e.g. datasci-dev0)
@@ -46,7 +46,7 @@ password for <user-name>
 . Set up <<How do I set up port forwarding for an application, port forwarding>> using port 9090, and the private IP
 address of the `<pipeline-name>-monitor` container group where
 .. `<pipeline-name>` is the combination of `cluster_name` and `environment` variables specified during deployment
-(see {uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[DeploymentManual] for details and datasci_vars.tfvars in particular)
+(see <<Step-by-step Guide, Deployment Section>> for details and `TF_VAR_cluster_name` and `TF_VAR_environment` in particular)
 . Open an Internet browser page at localhost:9090
 . Browse to 'Status/Targets' page to see the status of configured Prometheus targets
 
@@ -101,7 +101,7 @@ It should show the following output:
 
 === How do I start HDFS and YARN services
 . First figure out which worker node is the HDFS NameNode
-. Log into the NameNode (see <<How do I log into a worker node, above>> for details) using the `hadoop` user name
+. Log into the NameNode (see <<How do I log into a worker node, above>> for details) using the `hadoop` username
 . In a terminal on the <<How do I figure out which worker node is the NameNode, NameNode>>, run:
 .. `/usr/local/hadoop/sbin/start-dfs.sh`
 .. followed by `/usr/local/hadoop/sbin/start-yarn.sh`
@@ -112,13 +112,13 @@ It should show the following output:
 . Look up the Grafana admin name and password in Consul
 . Open an Internet browser at https://<reverseproxy-fqdn> where
 .. `<reverseproxy-fqdn>` is the url looked up above
-. Log into Grafana using the user name and the password looked up above
+. Log into Grafana using the username, and the password looked up above
 
 === How do I confirm messages are flowing from my device through the pipeline
 . Log into Azure portal
 . Look at <pipeline-name>-mqtt-eventhubs-namespace resource page and look at the metrics graph, where
 ... `<pipeline-name>` is the combination of `cluster_name` and `environment` variables specified during deployment
-(see {uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[DeploymentManual] for details and datasci_vars.tfvars in particular)
+(see <<Step-by-step Guide, Deployment Section>> for details and `TF_VAR_cluster_name` and `TF_VAR_environment` in particular)
 . If messages are not getting to the eventhubs namespace
 .. Browse to the <pipeline-name>-mqtt Container Instance resource page
 .. Look at the logs of the `mqtt` container. No errors should be shown
@@ -137,5 +137,5 @@ into the data lake
 === Reverse Proxy status
 . In a terminal, run `ssh datasci_admin@<pipeline-name>-nginx.<azure-cloud-url>` where
 .. `<pipeline-name>` is the combination of `cluster_name` and `environment` variables specified during deployment
-(see {uri-org}{doc-path}/deployment/docs/DeploymentManual.adoc[DeploymentManual] for details and datasci_vars.tfvars in particular)
+(see <<Step-by-step Guide, Deployment Section>> for details and `TF_VAR_cluster_name` and `TF_VAR_environment` in particular)
 .. `<azure-cloud-url>` is the Azure cloud URL (e.g. usgovarizona.cloudapp.usgovcloudapi.net or eastus.cloudapp.azure.com, etc.)
