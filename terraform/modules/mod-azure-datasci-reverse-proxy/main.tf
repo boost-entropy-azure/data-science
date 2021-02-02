@@ -139,20 +139,15 @@ locals {
     join("=", ["consul_server", var.consul_server])
   ]
 
-  cloudinit_data = <<EOF
-  #cloud-config
-  runcmd:
-    - yum install git epel-release -y
-    - yum install python3 python3-pip libselinux-python3 -y
-    - yum clean all -y
-    - pip3 install ansible -U --no-input
-    - mkdir -p /opt/ansible_plays
-    - pushd /opt/ansible_plays
-    - git clone https://github.com/chesapeaketechnology/ansible-datasci-roles.git
-    - pushd ansible-datasci-roles
-    - ansible-galaxy install -r ./nginx_requirements.yml
-    - python3 $(ansible-playbook) -i "localhost, " ./nginx.yml -e ansible_connection=local ${length(compact("${local.envs}")) > 0 ? "-e" : ""} ${join(" -e ", compact("${local.envs}"))}
-  EOF
+  cloudinit_data = templatefile("${path.module}/cloud_init.tmpl", {
+    ans_role           = var.ans_role
+    admin_user         = var.admin_username
+    admin_email        = var.admin_email
+    mqtt_ip_address    = var.mqtt_ip_address
+    grafana_ip_address = var.grafana_ip_address
+    consul_server      = var.consul_server
+    fqdn               = azurerm_public_ip.nginx_ip.fqdn
+  })
 }
 
 # Create nginx virtual machine
