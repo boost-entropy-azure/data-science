@@ -47,3 +47,9 @@ variable "blob_retention" {
   type        = number
   default     = 30
 }
+
+variable "remotestate_storage_account_name" {
+  description = "Remote state storage_account_name"
+  type        = string
+  default     = "remotetfstatedata0001"
+}

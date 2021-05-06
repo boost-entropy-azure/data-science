@@ -1,27 +1,3 @@
-
-output "grafana_server" {
-  value = module.grafana-server.grafana_fqdn
-}
-
-output "grafana_ip_address" {
-  value = module.grafana-server.grafana_ip_address
-}
-
-output "grafana_admin_user" {
-  value = var.grafana_admin_user
-}
-
-output "grafana_admin_password" {
-  value     = random_password.grafana_admin_password
-  sensitive = true
-}
-
-output "grafana_url" {
-  value = "http://${module.grafana-server.grafana_fqdn}:${var.grafana_port}"
-}
-
-//------------
-
 output "grafana_data_fqdn" {
   description = "The fully qualified domain name of the grafana data store"
   value       = module.grafana-data.server_fqdn
