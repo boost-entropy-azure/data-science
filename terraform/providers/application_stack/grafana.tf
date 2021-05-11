@@ -19,3 +19,48 @@ module "grafana" {
   subnet_end_address   = "10.0.1.255"
   consul_server        = module.datasci_nodes.consul_server_ip
 }
+
+output "postgres_config_fqdn" {
+  description = "The postgres fqdn the Grafana config database"
+  value = module.grafana.grafana_data_fqdn
+}
+
+output "postgres_config_administrator_username" {
+  description = "The postgres administrator username for the Grafana config database"
+  value = module.grafana.grafana_data_login
+}
+
+output "postgres_config_administrator_password" {
+  description = "The postgres administrator password for the Grafana config database"
+  value = module.grafana.grafana_data_password
+  sensitive = true
+}
+
+output "postgres_data_fqdn" {
+  description = "The postgres fqdn the data database"
+  value = module.grafana.datasci_fqdn
+}
+
+output "postgres_data_administrator_username" {
+  description = "The postgres administrator username for the data database"
+  value = module.grafana.datasci_login
+}
+
+output "postgres_data_administrator_password" {
+  description = "The postgres administrator password for the data database"
+  value = module.grafana.datasci_password
+  sensitive = true
+}
+
+//------------- Event Hub Checkpoint Container Information -------------
+
+output "gfi_storage_account_connection_string" {
+  description = "The connection string for the postgres connector checkpoint storage account"
+  value       = module.grafana.gfi_storage_account_connection_string
+  sensitive = true
+}
+
+output "gfi_storage_container_name" {
+  description = "The storage container name for the postgres connector checkpoint"
+  value       = module.grafana.gfi_storage_container_name
+}

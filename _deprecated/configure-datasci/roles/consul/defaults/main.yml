@@ -1,3 +1,0 @@
----
-  is_server: true    # indicates whether the consul node should run as a server or a client
-  is_leader: false   # only a single server node in conul cluster should be a leader

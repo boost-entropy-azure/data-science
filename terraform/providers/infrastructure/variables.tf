@@ -2,7 +2,7 @@
 variable "manage_resource_group" {
   description = "Manage the resource Group"
   type        = bool
-  default     = false
+  default     = true
 }
 variable "resource_group_name" {
   description = "Resource Group Name"
@@ -32,7 +32,7 @@ variable "default_tags" {
 
 variable "cluster_name" {
   type        = string
-  description = "Name to use for the data science culster being created"
+  description = "Name to use for the data science cluster being created"
   default     = "default"
 }
 

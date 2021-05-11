@@ -1,3 +1,0 @@
-{% for host in private_ips %}
-{{ host }}
-{% endfor %}

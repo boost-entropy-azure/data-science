@@ -37,3 +37,16 @@ output "datasci_password" {
   value     = module.datasci-data.administrator_password
   sensitive = true
 }
+
+//--------------------------
+
+output "gfi_storage_account_connection_string" {
+  description = "The connection string for the postgres connector checkpoint storage account"
+  value       = module.datasci-data.gfi_storage_account_connection_string
+  sensitive = true
+}
+
+output "gfi_storage_container_name" {
+  description = "The storage container name for the postgres connector checkpoint"
+  value       = module.datasci-data.gfi_storage_container_name
+}

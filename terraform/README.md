@@ -227,9 +227,28 @@ format: `1.1.1.1,2.2.2.2,3.3.3.3`. If it is not, Terraform will have parsing err
 
   ```bash
   terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure output -json | jq -r '.automation_account_ssh_private.value'
-  terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json |jq -r '.datasci_node_public_ips.value'
-  terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json |jq -r '.grafana_admin_password.value.result'
+  terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.datasci_node_public_ips.value'
+  terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.grafana_admin_password.value.result'
   ```
+
+- The following outputs are needed to pass into Kubernetes for the application portion of the data science pipeline
+    - The following command prints out all the outputs from the last Terraform run stored in the tfstates file for the
+      application stack.
+      ```bash
+      terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r
+      ```
+    - The same as above but for the infrastructure.
+      ```bash
+      terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure output -json | jq -r
+      ```
+
+    - If you want to print out a specific item from the Terraform run outputs, then use something like:
+      ```bash
+      terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_namespace_fqn.value'
+      terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_namespace_connection_string.value'
+      terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_view_primary_key.value'
+      terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_view_rule_name.value'
+      ```
 
 ## Destruction
 
@@ -241,9 +260,7 @@ To remove an environment:
 1. Infrastructure: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure destroy`
 2. Application Stack: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack destroy`
 
->NOTE: Based on the Terraform bootstrap process, running this destroy **WILL NOT** remove the Terraform state data or
-storage container, as that is (and should be) provisioned outside the main infrastructure states to ensure
-environment safety.
+> NOTE: Based on the Terraform bootstrap process, running this destroy **WILL NOT** remove the Terraform state data or storage container, as that is (and should be) provisioned outside the main infrastructure states to ensure environment safety.
 
 ## Operations
 

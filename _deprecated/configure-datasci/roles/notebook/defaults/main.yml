@@ -1,9 +1,0 @@
-jupyter_home: /usr/local/bin
-jupyter_user: jupyter
-jupyter_group: jupyter
-jupyter_conf: /home/{{ jupyter_user }}/.jupyter
-
-jupyter_ssl_path: /etc/ssl/private
-jupyter_key: /etc/ssl/private/jupyter.key
-jupyter_csr: /etc/ssl/private/jupyter.csr
-jupyter_cert: /etc/ssl/private/jupyter.pem

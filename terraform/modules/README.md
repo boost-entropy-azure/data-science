@@ -7,9 +7,3 @@ Current modules (in order of dependency):
 - mod-azure-datasci-eventhubs
 - mod-azure-datasci-nodes
 - mod-azure-datasci-fact-table
-
-## mod-azure-datasci-eventhubs
-
-## mod-azure-datasci-nodes
-
-## mod-azure-datasci-fact-table
