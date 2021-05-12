@@ -1,6 +1,0 @@
-mosquitto:
-  conf_file: "/tmp/mosquitto.conf"
-  connector_conf_file: "/tmp/mqtt-connector.conf"
-
-consul:
-  conf_file: /tmp/config.json

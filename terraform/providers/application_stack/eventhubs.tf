@@ -26,32 +26,99 @@ module "eventhubs_alert" {
   default_tags        = var.default_tags
 }
 
-# output "eventhubs_alert_topic_primary_key" {
-#   value     = module.eventhubs_alert.topic_primary_key
-#   sensitive = true
-# }
+//-------- Alert Event Hub Namespace ---------
 
-# output "eventhubs_alert_namespace_fqn" {
-#   value = module.eventhubs_alert.namespace_fqn
-# }
+output "eventhubs_alert_namespace_fqn" {
+  description = "The alert event hub namespace FQDN"
+  value = module.eventhubs_alert.namespace_fqn
+  sensitive = true
+}
 
-# output "eventhubs_alert_topic_shared_access_policy_name" {
-#   value = module.eventhubs_alert.topic_shared_access_policy_name
-# }
+output "eventhubs_alert_namespace_connection_string" {
+  description = "The alert event hub namespace connection string"
+  value     = module.eventhubs_alert.namespace_connection_string
+  sensitive = true
+}
 
-# output "eventhubs_mqtt_namespace_connection_string" {
-#   value = module.eventhubs_mqtt.namespace_connection_string
-# }
+output "eventhubs_alert_view_primary_key" {
+  description = "The alert event hub namespace View Auth Rule primary key"
+  value     = module.eventhubs_alert.namespace_view_primary_key
+  sensitive = true
+}
 
-# output "eventhubs_mqtt_topic_primary_key" {
-#   value     = module.eventhubs_mqtt.topic_primary_key
-#   sensitive = true
-# }
+output "eventhubs_alert_view_secondary_key" {
+  description = "The alert event hub namespace View Auth Rule secondary key"
+  value     = module.eventhubs_alert.namespace_view_secondary_key
+  sensitive = true
+}
 
-# output "eventhubs_mqtt_namespace_fqn" {
-#   value = module.eventhubs_mqtt.namespace_fqn
-# }
+output "eventhubs_alert_view_rule_name" {
+  description = "The alert event hub namespace View Auth Rule name"
+  value     = module.eventhubs_alert.namespace_view_auth_rule_name
+}
 
-# output "eventhubs_mqtt_topic_shared_access_policy_name" {
-#   value = module.eventhubs_mqtt.topic_shared_access_policy_name
-# }
+output "eventhubs_alert_postgres_connector_primary_key" {
+  description = "The alert event hub namespace Postgres Connector Auth Rule primary key"
+  value     = module.eventhubs_alert.namespace_postgres_connector_primary_key
+  sensitive = true
+}
+
+output "eventhubs_alert_postgres_connector_secondary_key" {
+  description = "The alert event hub namespace Postgres Connector Auth Rule secondary key"
+  value     = module.eventhubs_alert.namespace_postgres_connector_secondary_key
+  sensitive = true
+}
+
+output "eventhubs_alert_postgres_connector_rule_name" {
+  description = "The alert event hub namespace Postgres Connector Auth Rule name"
+  value     = module.eventhubs_alert.namespace_postgres_connector_auth_rule_name
+}
+
+
+//-------- MQTT Event Hub Namespace ---------
+
+output "eventhubs_mqtt_namespace_fqn" {
+  description = "The mqtt event hub namespace FQDN"
+  value = module.eventhubs_mqtt.namespace_fqn
+  sensitive = true
+}
+
+output "eventhubs_mqtt_namespace_connection_string" {
+  description = "The mqtt event hub namespace connection string"
+  value     = module.eventhubs_mqtt.namespace_connection_string
+  sensitive = true
+}
+
+output "eventhubs_mqtt_view_primary_key" {
+  description = "The mqtt event hub namespace View Auth Rule primary key"
+  value     = module.eventhubs_mqtt.namespace_view_primary_key
+  sensitive = true
+}
+
+output "eventhubs_mqtt_view_secondary_key" {
+  description = "The mqtt event hub namespace View Auth Rule secondary key"
+  value     = module.eventhubs_mqtt.namespace_view_secondary_key
+  sensitive = true
+}
+
+output "eventhubs_mqtt_view_rule_name" {
+  description = "The mqtt event hub namespace View Auth Rule name"
+  value     = module.eventhubs_mqtt.namespace_view_auth_rule_name
+}
+
+output "eventhubs_mqtt_postgres_connector_primary_key" {
+  description = "The mqtt event hub namespace Postgres Connector Auth Rule primary key"
+  value     = module.eventhubs_mqtt.namespace_postgres_connector_primary_key
+  sensitive = true
+}
+
+output "eventhubs_mqtt_postgres_connector_secondary_key" {
+  description = "The mqtt event hub namespace Postgres Connector Auth Rule secondary key"
+  value     = module.eventhubs_mqtt.namespace_postgres_connector_secondary_key
+  sensitive = true
+}
+
+output "eventhubs_mqtt_postgres_connector_rule_name" {
+  description = "The mqtt event hub namespace Postgres Connector Auth Rule name"
+  value     = module.eventhubs_mqtt.namespace_postgres_connector_auth_rule_name
+}

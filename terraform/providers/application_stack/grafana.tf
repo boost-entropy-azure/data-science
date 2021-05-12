@@ -15,34 +15,52 @@ module "grafana" {
   location             = var.location
   environment          = var.environment
   default_tags         = var.default_tags
-  grafana_admin_user   = var.admin_username
   subnet_start_address = "10.0.1.0"
   subnet_end_address   = "10.0.1.255"
-  consul_account_name  = data.terraform_remote_state.infrastructure.outputs.mqtt_storage_account_name
-  consul_account_key   = data.terraform_remote_state.infrastructure.outputs.mqtt_storage_account_primary_key
-  network_profile_id   = data.terraform_remote_state.infrastructure.outputs.network_datasci_net_profile_id
-  prometheus_server    = module.status_monitor.prometheus_ip_address
   consul_server        = module.datasci_nodes.consul_server_ip
-  system_topic_settings = {
-    topics                          = var.alert_topics
-    eventhub_keys                   = module.eventhubs_alert.topic_primary_key
-    eventhub_namespace              = module.eventhubs_alert.namespace_fqn
-    eventhub_shared_access_policies = module.eventhubs_alert.topic_shared_access_policy_name
-  }
-  topic_settings = {
-    topics                          = var.mqtt_topics
-    eventhub_keys                   = module.eventhubs_mqtt.topic_primary_key
-    eventhub_namespace              = module.eventhubs_mqtt.namespace_fqn
-    eventhub_shared_access_policies = module.eventhubs_mqtt.topic_shared_access_policy_name
-  }
 }
 
-output "grafana_admin_password" {
-  value     = module.grafana.grafana_admin_password
+output "postgres_config_fqdn" {
+  description = "The postgres fqdn the Grafana config database"
+  value = module.grafana.grafana_data_fqdn
+}
+
+output "postgres_config_administrator_username" {
+  description = "The postgres administrator username for the Grafana config database"
+  value = module.grafana.grafana_data_login
+}
+
+output "postgres_config_administrator_password" {
+  description = "The postgres administrator password for the Grafana config database"
+  value = module.grafana.grafana_data_password
   sensitive = true
 }
 
-output "grafana_admin_user" {
-  value     = module.grafana.grafana_admin_user
-  sensitive = false
+output "postgres_data_fqdn" {
+  description = "The postgres fqdn the data database"
+  value = module.grafana.datasci_fqdn
+}
+
+output "postgres_data_administrator_username" {
+  description = "The postgres administrator username for the data database"
+  value = module.grafana.datasci_login
+}
+
+output "postgres_data_administrator_password" {
+  description = "The postgres administrator password for the data database"
+  value = module.grafana.datasci_password
+  sensitive = true
+}
+
+//------------- Event Hub Checkpoint Container Information -------------
+
+output "gfi_storage_account_connection_string" {
+  description = "The connection string for the postgres connector checkpoint storage account"
+  value       = module.grafana.gfi_storage_account_connection_string
+  sensitive = true
+}
+
+output "gfi_storage_container_name" {
+  description = "The storage container name for the postgres connector checkpoint"
+  value       = module.grafana.gfi_storage_container_name
 }

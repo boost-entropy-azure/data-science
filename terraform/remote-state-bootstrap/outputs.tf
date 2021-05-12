@@ -7,6 +7,7 @@ output "resource_group_location" {
 output "storage_account_facts" {
   value       = azurerm_storage_account.tfstate_account
   description = "Storage Account Facts"
+  sensitive = true
 }
 
 ## Needed data for backend.tf

@@ -2,7 +2,7 @@
 variable "manage_resource_group" {
   description = "Manage the resource Group"
   type        = bool
-  default     = false
+  default     = true
 }
 variable "resource_group_name" {
   description = "Resource Group Name"
@@ -32,7 +32,7 @@ variable "default_tags" {
 
 variable "cluster_name" {
   type        = string
-  description = "Name to use for the data science culster being created"
+  description = "Name to use for the data science cluster being created"
   default     = "default"
 }
 
@@ -57,12 +57,6 @@ variable "principal_pword_expiry" {
 variable "mqtt_topics" {
   type        = list(string)
   description = "The list of MQTT Topics to that should be pulled from the MQTT Broker and pushed into Azure Event Hubs"
-  default     = ["default1", "default2"]
-}
-
-variable "mqtt_users" {
-  type        = list(string)
-  description = "The list of users that should be allowed connection to the MQTT Broker"
   default     = ["default1", "default2"]
 }
 

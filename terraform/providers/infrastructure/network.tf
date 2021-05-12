@@ -30,42 +30,8 @@ resource "azurerm_public_ip" "public_ip" {
 
   tags = merge(
     var.default_tags,
-    map("name", "nodes")
+    tomap({name = "nodes"})
   )
-}
-
-#Create subnet for use with containers
-resource "azurerm_subnet" "mqtt_subnet" {
-  #name                 = join("-", ["snet", var.cluster_name, var.environment, "mqtt"])
-  name                 = "mqtt_broker_subnet"
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.virtualnet.name
-  address_prefixes     = ["10.0.4.0/24"]
-  service_endpoints    = ["Microsoft.EventHub"]
-
-  delegation {
-    name = "mqtt_subnet_delegation"
-
-    service_delegation {
-      name    = "Microsoft.ContainerInstance/containerGroups"
-      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
-    }
-  }
-}
-
-resource "azurerm_network_profile" "datasci_net_profile" {
-  name                = join("-", [var.cluster_name, var.environment, "net-profile"])
-  location            = var.location
-  resource_group_name = var.resource_group_name
-
-  container_network_interface {
-    name = "container_nic"
-
-    ip_configuration {
-      name      = "container_ip_config"
-      subnet_id = azurerm_subnet.mqtt_subnet.id
-    }
-  }
 }
 
 output "virtualnet_id" {
@@ -91,14 +57,6 @@ output "network_public_ip_list" {
 output "network_public_fqdn_list" {
   value = azurerm_public_ip.public_ip.*.fqdn
 }
-
-output "network_datasci_net_profile_id" {
-  value = azurerm_network_profile.datasci_net_profile.id
-}
-
-# output "network_mqtt_subnet_facts" {
-#   value = azurerm_subnet.mqtt_subnet
-# }
 
 # output "network_datasci_net_profile_facts" {
 #   value = azurerm_network_profile.datasci_net_profile

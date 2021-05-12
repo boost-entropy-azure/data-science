@@ -1,27 +1,3 @@
-
-output "grafana_server" {
-  value = module.grafana-server.grafana_fqdn
-}
-
-output "grafana_ip_address" {
-  value = module.grafana-server.grafana_ip_address
-}
-
-output "grafana_admin_user" {
-  value = var.grafana_admin_user
-}
-
-output "grafana_admin_password" {
-  value     = random_password.grafana_admin_password
-  sensitive = true
-}
-
-output "grafana_url" {
-  value = "http://${module.grafana-server.grafana_fqdn}:${var.grafana_port}"
-}
-
-//------------
-
 output "grafana_data_fqdn" {
   description = "The fully qualified domain name of the grafana data store"
   value       = module.grafana-data.server_fqdn
@@ -60,4 +36,17 @@ output "datasci_login" {
 output "datasci_password" {
   value     = module.datasci-data.administrator_password
   sensitive = true
+}
+
+//--------------------------
+
+output "gfi_storage_account_connection_string" {
+  description = "The connection string for the postgres connector checkpoint storage account"
+  value       = module.datasci-data.gfi_storage_account_connection_string
+  sensitive = true
+}
+
+output "gfi_storage_container_name" {
+  description = "The storage container name for the postgres connector checkpoint"
+  value       = module.datasci-data.gfi_storage_container_name
 }

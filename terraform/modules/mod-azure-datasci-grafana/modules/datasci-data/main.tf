@@ -47,3 +47,20 @@ resource "azurerm_postgresql_firewall_rule" "data-fw" {
   start_ip_address    = var.allow_access_from[count.index].start_address
   end_ip_address      = var.allow_access_from[count.index].end_address
 }
+
+# Storage accounts to hold the event hub checkpoint information for the postgres connector containers that read from
+# the event hub topics the grafana data integration containers are setup to use azure storage accounts currently but
+# could be switched to use Kubernetes volumes instead, which would probably be better.
+resource "azurerm_storage_account" "gfi_storage_account" {
+  name                     = join("", ["sa", var.cluster_name, var.environment, "gfi"])
+  resource_group_name      = data.azurerm_resource_group.data_resource_group.name
+  location                 = data.azurerm_resource_group.data_resource_group.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_container" "gfi_storage_container" {
+  name                  = join("-", ["sc", var.cluster_name, var.environment, "gfi-checkpoint"])
+  storage_account_name  = azurerm_storage_account.gfi_storage_account.name
+  container_access_type = "private"
+}

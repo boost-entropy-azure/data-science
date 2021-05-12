@@ -38,18 +38,28 @@ resource "azurerm_eventhub" "topic" {
   }
 }
 
-# Add a rule so that client apps can interract with the above eventhub instances
-resource "azurerm_eventhub_authorization_rule" "eventhub_auth_rule" {
-  depends_on = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub.topic]
-  for_each   = toset(var.topics)
+# Add auth policies so that client apps can interact with the above eventhub instances
 
-  name                = join("-", [each.key, "auth-rule"])
-  resource_group_name = var.resource_group_name
+resource "azurerm_eventhub_namespace_authorization_rule" "view_auth_rule" {
+  depends_on          = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub.topic]
+  name                = "view"
   namespace_name      = azurerm_eventhub_namespace.eventhubs.name
-  eventhub_name       = each.key
-  listen              = var.listen
-  send                = var.send
-  manage              = var.manage
+  resource_group_name = azurerm_eventhub_namespace.eventhubs.resource_group_name
+
+  listen = true
+  send   = false
+  manage = false
+}
+
+resource "azurerm_eventhub_namespace_authorization_rule" "postgres_connector_auth_rule" {
+  depends_on          = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub.topic]
+  name                = "postgres-connector"
+  namespace_name      = azurerm_eventhub_namespace.eventhubs.name
+  resource_group_name = azurerm_eventhub_namespace.eventhubs.resource_group_name
+
+  listen = true
+  send   = false
+  manage = false
 }
 
 resource "azurerm_eventhub_consumer_group" "fe_consumer_group" {
@@ -58,5 +68,5 @@ resource "azurerm_eventhub_consumer_group" "fe_consumer_group" {
   namespace_name      = azurerm_eventhub_namespace.eventhubs.name
   eventhub_name       = each.key
   resource_group_name = var.resource_group_name
-  depends_on          = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub_authorization_rule.eventhub_auth_rule]
+  depends_on          = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub_namespace_authorization_rule.postgres_connector_auth_rule]
 }

@@ -26,7 +26,7 @@ variable "default_tags" {
 
 variable "cluster_name" {
   type        = string
-  description = "Name to use for the data science culster being created"
+  description = "Name to use for the data science cluster being created"
   default     = "default"
 }
 
@@ -44,7 +44,7 @@ variable "sp_password" {
 
 variable "principal_pword_expiry" {
   type        = string
-  description = "RFC3339 formated expiration date for password"
+  description = "RFC3339 formatted expiration date for password"
   default     = "2099-01-01T00:00:00Z"
 }
 
@@ -60,13 +60,6 @@ variable "alert_topics" {
   default     = ["test_message"]
 }
 
-
-variable "mqtt_users" {
-  type        = list(string)
-  description = "The list of users that should be allowed connection to the MQTT Broker"
-  default     = ["default1", "default2"]
-}
-
 variable "network_subnet_data_id" {
   description = "Data Network Subnet Id"
   type        = string
@@ -76,7 +69,7 @@ variable "network_subnet_data_id" {
 
 ## Remote State Vars
 variable "tfstate_resource_group_name" {
-  description = "Remote TF State Resoure Group Name"
+  description = "Remote TF State Resource Group Name"
   type        = string
   default     = "tfstatedefault"
 }
