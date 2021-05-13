@@ -29,7 +29,7 @@ runcmd:
   - chown ${admin_user}:${admin_user} /etc/ansible/group_vars/all
   # end bug workaround
   - yum install epel-release -y
-  - yum install git python2-pip python3 python3-pip libselinux-python3 libselinux-python -y
+  - yum install git python2-pip python3 python3-pip python3-setuptools python3-devel libselinux-python3 libselinux-python -y
   #  - yum install java-1.8.0-openjdk python2-pip -y
   - rpm --import https://packages.microsoft.com/keys/microsoft.asc
   - yum install azure-cli -y
@@ -38,6 +38,7 @@ runcmd:
   # - pip2 install 'ansible[azure]' -U --no-input
   # - pip2 install azure-mgmt-compute -U --no-input
   # - pip2 install msrestazure -U --no-input
+  - pip3 install --upgrade pip
   - pip3 install ansible -U --no-input
   - pip3 install azure-mgmt-compute -U --no-input
   - pip3 install msrestazure -U --no-input
@@ -51,7 +52,7 @@ runcmd:
     if [ "$(hostname -s)" = vm-${cluster_name}-${environment}0 ]; then
         pushd /opt/ansible_plays/ansible-datasci-roles
         git pull
-        sudo -u ${admin_user} -- bash -c "python3 $(which ansible-galaxy) install -r ./${ans_role}_requirements.yml; python3 $(which ansible-playbook) -i /etc/ansible/azure_rm.yml -l tag_ansible_role_${ans_role} ./${ans_role}.yml -e target_server_group=tag_ansible_role_${ans_role}"
+        sudo -u ${admin_user} -- bash -c "python3 /usr/local/bin/ansible-galaxy install -r ./${ans_role}_requirements.yml; python3 /usr/local/bin/ansible-playbook -i /etc/ansible/azure_rm.yml -l tag_ansible_role_${ans_role} ./${ans_role}.yml -e target_server_group=tag_ansible_role_${ans_role}"
     else
         echo "Not master, exiting."
     fi
