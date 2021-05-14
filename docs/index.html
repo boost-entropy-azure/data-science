@@ -461,6 +461,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_data_science_infrastructure_deployment">3. Data Science Infrastructure Deployment</a>
 <ul class="sectlevel2">
 <li><a href="#_step_by_step_guide">3.1. Step-by-step Guide</a></li>
+<li><a href="#_troubleshooting">3.2. Troubleshooting</a></li>
 </ul>
 </li>
 <li><a href="#_frequently_asked_questions_faq">4. Frequently Asked Questions (FAQ)</a>
@@ -679,10 +680,10 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 <p>A Virtual Network</p>
 </li>
 <li>
-<p>A Subnet for the MQTT broker, reverse proxy, and the CentOS VM worker nodes</p>
+<p>A Subnet for the CentOS VM worker nodes</p>
 </li>
 <li>
-<p>A Network Security Group for worker nodes and reverse proxy</p>
+<p>A Network Security Group for worker nodes</p>
 </li>
 <li>
 <p>A storage accounts for boot diagnostics</p>
@@ -694,28 +695,10 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 <p>An Azure data lake storage container</p>
 </li>
 <li>
-<p>An Azure File Share to store files for the docker containers</p>
-</li>
-<li>
-<p>A Mosquitto MQTT Broker in a Docker Container</p>
-</li>
-<li>
-<p>An MQTT-to-Event-Hubs Connector in a Docker Container</p>
-</li>
-<li>
-<p>A CentOS VM with NGINX reverse proxy</p>
-</li>
-<li>
-<p>A CentOS VM with PostgreSQL v10</p>
+<p>A CentOS VM with PostgreSQL v10 for the Apache Spark job state</p>
 </li>
 <li>
 <p>A set of CentOS VM worker nodes with Apache Spark, HDFS, YARN, Jupyter Notebook, and Consul</p>
-</li>
-<li>
-<p>A Grafana server in a Docker container</p>
-</li>
-<li>
-<p>A set of container groups for Grafana data integrations</p>
 </li>
 <li>
 <p>A set of Azure Databases for PostgreSQL server use with Grafana server</p>
@@ -740,125 +723,199 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 </li>
 <li>
 <p>Set the needed environment variables as shown in the example below.</p>
-<div class="literalblock">
-<div class="content">
-<pre>[source]
----
-## Set Pipeline Environment Variables
-export WORKING_DIR="/home/data-science"
-export TF_VAR_environment="dev"
-export TF_VAR_cluster_name="datasci"
-export TF_VAR_resource_group_name="rg-datasci-dev"
-export TF_VAR_tfstate_resource_group_name="rg-datasci-oob"
-export TF_VAR_state_container="remote-tfstates"
-export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}' $(echo ${TF_VAR_environment^^}))
-export TF_VAR_alert_topics='["alert_message"]'
-export TF_VAR_mqtt_topics='["comma","separated","list"]'
-export TF_VAR_mqtt_users='["comma","separated","list"]'
-# Azure Account Credentials
-export ARM_ENVIRONMENT="public"
-export ARM_CLIENT_ID="azure-serviceprincipal-client-id"
-export ARM_CLIENT_SECRET="azure-serviceprincipal-secret"
-export ARM_SUBSCRIPTION_ID="azure-subscription-id"
-export ARM_TENANT_ID="azure-tenant-id"
-# Remote State Azure Account Credentials (if in different resource group than assets...and it should be! If not, just source the ARM ENVs)
-export TF_VAR_remotestate_client_id="azure-serviceprincipal-client-id"
-export TF_VAR_remotestate_client_secret="azure-serviceprincipal-secret"
-export TF_VAR_remotestate_subscription_id="${ARM_SUBSCRIPTION_ID}"
-export TF_VAR_remotestate_tenant_id="${ARM_TENANT_ID}"
-export TF_VAR_remotestate_storage_account_name="${TF_VAR_environment}tfstatedata0001"
-export TF_VAR_sp_password="${ARM_CLIENT_SECRET}"
----</pre>
-</div>
-</div>
-</li>
-<li>
-<p>This step should only be done if this is the first time you&#8217;re deploying the data-science repo to your environment or if you&#8217;re re-deploying to an existing environment following a complete destruction of the environment (i.e. the Terraform remote state storage account does not have any state information on the environment you&#8217;re about to deploy)</p>
-<div class="literalblock">
-<div class="content">
-<pre>[source]
----
-cd ${WORKING_DIR}/data-science/terraform/remote-state-bootstrap
-unset ARM_CLIENT_ID
-unset ARM_CLIENT_SECRET
-export ARM_CLIENT_ID="${TF_VAR_remotestate_client_id}"
-export ARM_CLIENT_SECRET="${TF_VAR_remotestate_client_secret}"
-terraform init
-terraform plan
-terraform import azurerm_resource_group.resource_group /subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/${TF_VAR_tfstate_resource_group_name}
-terraform apply -auto-approve
-# OCD optional cleanup (is ignored by Git via .gitignore)
-rm -fr ./.terraform *.tfstate*
-unset ARM_CLIENT_ID
-unset ARM_CLIENT_SECRET
-echo "SET THE PROPER VARS AGAIN FOR ARM_CLIENT_ID &amp; ARM_CLIENT_SECRET"
----</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Log into Azure</p>
-<div class="literalblock">
-<div class="content">
-<pre>[source]
----
-az account clear
-az login --service-principal --username ${ARM_CLIENT_ID} --tenant ${ARM_TENANT_ID} --password ${ARM_CLIENT_SECRET}
----</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Change your working directory to match the WORKING_DIR setting from step 4 by running <code>cd $WORKING_DIR</code></p>
-</li>
-<li>
-<p>Clone the datasci-repo by running <code>git clone <a href="https://github.com/chesapeaketechnology/data-science" class="bare">https://github.com/chesapeaketechnology/data-science</a></code></p>
-</li>
-<li>
-<p>Deploy the infrastructure resources of the project</p>
-<div class="literalblock">
-<div class="content">
-<pre>[source]
----
-cd ${WORKING_DIR}/data-science/terraform/providers/infrastructure
-terraform init \
-  -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
-  -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
-  -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
-  -backend-config="container_name=${TF_VAR_state_container}" \
-  -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
-  -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
-  -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
-  -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
-terraform plan
-terraform apply
----</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Deploy the application resources of the project</p>
-<div class="literalblock">
-<div class="content">
-<pre>[source]
----
-cd ${WORKING_DIR}/data-science/terraform/providers/application_stack
-terraform init \
-  -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
-  -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
-  -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
-  -backend-config="container_name=${TF_VAR_state_container}" \
-  -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
-  -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
-  -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
-  -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
-terraform plan
-terraform apply
----</pre>
-</div>
-</div>
 </li>
 </ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="c">## Set Pipeline Environment Variables</span>
+<span class="nb">export </span><span class="nv">WORKING_DIR</span><span class="o">=</span><span class="s2">"/opt/repos"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_environment</span><span class="o">=</span><span class="s2">"dev"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_cluster_name</span><span class="o">=</span><span class="s2">"datasci"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_resource_group_name</span><span class="o">=</span><span class="s2">"rg-</span><span class="k">${</span><span class="nv">TF_VAR_cluster_name</span><span class="k">}</span><span class="s2">-</span><span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="k">}</span><span class="s2">"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_tfstate_resource_group_name</span><span class="o">=</span><span class="s2">"rg-</span><span class="k">${</span><span class="nv">TF_VAR_cluster_name</span><span class="k">}</span><span class="s2">-tfstate-</span><span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="k">}</span><span class="s2">"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_state_container</span><span class="o">=</span><span class="s2">"remote-tfstates"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_default_tags</span><span class="o">=</span><span class="si">$(</span><span class="nb">printf</span> <span class="s1">'{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}'</span> <span class="si">$(</span><span class="nb">echo</span> <span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="p">^^</span><span class="k">}</span><span class="si">))</span>
+<span class="nb">export </span><span class="nv">TF_VAR_alert_topics</span><span class="o">=</span><span class="s1">'["alert_message"]'</span>
+<span class="nb">export </span><span class="nv">TF_VAR_mqtt_topics</span><span class="o">=</span><span class="s1">'["comma","separated","list"]'</span>
+
+<span class="c"># Azure Account Credentials</span>
+<span class="nb">export </span><span class="nv">ARM_ENVIRONMENT</span><span class="o">=</span><span class="s2">"public"</span>
+<span class="nb">export </span><span class="nv">ARM_CLIENT_ID</span><span class="o">=</span><span class="s2">"azure-serviceprincipal-client-id"</span>
+<span class="nb">export </span><span class="nv">ARM_CLIENT_SECRET</span><span class="o">=</span><span class="s2">"azure-serviceprincipal-secret"</span>
+<span class="nb">export </span><span class="nv">ARM_SUBSCRIPTION_ID</span><span class="o">=</span><span class="s2">"azure-subscription-id"</span>
+<span class="nb">export </span><span class="nv">ARM_TENANT_ID</span><span class="o">=</span><span class="s2">"azure-tenant-id"</span>
+
+<span class="c"># Remote State Azure Account Credentials (if in different resource group than assets...and it should be! If not, just source the ARM ENVs)</span>
+<span class="nb">export </span><span class="nv">TF_VAR_remotestate_client_id</span><span class="o">=</span><span class="s2">"azure-serviceprincipal-client-id"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="o">=</span><span class="s2">"azure-serviceprincipal-secret"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_remotestate_subscription_id</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">ARM_SUBSCRIPTION_ID</span><span class="k">}</span><span class="s2">"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_remotestate_tenant_id</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">ARM_TENANT_ID</span><span class="k">}</span><span class="s2">"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_remotestate_storage_account_name</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="k">}</span><span class="s2">tfstatedata0001"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_sp_password</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">ARM_CLIENT_SECRET</span><span class="k">}</span><span class="s2">"</span></code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic" start="5">
+<li>
+<p>Clone the data-science repo by running:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>mkdir -p ${WORKING_DIR}
+cd ${WORKING_DIR}
+git clone https://github.com/chesapeaketechnology/data-science.git
+cd data-science/
+git checkout master
+echo $(pwd)
+echo "We should be ready to fire away."</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic" start="6">
+<li>
+<p><strong>First Time Only</strong>: This step should only be done if this is the first time you&#8217;re deploying the data-science repo to your environment or if you&#8217;re re-deploying to an existing environment following a complete destruction of the environment (i.e. the Terraform remote state storage account does not have any state information on the environment you&#8217;re about to deploy).</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">cd</span> <span class="k">${</span><span class="nv">WORKING_DIR</span><span class="k">}</span>/data-science/terraform/remote-state-bootstrap
+<span class="nb">unset </span>ARM_CLIENT_ID
+<span class="nb">unset </span>ARM_CLIENT_SECRET
+<span class="nb">export </span><span class="nv">ARM_CLIENT_ID</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_id</span><span class="k">}</span><span class="s2">"</span>
+<span class="nb">export </span><span class="nv">ARM_CLIENT_SECRET</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="k">}</span><span class="s2">"</span>
+terraform init
+terraform plan
+terraform import azurerm_resource_group.resource_group /subscriptions/<span class="k">${</span><span class="nv">ARM_SUBSCRIPTION_ID</span><span class="k">}</span>/resourceGroups/<span class="k">${</span><span class="nv">TF_VAR_tfstate_resource_group_name</span><span class="k">}</span>
+terraform apply <span class="nt">-auto-approve</span>
+<span class="c"># OCD optional cleanup (is ignored by Git via .gitignore)</span>
+<span class="nb">rm</span> <span class="nt">-fr</span> ./.terraform <span class="k">*</span>.tfstate<span class="k">*</span>
+<span class="nb">unset </span>ARM_CLIENT_ID
+<span class="nb">unset </span>ARM_CLIENT_SECRET
+<span class="nb">echo</span> <span class="s2">"SET THE PROPER VARS AGAIN FOR ARM_CLIENT_ID &amp; ARM_CLIENT_SECRET"</span></code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic" start="7">
+<li>
+<p>Log into Azure CLI</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash">az account clear
+az login <span class="nt">--service-principal</span> <span class="nt">--username</span> <span class="k">${</span><span class="nv">ARM_CLIENT_ID</span><span class="k">}</span> <span class="nt">--tenant</span> <span class="k">${</span><span class="nv">ARM_TENANT_ID</span><span class="k">}</span> <span class="nt">--password</span> <span class="k">${</span><span class="nv">ARM_CLIENT_SECRET</span><span class="k">}</span></code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic" start="8">
+<li>
+<p>Deploy the <strong>infrastructure</strong> resources of the project</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+There is a capability to toggle the management (import/create) of resource groups. To change this default behavior, set "TF_VAR_manage_resource_group=True".
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">cd</span> <span class="k">${</span><span class="nv">WORKING_DIR</span><span class="k">}</span>/data-science/terraform/providers/infrastructure
+terraform init <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"key=</span><span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="k">}</span><span class="s2">/</span><span class="si">$(</span><span class="nb">basename</span> <span class="si">$(</span><span class="nb">pwd</span><span class="si">))</span><span class="s2">.tfstate"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"resource_group_name=</span><span class="k">${</span><span class="nv">TF_VAR_tfstate_resource_group_name</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"storage_account_name=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_storage_account_name</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"container_name=</span><span class="k">${</span><span class="nv">TF_VAR_state_container</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"client_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_id</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"client_secret=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"subscription_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_subscription_id</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"tenant_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_tenant_id</span><span class="k">}</span><span class="s2">"</span>
+terraform plan
+terraform apply</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic" start="9">
+<li>
+<p>Deploy the <strong>application</strong> resources of the project</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">cd</span> <span class="k">${</span><span class="nv">WORKING_DIR</span><span class="k">}</span>/data-science/terraform/providers/application_stack
+terraform init <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"key=</span><span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="k">}</span><span class="s2">/</span><span class="si">$(</span><span class="nb">basename</span> <span class="si">$(</span><span class="nb">pwd</span><span class="si">))</span><span class="s2">.tfstate"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"resource_group_name=</span><span class="k">${</span><span class="nv">TF_VAR_tfstate_resource_group_name</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"storage_account_name=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_storage_account_name</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"container_name=</span><span class="k">${</span><span class="nv">TF_VAR_state_container</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"client_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_id</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"client_secret=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"subscription_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_subscription_id</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"tenant_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_tenant_id</span><span class="k">}</span><span class="s2">"</span>
+terraform plan
+terraform apply</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>3.2. Troubleshooting</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>After running a full <code>terraform destroy</code> and Azure still shows 2 resources (Network security group and Virtual Network), execute the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This assumes you are logged into the container per the Deployment Process</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash">az network profile delete <span class="nt">--id</span> <span class="si">$(</span>az network profile list | jq <span class="nt">-r</span> <span class="s1">'.[].id'</span><span class="si">)</span> <span class="nt">-y</span>
+az network vnet delete <span class="nt">--resource-group</span> <span class="si">$(</span>az network vnet list | jq <span class="nt">-r</span> <span class="s1">'.[].resourceGroup'</span><span class="si">)</span> <span class="nt">--name</span> <span class="si">$(</span>az network vnet list | jq <span class="nt">-r</span> <span class="s1">'.[].name'</span><span class="si">)</span>
+az network nsg delete <span class="nt">--resource-group</span> <span class="si">$(</span>az network nsg list | jq <span class="nt">-r</span> <span class="s1">'.[].resourceGroup'</span><span class="si">)</span> <span class="nt">--name</span> <span class="si">$(</span>az network nsg list | jq <span class="nt">-r</span> <span class="s1">'.[].name'</span><span class="si">)</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you get an error about <em>"The subscription is not registered to use namespace Microsoft.Network"</em>, then use the steps on the following page to register the <strong>Microsoft.Network</strong> resource provider.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/error-register-resource-provider" class="bare">https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/error-register-resource-provider</a></p>
+</li>
+<li>
+<p>Something like:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>az provider register --namespace Microsoft.Network</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1096,44 +1153,42 @@ available from Azure portal on the datalake 'Properties' page)</p>
 <li>
 <p>In a terminal on the <a href="#_how_do_i_figure_out_which_worker_node_is_the_namenode">NameNode</a>, run <code>jps</code>.
 It should show the following output:</p>
-<div class="literalblock">
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="listingblock">
 <div class="content">
-<pre>[source]
-----
-$ ssh hadoop@cti-dev1.eastus.cloudapp.azure.com
+<pre class="rouge highlight"><code data-lang="bash"><span class="nv">$ </span>ssh hadoop@cti-dev1.eastus.cloudapp.azure.com
 Last login: Mon Oct 19 19:16:54 2020 from utm1.ctic-inc.com
-[hadoop@ctidev1 ~]$ jps
+<span class="o">[</span>hadoop@ctidev1 ~]<span class="nv">$ </span>jps
 8833 Jps
 20258 ResourceManager
 20370 NodeManager
 19861 DataNode
 19725 NameNode
 20029 SecondaryNameNode
-[hadoop@ctidev1 ~]$
-----</pre>
+<span class="o">[</span>hadoop@ctidev1 ~]<span class="err">$</span></code></pre>
 </div>
 </div>
-</li>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
 <li>
 <p>In a terminal on a datanode (i.e. not NameNode), run <code>jps</code>. It should show the following output:</p>
-<div class="literalblock">
+</li>
+</ol>
+</div>
+<div class="listingblock">
 <div class="content">
-<pre>[source]
-----
-$ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
-[hadoop@ctidev2 ~]$ jps
+<pre class="rouge highlight"><code data-lang="bash"><span class="nv">$ </span>ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
+<span class="o">[</span>hadoop@ctidev2 ~]<span class="nv">$ </span>jps
 32215 Jps
 10172 DataNode
 10333 NodeManager
-[hadoop@ctidev2 ~]$
-----</pre>
+<span class="o">[</span>hadoop@ctidev2 ~]<span class="err">$</span></code></pre>
 </div>
-</div>
-</li>
-</ol>
-</div>
-</li>
-</ol>
 </div>
 </div>
 <div class="sect2">
@@ -1289,8 +1344,219 @@ into the data lake</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-01 11:39:07 -0800
+Last updated 2021-02-13 11:47:54 -0500
 </div>
 </div>
+<style>
+pre.rouge table td { padding: 5px; }
+pre.rouge table pre { margin: 0; }
+pre.rouge .cm {
+  color: #999988;
+  font-style: italic;
+}
+pre.rouge .cp {
+  color: #999999;
+  font-weight: bold;
+}
+pre.rouge .c1 {
+  color: #999988;
+  font-style: italic;
+}
+pre.rouge .cs {
+  color: #999999;
+  font-weight: bold;
+  font-style: italic;
+}
+pre.rouge .c, pre.rouge .ch, pre.rouge .cd, pre.rouge .cpf {
+  color: #999988;
+  font-style: italic;
+}
+pre.rouge .err {
+  color: #a61717;
+  background-color: #e3d2d2;
+}
+pre.rouge .gd {
+  color: #000000;
+  background-color: #ffdddd;
+}
+pre.rouge .ge {
+  color: #000000;
+  font-style: italic;
+}
+pre.rouge .gr {
+  color: #aa0000;
+}
+pre.rouge .gh {
+  color: #999999;
+}
+pre.rouge .gi {
+  color: #000000;
+  background-color: #ddffdd;
+}
+pre.rouge .go {
+  color: #888888;
+}
+pre.rouge .gp {
+  color: #555555;
+}
+pre.rouge .gs {
+  font-weight: bold;
+}
+pre.rouge .gu {
+  color: #aaaaaa;
+}
+pre.rouge .gt {
+  color: #aa0000;
+}
+pre.rouge .kc {
+  color: #000000;
+  font-weight: bold;
+}
+pre.rouge .kd {
+  color: #000000;
+  font-weight: bold;
+}
+pre.rouge .kn {
+  color: #000000;
+  font-weight: bold;
+}
+pre.rouge .kp {
+  color: #000000;
+  font-weight: bold;
+}
+pre.rouge .kr {
+  color: #000000;
+  font-weight: bold;
+}
+pre.rouge .kt {
+  color: #445588;
+  font-weight: bold;
+}
+pre.rouge .k, pre.rouge .kv {
+  color: #000000;
+  font-weight: bold;
+}
+pre.rouge .mf {
+  color: #009999;
+}
+pre.rouge .mh {
+  color: #009999;
+}
+pre.rouge .il {
+  color: #009999;
+}
+pre.rouge .mi {
+  color: #009999;
+}
+pre.rouge .mo {
+  color: #009999;
+}
+pre.rouge .m, pre.rouge .mb, pre.rouge .mx {
+  color: #009999;
+}
+pre.rouge .sb {
+  color: #d14;
+}
+pre.rouge .sc {
+  color: #d14;
+}
+pre.rouge .sd {
+  color: #d14;
+}
+pre.rouge .s2 {
+  color: #d14;
+}
+pre.rouge .se {
+  color: #d14;
+}
+pre.rouge .sh {
+  color: #d14;
+}
+pre.rouge .si {
+  color: #d14;
+}
+pre.rouge .sx {
+  color: #d14;
+}
+pre.rouge .sr {
+  color: #009926;
+}
+pre.rouge .s1 {
+  color: #d14;
+}
+pre.rouge .ss {
+  color: #990073;
+}
+pre.rouge .s, pre.rouge .sa, pre.rouge .dl {
+  color: #d14;
+}
+pre.rouge .na {
+  color: #008080;
+}
+pre.rouge .bp {
+  color: #999999;
+}
+pre.rouge .nb {
+  color: #0086B3;
+}
+pre.rouge .nc {
+  color: #445588;
+  font-weight: bold;
+}
+pre.rouge .no {
+  color: #008080;
+}
+pre.rouge .nd {
+  color: #3c5d5d;
+  font-weight: bold;
+}
+pre.rouge .ni {
+  color: #800080;
+}
+pre.rouge .ne {
+  color: #990000;
+  font-weight: bold;
+}
+pre.rouge .nf, pre.rouge .fm {
+  color: #990000;
+  font-weight: bold;
+}
+pre.rouge .nl {
+  color: #990000;
+  font-weight: bold;
+}
+pre.rouge .nn {
+  color: #555555;
+}
+pre.rouge .nt {
+  color: #000080;
+}
+pre.rouge .vc {
+  color: #008080;
+}
+pre.rouge .vg {
+  color: #008080;
+}
+pre.rouge .vi {
+  color: #008080;
+}
+pre.rouge .nv, pre.rouge .vm {
+  color: #008080;
+}
+pre.rouge .ow {
+  color: #000000;
+  font-weight: bold;
+}
+pre.rouge .o {
+  color: #000000;
+  font-weight: bold;
+}
+pre.rouge .w {
+  color: #bbbbbb;
+}
+pre.rouge {
+  background-color: #f8f8f8;
+}
+</style>
 </body>
 </html>
