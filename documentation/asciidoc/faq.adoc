@@ -73,31 +73,31 @@ available from Azure portal on the datalake 'Properties' page)
 .. In a terminal on the <<How do I figure out which worker node is the NameNode, NameNode>>, run `jps`.
 It should show the following output:
 
-    [source]
-    ----
-    $ ssh hadoop@cti-dev1.eastus.cloudapp.azure.com
-    Last login: Mon Oct 19 19:16:54 2020 from utm1.ctic-inc.com
-    [hadoop@ctidev1 ~]$ jps
-    8833 Jps
-    20258 ResourceManager
-    20370 NodeManager
-    19861 DataNode
-    19725 NameNode
-    20029 SecondaryNameNode
-    [hadoop@ctidev1 ~]$
-    ----
+[source,bash]
+----
+$ ssh hadoop@cti-dev1.eastus.cloudapp.azure.com
+Last login: Mon Oct 19 19:16:54 2020 from utm1.ctic-inc.com
+[hadoop@ctidev1 ~]$ jps
+8833 Jps
+20258 ResourceManager
+20370 NodeManager
+19861 DataNode
+19725 NameNode
+20029 SecondaryNameNode
+[hadoop@ctidev1 ~]$
+----
 
 .. In a terminal on a datanode (i.e. not NameNode), run `jps`. It should show the following output:
 
-    [source]
-    ----
-    $ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
-    [hadoop@ctidev2 ~]$ jps
-    32215 Jps
-    10172 DataNode
-    10333 NodeManager
-    [hadoop@ctidev2 ~]$
-    ----
+[source,bash]
+----
+$ ssh hadoop@cti-dev2.eastus.cloudapp.azure.com
+[hadoop@ctidev2 ~]$ jps
+32215 Jps
+10172 DataNode
+10333 NodeManager
+[hadoop@ctidev2 ~]$
+----
 
 === How do I start HDFS and YARN services
 . First figure out which worker node is the HDFS NameNode

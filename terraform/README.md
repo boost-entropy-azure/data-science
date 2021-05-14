@@ -111,6 +111,9 @@ be managed and updated outside the Terraform state.
 Cloud-Init and Ansible execution can be reviewed from within the Azure Portal for each Virtual Machine here:
 `Boot diagnostics` -> `Serial Log`
 
+The [Ansible Datasci Roles repo](https://github.com/chesapeaketechnology/ansible-datasci-roles) is responsible for
+provisioning the VMs that run Spark and Jupyter Notebook.
+
 ## Environment Variables
 
 In order to facilitate an automated means of deployment, as well as protect sensitive variables, the following
@@ -187,41 +190,10 @@ export TF_VAR_azure_keyvault_secret1=""
 On the Azure Key Vault side, the `azure_keyvault_secret1` secret is expected to be in a comma separated value
 format: `1.1.1.1,2.2.2.2,3.3.3.3`. If it is not, Terraform will have parsing errors.
 
-## Execution
+## Deployment Steps
 
-- With the appropriate variables set, execute this command to deploy the infrastructure:
-
-  ```bash
-  cd ${WORKING_DIR}/data-science/terraform/providers/infrastructure:
-  terraform init \
-    -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
-    -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
-    -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
-    -backend-config="container_name=${TF_VAR_state_container}" \
-    -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
-    -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
-    -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
-    -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
-  terraform plan
-  terraform apply
-  ```
-
-- Execute this command to deploy the application stack:
-
-  ```bash
-  cd ${WORKING_DIR}/data-science/terraform/providers/application_stack
-  terraform init \
-    -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
-    -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
-    -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
-    -backend-config="container_name=${TF_VAR_state_container}" \
-    -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
-    -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
-    -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
-    -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
-  terraform plan
-  terraform apply
-  ```
+To deploy the resources defined in the Terraform code from this repo, use the steps
+provided [here in the Step-by-step Guide](https://chesapeaketechnology.github.io/data-science/#_step_by_step_guide)
 
 - Once deployed, the outputs below will assist in accessing or managing the environment:
 
