@@ -23,7 +23,7 @@ resource "azurerm_public_ip" "fact_ip" {
 
   tags = merge(
     var.default_tags,
-    map("name", "fact")
+    tomap({name = "fact"})
   )
 }
 
@@ -40,7 +40,7 @@ resource "azurerm_network_interface" "fact_nic" {
     name                          = "fact_nicConfiguration"
     subnet_id                     = var.parent_subnet_id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = element(concat(azurerm_public_ip.fact_ip.*.id, list("")), count.index)
+    public_ip_address_id          = element(concat(azurerm_public_ip.fact_ip.*.id, tolist([""])), count.index)
   }
 }
 

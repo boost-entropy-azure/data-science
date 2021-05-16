@@ -1,22 +1,31 @@
-# Moved to a more hacked, but cross cloud FQN
-# output "namespace_fqn" {
-#   description = "fully qualified namesapce for event hub"
-#   value = join(".", [azurerm_eventhub_namespace.eventhubs.name, "servicebus.uscloudapi.net"])
-# }
-
-output "topic_primary_key" {
-  description = "primary access key for the topic"
-  value       = values(azurerm_eventhub_authorization_rule.eventhub_auth_rule)[*].primary_key
+output "namespace_view_primary_key" {
+  description = "primary access key for the namespace for the view auth rule"
+  value       = azurerm_eventhub_namespace_authorization_rule.view_auth_rule.primary_key
 }
 
-output "topic_secondary_key" {
-  description = "secondary access key for the topic"
-  value       = values(azurerm_eventhub_authorization_rule.eventhub_auth_rule)[*].secondary_key
+output "namespace_view_secondary_key" {
+  description = "secondary access key for the namespace for the view auth rule"
+  value       = azurerm_eventhub_namespace_authorization_rule.view_auth_rule.secondary_key
 }
 
-output "topic_shared_access_policy_name" {
-  description = "The shared access policy name for accessing the topic"
-  value       = values(azurerm_eventhub_authorization_rule.eventhub_auth_rule)[*].name
+output "namespace_view_auth_rule_name" {
+  description = "The shared access policy name for accessing the namespace for the view auth rule"
+  value       = azurerm_eventhub_namespace_authorization_rule.view_auth_rule.name
+}
+
+output "namespace_postgres_connector_primary_key" {
+  description = "primary access key for the namespace for the postgres connector auth rule"
+  value       = azurerm_eventhub_namespace_authorization_rule.postgres_connector_auth_rule.primary_key
+}
+
+output "namespace_postgres_connector_secondary_key" {
+  description = "secondary access key for the namespace for the postgres connector auth rule"
+  value       = azurerm_eventhub_namespace_authorization_rule.postgres_connector_auth_rule.secondary_key
+}
+
+output "namespace_postgres_connector_auth_rule_name" {
+  description = "The shared access policy name for accessing the namespace for the postgres connector auth rule"
+  value       = azurerm_eventhub_namespace_authorization_rule.postgres_connector_auth_rule.name
 }
 
 output "namespace_fqn" {

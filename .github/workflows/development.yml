@@ -1,0 +1,195 @@
+name: Deploy To Development
+
+on:
+  push:
+    branches:
+      - develop
+
+# Global Environment Variables
+env:
+  JOB_CONTAINER: "chesapeaketechnology/devops:latest"
+  TF_WORKING_DIR: "./terraform/providers"
+
+jobs:
+  Dev-Validate:
+    runs-on: ubuntu-latest
+    container:
+      image: chesapeaketechnology/devops:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      - name: Terraform Validation - Infrastructure
+        working-directory: ./terraform/providers/infrastructure
+        run: |
+          terraform fmt -check
+          terraform init -backend=false
+          terraform validate
+      - name: Terraform Validation - Application Stack
+        working-directory: ./terraform/providers/application_stack
+        run: |
+          terraform fmt -check
+          terraform init -backend=false
+          terraform validate
+  Dev-Plan:
+    if: ${{ github.refs != 'refs/heads/develop' }}
+    environment: development
+    runs-on: ubuntu-latest
+    needs: Dev-Validate
+    container:
+      image: chesapeaketechnology/devops:latest
+    env:
+      ARM_ENVIRONMENT: ${{ secrets.ARM_ENVIRONMENT }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      TF_VAR_environment: ${{ secrets.TF_VAR_environment }}
+      TF_VAR_cluster_name: ${{ secrets.TF_VAR_cluster_name }}
+      TF_VAR_resource_group_name: ${{ secrets.TF_VAR_resource_group_name }}
+      TF_VAR_tfstate_resource_group_name: ${{ secrets.TF_VAR_tfstate_resource_group_name }}
+      TF_VAR_state_container: ${{ secrets.TF_VAR_state_container }}
+      TF_VAR_default_tags: ${{ secrets.TF_VAR_default_tags }}
+      TF_VAR_alert_topics: ${{ secrets.TF_VAR_alert_topics }}
+      TF_VAR_mqtt_topics: ${{ secrets.TF_VAR_mqtt_topics }}
+      TF_VAR_mqtt_users: ${{ secrets.TF_VAR_mqtt_users }}
+      TF_VAR_sp_password: ${{ secrets.TF_VAR_sp_password }}
+      TF_VAR_remotestate_client_id: ${{ secrets.TF_VAR_remotestate_client_id }}
+      TF_VAR_remotestate_client_secret: ${{ secrets.TF_VAR_remotestate_client_secret }}
+      TF_VAR_remotestate_subscription_id: ${{ secrets.TF_VAR_remotestate_subscription_id }}
+      TF_VAR_remotestate_tenant_id: ${{ secrets.TF_VAR_remotestate_tenant_id }}
+      TF_VAR_remotestate_storage_account_name: ${{ secrets.TF_VAR_remotestate_storage_account_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      - name: Azure Login
+        run: |
+          az account clear
+          az login --service-principal --username ${ARM_CLIENT_ID} --tenant ${ARM_TENANT_ID} --password ${ARM_CLIENT_SECRET}
+      - name: Terraform Initialize - Infrastructure
+        working-directory: ./terraform/providers/infrastructure
+        run: |
+          terraform init \
+              -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
+              -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
+              -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
+              -backend-config="container_name=${TF_VAR_state_container}" \
+              -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
+              -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
+              -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
+              -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
+      - name: Terraform Initialize - Application Stack
+        working-directory: ./terraform/providers/application_stack
+        run: |
+          terraform init \
+              -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
+              -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
+              -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
+              -backend-config="container_name=${TF_VAR_state_container}" \
+              -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
+              -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
+              -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
+              -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
+      - name: Terraform Plan - Infrastructure
+        working-directory: ./terraform/providers/infrastructure
+        run: |
+          export TF_VAR_default_tags=$(echo $TF_VAR_default_tags | base64 -d)
+          export TF_VAR_alert_topics=$(echo $TF_VAR_alert_topics | base64 -d)
+          export TF_VAR_mqtt_topics=$(echo $TF_VAR_mqtt_topics | base64 -d)
+          export TF_VAR_mqtt_users=$(echo $TF_VAR_mqtt_users | base64 -d)
+          export TF_VAR_sp_password=$(echo $TF_VAR_sp_password | base64 -d)
+          terraform plan
+      - name: Terraform Plan - Application Stack
+        working-directory: ./terraform/providers/application_stack
+        run: |
+          export TF_VAR_default_tags=$(echo $TF_VAR_default_tags | base64 -d)
+          export TF_VAR_alert_topics=$(echo $TF_VAR_alert_topics | base64 -d)
+          export TF_VAR_mqtt_topics=$(echo $TF_VAR_mqtt_topics | base64 -d)
+          export TF_VAR_mqtt_users=$(echo $TF_VAR_mqtt_users | base64 -d)
+          terraform plan
+        continue-on-error: true
+  Dev-Deploy:
+    if: ${{ github.ref == 'refs/heads/develop' }}
+    environment: development
+    needs: Dev-Plan
+    runs-on: ubuntu-latest
+    container:
+      image: chesapeaketechnology/devops:latest
+    env:
+      ARM_ENVIRONMENT: ${{ secrets.ARM_ENVIRONMENT }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      TF_VAR_environment: ${{ secrets.TF_VAR_environment }}
+      TF_VAR_cluster_name: ${{ secrets.TF_VAR_cluster_name }}
+      TF_VAR_resource_group_name: ${{ secrets.TF_VAR_resource_group_name }}
+      TF_VAR_tfstate_resource_group_name: ${{ secrets.TF_VAR_tfstate_resource_group_name }}
+      TF_VAR_state_container: ${{ secrets.TF_VAR_state_container }}
+      TF_VAR_default_tags: ${{ secrets.TF_VAR_default_tags }}
+      TF_VAR_alert_topics: ${{ secrets.TF_VAR_alert_topics }}
+      TF_VAR_mqtt_topics: ${{ secrets.TF_VAR_mqtt_topics }}
+      TF_VAR_mqtt_users: ${{ secrets.TF_VAR_mqtt_users }}
+      TF_VAR_sp_password: ${{ secrets.TF_VAR_sp_password }}
+      TF_VAR_remotestate_client_id: ${{ secrets.TF_VAR_remotestate_client_id }}
+      TF_VAR_remotestate_client_secret: ${{ secrets.TF_VAR_remotestate_client_secret }}
+      TF_VAR_remotestate_subscription_id: ${{ secrets.TF_VAR_remotestate_subscription_id }}
+      TF_VAR_remotestate_tenant_id: ${{ secrets.TF_VAR_remotestate_tenant_id }}
+      TF_VAR_remotestate_storage_account_name: ${{ secrets.TF_VAR_remotestate_storage_account_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      - name: Debugger
+        run: env
+      - name: Azure Login
+        run: |
+          az account clear
+          az login --service-principal --username ${ARM_CLIENT_ID} --tenant ${ARM_TENANT_ID} --password ${ARM_CLIENT_SECRET}
+      - name: Terraform Initialize - Infrastructure
+        working-directory: ./terraform/providers/infrastructure
+        run: |
+          terraform init \
+              -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
+              -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
+              -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
+              -backend-config="container_name=${TF_VAR_state_container}" \
+              -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
+              -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
+              -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
+              -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
+      - name: Terraform Deploy - Infrastructure
+        working-directory: ./terraform/providers/infrastructure
+        run: |
+          export TF_VAR_default_tags=$(echo $TF_VAR_default_tags | base64 -d)
+          export TF_VAR_alert_topics=$(echo $TF_VAR_alert_topics | base64 -d)
+          export TF_VAR_mqtt_topics=$(echo $TF_VAR_mqtt_topics | base64 -d)
+          export TF_VAR_mqtt_users=$(echo $TF_VAR_mqtt_users | base64 -d)
+          export TF_VAR_sp_password=$(echo $TF_VAR_sp_password | base64 -d)
+          for i in {1..5}; do terraform apply -auto-approve; sleep 30; done
+      - name: Wait for Azure to Catch Up
+        run: sleep 2m
+      - name: Terraform Initialize - Application Stack
+        working-directory: ./terraform/providers/application_stack
+        run: |
+          terraform init \
+              -backend-config="key=${TF_VAR_environment}/$(basename $(pwd)).tfstate" \
+              -backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
+              -backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
+              -backend-config="container_name=${TF_VAR_state_container}" \
+              -backend-config="client_id=${TF_VAR_remotestate_client_id}" \
+              -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
+              -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
+              -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
+      - name: Terraform Deploy - Application Stack
+        working-directory: ./terraform/providers/application_stack
+        run: |
+          export TF_VAR_default_tags=$(echo $TF_VAR_default_tags | base64 -d)
+          export TF_VAR_alert_topics=$(echo $TF_VAR_alert_topics | base64 -d)
+          export TF_VAR_mqtt_topics=$(echo $TF_VAR_mqtt_topics | base64 -d)
+          export TF_VAR_mqtt_users=$(echo $TF_VAR_mqtt_users | base64 -d)
+          for i in {1..5}; do terraform apply -auto-approve; sleep 30; done
+      - name: Terraform Outputs
+        working-directory: ./terraform/providers
+        run: |
+          terraform -chdir=./infrastructure output -json | jq -r '.automation_account_ssh_private.value'
+          terraform -chdir=./application_stack output -json |jq -r '.datasci_node_public_ips.value'
+          terraform -chdir=./application_stack output -json |jq -r '.grafana_admin_password.value.result'
