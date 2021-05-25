@@ -27,6 +27,7 @@ The data-science project is meant to be deployed from a DevOps Docker container 
 ----
 ## Set Pipeline Environment Variables
 export WORKING_DIR="/opt/repos"
+export TF_VAR_location="eastus" # For Azure US Government: export TF_VAR_location="usgovvirginia"
 export TF_VAR_environment="dev"
 export TF_VAR_cluster_name="datasci"
 export TF_VAR_resource_group_name="rg-${TF_VAR_cluster_name}-${TF_VAR_environment}"
@@ -48,7 +49,7 @@ export TF_VAR_remotestate_client_id="azure-serviceprincipal-client-id"
 export TF_VAR_remotestate_client_secret="azure-serviceprincipal-secret"
 export TF_VAR_remotestate_subscription_id="${ARM_SUBSCRIPTION_ID}"
 export TF_VAR_remotestate_tenant_id="${ARM_TENANT_ID}"
-export TF_VAR_remotestate_storage_account_name="${TF_VAR_environment}tfstatedata0001"
+export TF_VAR_remotestate_storage_account_name="${TF_VAR_environment}tfstate${TF_VAR_cluster_name}001"
 export TF_VAR_sp_password="${ARM_CLIENT_SECRET}"
 ----
 

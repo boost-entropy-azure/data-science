@@ -2,6 +2,7 @@
 # - Resource Group
 
 resource "azurerm_virtual_network" "virtualnet" {
+  depends_on          = [var.resource_group_name]
   name                = join("-", ["vnet", var.cluster_name, var.environment])
   resource_group_name = var.resource_group_name
   location            = var.location
