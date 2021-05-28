@@ -9,6 +9,7 @@ variable "environment" {
   type        = string
   default     = "OOB"
 }
+
 variable "location" {
   description = "Azure Location"
   type        = string
