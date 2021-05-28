@@ -69,11 +69,11 @@ resource "azurerm_storage_account" "tfstate_account" {
   enable_https_traffic_only = true
   allow_blob_public_access  = false
   tags = merge(
-  var.default_tags,
-  {
-    "IaC_Managed" = "Yes",
-    "Purpose"     = "Terraform State"
-  }
+    var.default_tags,
+    {
+      "IaC_Managed" = "Yes",
+      "Purpose"     = "Terraform State"
+    }
   )
 }
 
