@@ -17,7 +17,6 @@ module "grafana" {
   default_tags         = var.default_tags
   subnet_start_address = "10.0.1.0"
   subnet_end_address   = "10.0.1.255"
-  consul_server        = module.datasci_nodes.consul_server_ip
 }
 
 output "postgres_config_fqdn" {

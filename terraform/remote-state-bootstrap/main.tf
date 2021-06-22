@@ -57,7 +57,7 @@ resource "azurerm_storage_account" "tfstate_account" {
 }
 
 # The storage account resource that works with Azure US Gov Cloud (removed the blob_properties and TLS1_2)
-resource "azurerm_storage_account" "tfstate_account" {
+resource "azurerm_storage_account" "tfstate_account2" {
   count                    = substr(var.location, 0, 4) == "usgov" ? 1 : 0
   name                     = substr(lower(var.remotestate_storage_account_name), 0, 23)
   resource_group_name      = azurerm_resource_group.resource_group.name
@@ -80,5 +80,5 @@ resource "azurerm_storage_account" "tfstate_account" {
 resource "azurerm_storage_container" "tfstate_container" {
   #name = lower(join("-", [var.environment, "tfstates"]))
   name                 = "remote-tfstates"
-  storage_account_name = azurerm_storage_account.tfstate_account.name
+  storage_account_name = azurerm_storage_account.tfstate_account[0].name
 }

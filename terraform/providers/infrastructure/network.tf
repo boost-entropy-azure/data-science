@@ -21,19 +21,19 @@ resource "azurerm_subnet" "subnet_data" {
   service_endpoints = ["Microsoft.Storage", "Microsoft.EventHub"]
 }
 
-resource "azurerm_public_ip" "public_ip" {
-  count               = var.node_count
-  name                = join("", ["pip-", var.cluster_name, "-", var.environment, count.index])
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  allocation_method   = "Static"
-  domain_name_label   = join("", [var.cluster_name, "-", var.environment, count.index])
+# resource "azurerm_public_ip" "public_ip" {
+#   count               = var.node_count
+#   name                = join("", ["pip-", var.cluster_name, "-", var.environment, count.index])
+#   location            = var.location
+#   resource_group_name = var.resource_group_name
+#   allocation_method   = "Static"
+#   domain_name_label   = join("", [var.cluster_name, "-", var.environment, count.index])
 
-  tags = merge(
-    var.default_tags,
-    tomap({name = "nodes"})
-  )
-}
+#   tags = merge(
+#     var.default_tags,
+#     tomap({name = "nodes"})
+#   )
+# }
 
 output "virtualnet_id" {
   value = azurerm_virtual_network.virtualnet.id
@@ -51,13 +51,13 @@ output "network_subnet_data_id" {
   value = azurerm_subnet.subnet_data.id
 }
 
-output "network_public_ip_list" {
-  value = azurerm_public_ip.public_ip.*.id
-}
+# output "network_public_ip_list" {
+#   value = azurerm_public_ip.public_ip.*.id
+# }
 
-output "network_public_fqdn_list" {
-  value = azurerm_public_ip.public_ip.*.fqdn
-}
+# output "network_public_fqdn_list" {
+#   value = azurerm_public_ip.public_ip.*.fqdn
+# }
 
 # output "network_datasci_net_profile_facts" {
 #   value = azurerm_network_profile.datasci_net_profile
