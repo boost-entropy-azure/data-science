@@ -8,6 +8,12 @@ The Data Science Pipeline Documentation can be found https://chesapeaketechnolog
 
 == Change Log
 
+=== https://github.com/chesapeaketechnology/data-science/releases/tag/v0.5[0.5] - 2021-07-16
+* Removed all the containers and other resources that have been moved to Kubernetes. Kubernetes is now used to run all the containers.
+* Replaced the Spark Worker VMs with Azure Databricks.
+* Replaced the Spark Postgres Facts DB with a Redis cache for improved performance.
+* Fixed some bugs that prevented deploying to Azure US Government Cloud.
+
 === https://github.com/chesapeaketechnology/data-science/releases/tag/v0.4.0[0.4.0] - 2021-01-29
 * Added Terraform remote state
 * Separated infrastructure resources from application resources
