@@ -36,12 +36,6 @@ variable "cluster_name" {
   default     = "default"
 }
 
-variable "node_count" {
-  type        = number
-  description = "Number of Virtual Machine nodes to provision"
-  default     = 3
-}
-
 variable "sp_password" {
   type        = string
   description = "Azure Service Principal Cred"

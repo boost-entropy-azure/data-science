@@ -37,8 +37,3 @@ variable "default_tags" {
   type        = map(string)
   description = "Collection of default tags to apply to all resources"
 }
-
-variable "consul_server" {
-  type        = string
-  description = "IP address of a Consul server to join"
-}

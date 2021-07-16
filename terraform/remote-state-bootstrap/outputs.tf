@@ -17,7 +17,7 @@ output "resource_group_name" {
 }
 
 output "storage_account_id" {
-  value       = azurerm_storage_account.tfstate_account.name
+  value       = azurerm_storage_account.tfstate_account[0].name
   description = "Storage Account ID"
 }
 

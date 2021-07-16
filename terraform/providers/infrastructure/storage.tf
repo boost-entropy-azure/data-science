@@ -128,6 +128,12 @@ output "container_template_deploy_name" {
   value = azurerm_template_deployment.datasci_container.name
 }
 
+output "storage_account_connection_string" {
+  description = "The connection string for the postgres connector checkpoint storage account"
+  value       = azurerm_storage_account.lake_storage_account.primary_connection_string
+  sensitive = true
+}
+
 # output "storage_account_facts" {
 #   value = azurerm_storage_account.lake_storage_account
 # }

@@ -730,6 +730,7 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 <div class="content">
 <pre class="rouge highlight"><code data-lang="bash"><span class="c">## Set Pipeline Environment Variables</span>
 <span class="nb">export </span><span class="nv">WORKING_DIR</span><span class="o">=</span><span class="s2">"/opt/repos"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_location</span><span class="o">=</span><span class="s2">"eastus"</span> <span class="c"># For Azure US Government: export TF_VAR_location="usgovvirginia"</span>
 <span class="nb">export </span><span class="nv">TF_VAR_environment</span><span class="o">=</span><span class="s2">"dev"</span>
 <span class="nb">export </span><span class="nv">TF_VAR_cluster_name</span><span class="o">=</span><span class="s2">"datasci"</span>
 <span class="nb">export </span><span class="nv">TF_VAR_resource_group_name</span><span class="o">=</span><span class="s2">"rg-</span><span class="k">${</span><span class="nv">TF_VAR_cluster_name</span><span class="k">}</span><span class="s2">-</span><span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="k">}</span><span class="s2">"</span>
@@ -751,7 +752,7 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 <span class="nb">export </span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="o">=</span><span class="s2">"azure-serviceprincipal-secret"</span>
 <span class="nb">export </span><span class="nv">TF_VAR_remotestate_subscription_id</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">ARM_SUBSCRIPTION_ID</span><span class="k">}</span><span class="s2">"</span>
 <span class="nb">export </span><span class="nv">TF_VAR_remotestate_tenant_id</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">ARM_TENANT_ID</span><span class="k">}</span><span class="s2">"</span>
-<span class="nb">export </span><span class="nv">TF_VAR_remotestate_storage_account_name</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="k">}</span><span class="s2">tfstatedata0001"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_remotestate_storage_account_name</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="k">}</span><span class="s2">tfstate</span><span class="k">${</span><span class="nv">TF_VAR_cluster_name</span><span class="k">}</span><span class="s2">001"</span>
 <span class="nb">export </span><span class="nv">TF_VAR_sp_password</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">ARM_CLIENT_SECRET</span><span class="k">}</span><span class="s2">"</span></code></pre>
 </div>
 </div>
