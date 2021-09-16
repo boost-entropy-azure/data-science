@@ -54,6 +54,13 @@ variable "alert_topics" {
   default     = ["test_message"]
 }
 
+variable "jobs" {
+  type        = list(string)
+  description = "The list of Spark jobs"
+  default     = ["default1", "default2"]
+}
+
+
 variable "network_subnet_data_id" {
   description = "Data Network Subnet Id"
   type        = string

@@ -36,6 +36,7 @@ export TF_VAR_state_container="remote-tfstates"
 export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}' $(echo ${TF_VAR_environment^^}))
 export TF_VAR_alert_topics='["alert_message"]'
 export TF_VAR_mqtt_topics='["comma","separated","list"]'
+export TF_VAR_jobs='["analysis_job1","analysis_job2"]'
 
 # Azure Account Credentials
 export ARM_ENVIRONMENT="public"
