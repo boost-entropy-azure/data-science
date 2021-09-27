@@ -1,7 +1,22 @@
+provider "databricks" {
+  host                        = data.terraform_remote_state.infrastructure.outputs.databricks_host
+  azure_workspace_resource_id = data.terraform_remote_state.infrastructure.outputs.databricks_id
+  azure_client_id             = var.remotestate_client_id
+  azure_client_secret         = var.remotestate_client_secret
+  azure_tenant_id             = var.remotestate_tenant_id
+}
+
+provider "null" {}
+
 module "analysis_jobs" {
     source                          = "git::https://gitlab.ctic-dev.com/engineering/dfp/analysis/analysis_jobs.git//terraform"
+  
+    providers                       = {
+        databricks = databricks
+        null       = null
+    }
 
-    job_names_to_deploy             = var.jobs
+    jobs                            = var.jobs
 
     cluster_name                    = var.cluster_name
     environment                     = var.environment
