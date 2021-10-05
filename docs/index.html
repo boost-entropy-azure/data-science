@@ -461,7 +461,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_data_science_infrastructure_deployment">3. Data Science Infrastructure Deployment</a>
 <ul class="sectlevel2">
 <li><a href="#_step_by_step_guide">3.1. Step-by-step Guide</a></li>
-<li><a href="#_troubleshooting">3.2. Troubleshooting</a></li>
+<li><a href="#_viewing_the_terraform_output">3.2. Viewing the Terraform Output</a></li>
+<li><a href="#_destruction">3.3. Destruction</a></li>
+<li><a href="#_troubleshooting">3.4. Troubleshooting</a></li>
 </ul>
 </li>
 <li><a href="#_frequently_asked_questions_faq">4. Frequently Asked Questions (FAQ)</a>
@@ -723,6 +725,19 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 </li>
 <li>
 <p>Set the needed environment variables as shown in the example below.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Copy the entire code block below and paste it into a text document (VSCode is recommended).</p>
+</li>
+<li>
+<p>Update the values as necessary, specifically the cluster name, default tags, and Azure Account Credentials likely need to be updated.</p>
+</li>
+<li>
+<p>Copy the entire code block out of VSCode and paste it into the terminal of the devops container and hit the "Enter" key.</p>
+</li>
+</ol>
+</div>
 </li>
 </ol>
 </div>
@@ -738,18 +753,19 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 <span class="nb">export </span><span class="nv">TF_VAR_state_container</span><span class="o">=</span><span class="s2">"remote-tfstates"</span>
 <span class="nb">export </span><span class="nv">TF_VAR_default_tags</span><span class="o">=</span><span class="si">$(</span><span class="nb">printf</span> <span class="s1">'{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}'</span> <span class="si">$(</span><span class="nb">echo</span> <span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="p">^^</span><span class="k">}</span><span class="si">))</span>
 <span class="nb">export </span><span class="nv">TF_VAR_alert_topics</span><span class="o">=</span><span class="s1">'["alert_message"]'</span>
-<span class="nb">export </span><span class="nv">TF_VAR_mqtt_topics</span><span class="o">=</span><span class="s1">'["comma","separated","list"]'</span>
+<span class="nb">export </span><span class="nv">TF_VAR_mqtt_topics</span><span class="o">=</span><span class="s1">'["gsm_message","cdma_message","umts_message","lte_message","nr_message","80211_beacon_message","bluetooth_message","gnss_message","device_status_message","cellular_ota_message"]'</span>
+<span class="nb">export </span><span class="nv">TF_VAR_jobs</span><span class="o">=</span><span class="s1">'["analysis_job1","analysis_job2"]'</span>
 
 <span class="c"># Azure Account Credentials</span>
 <span class="nb">export </span><span class="nv">ARM_ENVIRONMENT</span><span class="o">=</span><span class="s2">"public"</span>
-<span class="nb">export </span><span class="nv">ARM_CLIENT_ID</span><span class="o">=</span><span class="s2">"azure-serviceprincipal-client-id"</span>
+<span class="nb">export </span><span class="nv">ARM_CLIENT_ID</span><span class="o">=</span><span class="s2">"azure-serviceprincipal-client-id"</span> <span class="c"># Called Application ID in Azure</span>
 <span class="nb">export </span><span class="nv">ARM_CLIENT_SECRET</span><span class="o">=</span><span class="s2">"azure-serviceprincipal-secret"</span>
 <span class="nb">export </span><span class="nv">ARM_SUBSCRIPTION_ID</span><span class="o">=</span><span class="s2">"azure-subscription-id"</span>
 <span class="nb">export </span><span class="nv">ARM_TENANT_ID</span><span class="o">=</span><span class="s2">"azure-tenant-id"</span>
 
-<span class="c"># Remote State Azure Account Credentials (if in different resource group than assets...and it should be! If not, just source the ARM ENVs)</span>
-<span class="nb">export </span><span class="nv">TF_VAR_remotestate_client_id</span><span class="o">=</span><span class="s2">"azure-serviceprincipal-client-id"</span>
-<span class="nb">export </span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="o">=</span><span class="s2">"azure-serviceprincipal-secret"</span>
+<span class="c"># Remote State Configuration</span>
+<span class="nb">export </span><span class="nv">TF_VAR_remotestate_client_id</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">ARM_CLIENT_ID</span><span class="k">}</span><span class="s2">"</span>
+<span class="nb">export </span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">ARM_CLIENT_SECRET</span><span class="k">}</span><span class="s2">"</span>
 <span class="nb">export </span><span class="nv">TF_VAR_remotestate_subscription_id</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">ARM_SUBSCRIPTION_ID</span><span class="k">}</span><span class="s2">"</span>
 <span class="nb">export </span><span class="nv">TF_VAR_remotestate_tenant_id</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">ARM_TENANT_ID</span><span class="k">}</span><span class="s2">"</span>
 <span class="nb">export </span><span class="nv">TF_VAR_remotestate_storage_account_name</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="k">}</span><span class="s2">tfstate</span><span class="k">${</span><span class="nv">TF_VAR_cluster_name</span><span class="k">}</span><span class="s2">001"</span>
@@ -777,26 +793,18 @@ echo "We should be ready to fire away."</pre>
 <div class="olist arabic">
 <ol class="arabic" start="6">
 <li>
-<p><strong>First Time Only</strong>: This step should only be done if this is the first time you&#8217;re deploying the data-science repo to your environment or if you&#8217;re re-deploying to an existing environment following a complete destruction of the environment (i.e. the Terraform remote state storage account does not have any state information on the environment you&#8217;re about to deploy).</p>
+<p><strong>First Time Only</strong>: This step should only be done if this is the first time you&#8217;re deploying the data-science repo to your environment, or if you&#8217;re re-deploying to an existing environment following a complete destruction of the environment (i.e. the Terraform remote state storage account does not have any state information on the environment you&#8217;re about to deploy).</p>
 </li>
 </ol>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="bash"><span class="nb">cd</span> <span class="k">${</span><span class="nv">WORKING_DIR</span><span class="k">}</span>/data-science/terraform/remote-state-bootstrap
-<span class="nb">unset </span>ARM_CLIENT_ID
-<span class="nb">unset </span>ARM_CLIENT_SECRET
-<span class="nb">export </span><span class="nv">ARM_CLIENT_ID</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_id</span><span class="k">}</span><span class="s2">"</span>
-<span class="nb">export </span><span class="nv">ARM_CLIENT_SECRET</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="k">}</span><span class="s2">"</span>
 terraform init
-terraform plan
 terraform import azurerm_resource_group.resource_group /subscriptions/<span class="k">${</span><span class="nv">ARM_SUBSCRIPTION_ID</span><span class="k">}</span>/resourceGroups/<span class="k">${</span><span class="nv">TF_VAR_tfstate_resource_group_name</span><span class="k">}</span>
 terraform apply <span class="nt">-auto-approve</span>
 <span class="c"># OCD optional cleanup (is ignored by Git via .gitignore)</span>
-<span class="nb">rm</span> <span class="nt">-fr</span> ./.terraform <span class="k">*</span>.tfstate<span class="k">*</span>
-<span class="nb">unset </span>ARM_CLIENT_ID
-<span class="nb">unset </span>ARM_CLIENT_SECRET
-<span class="nb">echo</span> <span class="s2">"SET THE PROPER VARS AGAIN FOR ARM_CLIENT_ID &amp; ARM_CLIENT_SECRET"</span></code></pre>
+<span class="nb">rm</span> <span class="nt">-fr</span> ./.terraform <span class="k">*</span>.tfstate<span class="k">*</span></code></pre>
 </div>
 </div>
 <div class="olist arabic">
@@ -826,7 +834,7 @@ az login <span class="nt">--service-principal</span> <span class="nt">--username
 <div class="title">Note</div>
 </td>
 <td class="content">
-There is a capability to toggle the management (import/create) of resource groups. To change this default behavior, set "TF_VAR_manage_resource_group=True".
+The first <code>terraform apply</code> command often fails with an error indicating the resource group does not exist. If this happens run the command again since Azure has likely finished creating the resource group by the time you re-run the command.
 </td>
 </tr>
 </table>
@@ -843,7 +851,6 @@ terraform init <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"client_secret=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"subscription_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_subscription_id</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"tenant_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_tenant_id</span><span class="k">}</span><span class="s2">"</span>
-terraform plan
 terraform apply</code></pre>
 </div>
 </div>
@@ -866,13 +873,103 @@ terraform init <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"client_secret=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"subscription_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_subscription_id</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"tenant_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_tenant_id</span><span class="k">}</span><span class="s2">"</span>
-terraform plan
 terraform apply</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>3.2. Troubleshooting</h3>
+<h3 id="_viewing_the_terraform_output"><a class="anchor" href="#_viewing_the_terraform_output"></a>3.2. Viewing the Terraform Output</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Once deployed, the outputs below will assist in accessing or managing the environment:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure output -json | jq -r '.automation_account_ssh_private.value'
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.datasci_node_public_ips.value'
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.grafana_admin_password.value.result'</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The following outputs are needed to pass into Kubernetes for the application portion of the data science pipeline</p>
+</li>
+<li>
+<p>The following command prints out all the outputs from the last Terraform run stored in the tfstates file for the application stack.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The same as above but for the infrastructure.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure output -json | jq -r</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you want to print out a specific item from the Terraform run outputs, then use something like:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_namespace_fqn.value'
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_namespace_connection_string.value'
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_view_primary_key.value'
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_view_rule_name.value'</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_destruction"><a class="anchor" href="#_destruction"></a>3.3. Destruction</h3>
+<div class="paragraph">
+<p>Destruction of assets will not be an automated process. Tread with caution, as this is permanent and <strong>WILL</strong> result in
+data loss.</p>
+</div>
+<div class="paragraph">
+<p>To remove an environment:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Infrastructure: <code>terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure destroy</code></p>
+</li>
+<li>
+<p>Application Stack: <code>terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack destroy</code></p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Based on the Terraform bootstrap process, running the destroy command <strong>WILL NOT</strong> remove the Terraform state data or storage container, as that is (and should be) provisioned outside the main infrastructure states to ensure environment safety.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>3.4. Troubleshooting</h3>
 <div class="ulist">
 <ul>
 <li>
