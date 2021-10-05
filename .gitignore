@@ -20,6 +20,7 @@ pwfile.txt
 documentation/**/build/**
 documentation/**/*.pdf
 documentation/.gradle/*
+documentation/.idea/*
 
 # Created by https://www.toptal.com/developers/gitignore/api/terraform,ansible,macos,basic,vscode,vim,git
 # Edit at https://www.toptal.com/developers/gitignore?templates=terraform,ansible,macos,basic,vscode,vim,git

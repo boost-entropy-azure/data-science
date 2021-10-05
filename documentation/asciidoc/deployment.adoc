@@ -37,6 +37,7 @@ export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Env
 export TF_VAR_alert_topics='["alert_message"]'
 export TF_VAR_mqtt_topics='["comma","separated","list"]'
 export TF_VAR_jobs='["analysis_job1","analysis_job2"]'
+export TF_VAR_jobs='["comma","separated","list"]'
 
 # Azure Account Credentials
 export ARM_ENVIRONMENT="public"
@@ -133,6 +134,11 @@ terraform init \
 -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
 -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
 -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
+## Optional step for downloading analysis job artifacts
+cd ./terraform/modules/analysis_jobs/
+export GITLAB_PRIVATE_TOKEN=<token-value>
+./gradlew getJobArtifacts
+## end optional step
 terraform plan
 terraform apply
 ----
