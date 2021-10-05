@@ -22,6 +22,9 @@ The data-science project is meant to be deployed from a DevOps Docker container 
 . In a terminal, run `docker run -dit --name datasci chesapeaketechnology/devops:latest /bin/bash` to download the container image
 . Log into the newly downloaded container by running `docker exec -u 0 -it datasci /bin/bash`
 . Set the needed environment variables as shown in the example below.
+.. Copy the entire code block below and paste it into a text document (VSCode is recommended).
+.. Update the values as necessary, specifically the cluster name, default tags, and Azure Account Credentials likely need to be updated.
+.. Copy the entire code block out of VSCode and paste it into the terminal of the devops container and hit the "Enter" key.
 
 [source,bash]
 ----
@@ -35,19 +38,19 @@ export TF_VAR_tfstate_resource_group_name="rg-${TF_VAR_cluster_name}-tfstate-${T
 export TF_VAR_state_container="remote-tfstates"
 export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}' $(echo ${TF_VAR_environment^^}))
 export TF_VAR_alert_topics='["alert_message"]'
-export TF_VAR_mqtt_topics='["comma","separated","list"]'
+export TF_VAR_mqtt_topics='["gsm_message","cdma_message","umts_message","lte_message","nr_message","80211_beacon_message","bluetooth_message","gnss_message","device_status_message","cellular_ota_message"]'
 export TF_VAR_jobs='["analysis_job1","analysis_job2"]'
 
 # Azure Account Credentials
 export ARM_ENVIRONMENT="public"
-export ARM_CLIENT_ID="azure-serviceprincipal-client-id"
+export ARM_CLIENT_ID="azure-serviceprincipal-client-id" # Called Application ID in Azure
 export ARM_CLIENT_SECRET="azure-serviceprincipal-secret"
 export ARM_SUBSCRIPTION_ID="azure-subscription-id"
 export ARM_TENANT_ID="azure-tenant-id"
 
-# Remote State Azure Account Credentials (if in different resource group than assets...and it should be! If not, just source the ARM ENVs)
-export TF_VAR_remotestate_client_id="azure-serviceprincipal-client-id"
-export TF_VAR_remotestate_client_secret="azure-serviceprincipal-secret"
+# Remote State Configuration
+export TF_VAR_remotestate_client_id="${ARM_CLIENT_ID}"
+export TF_VAR_remotestate_client_secret="${ARM_CLIENT_SECRET}"
 export TF_VAR_remotestate_subscription_id="${ARM_SUBSCRIPTION_ID}"
 export TF_VAR_remotestate_tenant_id="${ARM_TENANT_ID}"
 export TF_VAR_remotestate_storage_account_name="${TF_VAR_environment}tfstate${TF_VAR_cluster_name}001"
@@ -68,24 +71,16 @@ echo "We should be ready to fire away."
 ----
 
 [start=6]
-. *First Time Only*: This step should only be done if this is the first time you're deploying the data-science repo to your environment or if you're re-deploying to an existing environment following a complete destruction of the environment (i.e. the Terraform remote state storage account does not have any state information on the environment you're about to deploy).
+. *First Time Only*: This step should only be done if this is the first time you're deploying the data-science repo to your environment, or if you're re-deploying to an existing environment following a complete destruction of the environment (i.e. the Terraform remote state storage account does not have any state information on the environment you're about to deploy).
 
 [source,bash]
 ----
 cd ${WORKING_DIR}/data-science/terraform/remote-state-bootstrap
-unset ARM_CLIENT_ID
-unset ARM_CLIENT_SECRET
-export ARM_CLIENT_ID="${TF_VAR_remotestate_client_id}"
-export ARM_CLIENT_SECRET="${TF_VAR_remotestate_client_secret}"
 terraform init
-terraform plan
 terraform import azurerm_resource_group.resource_group /subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/${TF_VAR_tfstate_resource_group_name}
 terraform apply -auto-approve
 # OCD optional cleanup (is ignored by Git via .gitignore)
 rm -fr ./.terraform *.tfstate*
-unset ARM_CLIENT_ID
-unset ARM_CLIENT_SECRET
-echo "SET THE PROPER VARS AGAIN FOR ARM_CLIENT_ID & ARM_CLIENT_SECRET"
 ----
 
 [start=7]
@@ -100,7 +95,7 @@ az login --service-principal --username ${ARM_CLIENT_ID} --tenant ${ARM_TENANT_I
 [start=8]
 . Deploy the *infrastructure* resources of the project
 
-NOTE: There is a capability to toggle the management (import/create) of resource groups. To change this default behavior, set "TF_VAR_manage_resource_group=True".
+NOTE: The first `terraform apply` command often fails with an error indicating the resource group does not exist. If this happens run the command again since Azure has likely finished creating the resource group by the time you re-run the command.
 
 [source,bash]
 ----
@@ -114,7 +109,6 @@ terraform init \
 -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
 -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
 -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
-terraform plan
 terraform apply
 ----
 
@@ -133,9 +127,53 @@ terraform init \
 -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
 -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
 -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
-terraform plan
 terraform apply
 ----
+
+=== Viewing the Terraform Output
+
+- Once deployed, the outputs below will assist in accessing or managing the environment:
+[source,bash]
+----
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure output -json | jq -r '.automation_account_ssh_private.value'
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.datasci_node_public_ips.value'
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.grafana_admin_password.value.result'
+----
+
+- The following outputs are needed to pass into Kubernetes for the application portion of the data science pipeline
+- The following command prints out all the outputs from the last Terraform run stored in the tfstates file for the application stack.
+[source,bash]
+----
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r
+----
+
+- The same as above but for the infrastructure.
+[source,bash]
+----
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure output -json | jq -r
+----
+
+- If you want to print out a specific item from the Terraform run outputs, then use something like:
+[source,bash]
+----
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_namespace_fqn.value'
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_namespace_connection_string.value'
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_view_primary_key.value'
+terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack output -json | jq -r '.eventhubs_mqtt_view_rule_name.value'
+----
+
+=== Destruction
+
+Destruction of assets will not be an automated process. Tread with caution, as this is permanent and **WILL** result in
+data loss.
+
+To remove an environment:
+
+1. Infrastructure: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure destroy`
+2. Application Stack: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack destroy`
+
+NOTE: Based on the Terraform bootstrap process, running the destroy command **WILL NOT** remove the Terraform state data or storage container, as that is (and should be) provisioned outside the main infrastructure states to ensure environment safety.
+
 
 === Troubleshooting
 * After running a full `terraform destroy` and Azure still shows 2 resources (Network security group and Virtual Network), execute the following:
