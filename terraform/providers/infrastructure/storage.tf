@@ -116,6 +116,10 @@ output "storage_account_id" {
   value = azurerm_storage_account.lake_storage_account.id
 }
 
+output "storage_container_name" {
+  value = azurerm_template_deployment.datasci_container.name
+}
+
 output "storage_account_boot_storage_primary_blob_endpoint" {
   value = azurerm_storage_account.boot_storage.primary_blob_endpoint
 }

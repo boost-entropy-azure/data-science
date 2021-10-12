@@ -16,5 +16,5 @@ output "databricks_host" {
 }
 
 output "databricks_id" {
-  value = azurerm_databricks_workspace.analytics.workspace_id
+  value = azurerm_databricks_workspace.analytics.id
 }
