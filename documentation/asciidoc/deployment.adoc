@@ -40,7 +40,6 @@ export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Env
 export TF_VAR_alert_topics='["alert_message"]'
 export TF_VAR_mqtt_topics='["gsm_message","cdma_message","umts_message","lte_message","nr_message","80211_beacon_message","bluetooth_message","gnss_message","device_status_message","cellular_ota_message"]'
 export TF_VAR_jobs='["analysis_job1","analysis_job2"]'
-export TF_VAR_jobs='["comma","separated","list"]'
 
 # Azure Account Credentials
 export ARM_ENVIRONMENT="public"
