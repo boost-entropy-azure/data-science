@@ -755,6 +755,7 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 <span class="nb">export </span><span class="nv">TF_VAR_alert_topics</span><span class="o">=</span><span class="s1">'["alert_message"]'</span>
 <span class="nb">export </span><span class="nv">TF_VAR_mqtt_topics</span><span class="o">=</span><span class="s1">'["gsm_message","cdma_message","umts_message","lte_message","nr_message","80211_beacon_message","bluetooth_message","gnss_message","device_status_message","cellular_ota_message"]'</span>
 <span class="nb">export </span><span class="nv">TF_VAR_jobs</span><span class="o">=</span><span class="s1">'["analysis_job1","analysis_job2"]'</span>
+<span class="nb">export </span><span class="nv">TF_VAR_jobs</span><span class="o">=</span><span class="s1">'["comma","separated","list"]'</span>
 
 <span class="c"># Azure Account Credentials</span>
 <span class="nb">export </span><span class="nv">ARM_ENVIRONMENT</span><span class="o">=</span><span class="s2">"public"</span>
@@ -873,6 +874,11 @@ terraform init <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"client_secret=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"subscription_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_subscription_id</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"tenant_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_tenant_id</span><span class="k">}</span><span class="s2">"</span>
+<span class="c">## Optional step for downloading analysis job artifacts</span>
+<span class="nb">cd</span> ./terraform/modules/analysis_jobs/
+<span class="nb">export </span><span class="nv">GITLAB_PRIVATE_TOKEN</span><span class="o">=</span>&lt;token-value&gt;
+./gradlew getJobArtifacts
+<span class="c">## end optional step</span>
 terraform apply</code></pre>
 </div>
 </div>
@@ -1442,7 +1448,7 @@ into the data lake</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-13 11:47:54 -0500
+Last updated 2021-02-13 17:47:54 +0100
 </div>
 </div>
 <style>
