@@ -79,3 +79,12 @@ resource "azurerm_eventhub_consumer_group" "view_consumer_group" {
   resource_group_name = var.resource_group_name
   depends_on          = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub_namespace_authorization_rule.view_auth_rule]
 }
+
+resource "azurerm_eventhub_consumer_group" "analytics_consumer_group" {
+  for_each            = toset(var.topics)
+  name                = "analytics"
+  namespace_name      = azurerm_eventhub_namespace.eventhubs.name
+  eventhub_name       = each.key
+  resource_group_name = var.resource_group_name
+  depends_on          = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub_namespace_authorization_rule.postgres_connector_auth_rule]
+}
