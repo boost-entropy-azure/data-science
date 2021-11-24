@@ -159,3 +159,5 @@ tags
 **inventory.yml
 
 **config.json
+
+**/.gradle/**

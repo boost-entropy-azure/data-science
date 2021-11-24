@@ -39,7 +39,6 @@ export TF_VAR_state_container="remote-tfstates"
 export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}' $(echo ${TF_VAR_environment^^}))
 export TF_VAR_alert_topics='["alert_message"]'
 export TF_VAR_mqtt_topics='["gsm_message","cdma_message","umts_message","lte_message","nr_message","80211_beacon_message","bluetooth_message","gnss_message","device_status_message","cellular_ota_message"]'
-export TF_VAR_jobs='["analysis_job1","analysis_job2"]'
 
 # Azure Account Credentials
 export ARM_ENVIRONMENT="public"
@@ -192,8 +191,9 @@ data loss.
 
 To remove an environment:
 
+1. Analysis Jobs: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/analysis destroy`
+1. Application Stack: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack destroy`
 1. Infrastructure: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure destroy`
-2. Application Stack: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack destroy`
 
 NOTE: Based on the Terraform bootstrap process, running the destroy command **WILL NOT** remove the Terraform state data or storage container, as that is (and should be) provisioned outside the main infrastructure states to ensure environment safety.
 
