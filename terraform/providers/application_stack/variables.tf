@@ -19,7 +19,7 @@ variable "location" {
 variable "default_tags" {
   description = "Default tags"
   type        = map(any)
-  default = {
+  default     = {
     IaC = "True"
   }
 }
@@ -53,13 +53,6 @@ variable "alert_topics" {
   description = "The list of Alert Topics pushed into Azure Event Hubs"
   default     = ["test_message"]
 }
-
-variable "jobs" {
-  type        = list(string)
-  description = "The list of Spark jobs"
-  default     = ["default1", "default2"]
-}
-
 
 variable "network_subnet_data_id" {
   description = "Data Network Subnet Id"

@@ -127,11 +127,29 @@ terraform init \
 -backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
 -backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
 -backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
-## Optional step for downloading analysis job artifacts
-cd ./terraform/modules/analysis_jobs/
+terraform apply
+----
+
+[start=10]
+. Optional - Deploy the *analysis* resources of the project
+
+The Analysis jobs have not been made public yet. Reach out to CTI to get access to them.
+
+[source,bash]
+----
+cd ${WORKING_DIR}/data-science/terraform/providers/analysis
+terraform init \
+-backend-config="resource_group_name=${TF_VAR_tfstate_resource_group_name}" \
+-backend-config="storage_account_name=${TF_VAR_remotestate_storage_account_name}" \
+-backend-config="container_name=${TF_VAR_state_container}" \
+-backend-config="client_id=${TF_VAR_remotestate_client_id}" \
+-backend-config="client_secret=${TF_VAR_remotestate_client_secret}" \
+-backend-config="subscription_id=${TF_VAR_remotestate_subscription_id}" \
+-backend-config="tenant_id=${TF_VAR_remotestate_tenant_id}"
+cd .terraform/modules/analysis_jobs/
 export GITLAB_PRIVATE_TOKEN=<token-value>
 ./gradlew getJobArtifacts
-## end optional step
+cd ${WORKING_DIR}/data-science/terraform/providers/analysis
 terraform apply
 ----
 

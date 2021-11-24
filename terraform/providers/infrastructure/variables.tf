@@ -1,4 +1,3 @@
-
 variable "manage_resource_group" {
   description = "Manage the resource Group"
   type        = bool
@@ -25,7 +24,7 @@ variable "location" {
 variable "default_tags" {
   description = "Default tags"
   type        = map(any)
-  default = {
+  default     = {
     IaC = "True"
   }
 }
