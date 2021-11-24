@@ -754,7 +754,6 @@ are indexed and stored in the dbs&lt;pipeline-name&gt;-data Azure Database for P
 <span class="nb">export </span><span class="nv">TF_VAR_default_tags</span><span class="o">=</span><span class="si">$(</span><span class="nb">printf</span> <span class="s1">'{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}'</span> <span class="si">$(</span><span class="nb">echo</span> <span class="k">${</span><span class="nv">TF_VAR_environment</span><span class="p">^^</span><span class="k">}</span><span class="si">))</span>
 <span class="nb">export </span><span class="nv">TF_VAR_alert_topics</span><span class="o">=</span><span class="s1">'["alert_message"]'</span>
 <span class="nb">export </span><span class="nv">TF_VAR_mqtt_topics</span><span class="o">=</span><span class="s1">'["gsm_message","cdma_message","umts_message","lte_message","nr_message","80211_beacon_message","bluetooth_message","gnss_message","device_status_message","cellular_ota_message"]'</span>
-<span class="nb">export </span><span class="nv">TF_VAR_jobs</span><span class="o">=</span><span class="s1">'["analysis_job1","analysis_job2"]'</span>
 
 <span class="c"># Azure Account Credentials</span>
 <span class="nb">export </span><span class="nv">ARM_ENVIRONMENT</span><span class="o">=</span><span class="s2">"public"</span>
@@ -873,11 +872,34 @@ terraform init <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"client_secret=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"subscription_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_subscription_id</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
 <span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"tenant_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_tenant_id</span><span class="k">}</span><span class="s2">"</span>
-<span class="c">## Optional step for downloading analysis job artifacts</span>
-<span class="nb">cd</span> ./terraform/modules/analysis_jobs/
+terraform apply</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic" start="10">
+<li>
+<p>Optional - Deploy the <strong>analysis</strong> resources of the project</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The Analysis jobs have not been made public yet. Reach out to CTI to get access to them.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">cd</span> <span class="k">${</span><span class="nv">WORKING_DIR</span><span class="k">}</span>/data-science/terraform/providers/analysis
+terraform init <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"resource_group_name=</span><span class="k">${</span><span class="nv">TF_VAR_tfstate_resource_group_name</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"storage_account_name=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_storage_account_name</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"container_name=</span><span class="k">${</span><span class="nv">TF_VAR_state_container</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"client_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_id</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"client_secret=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_client_secret</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"subscription_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_subscription_id</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+<span class="nt">-backend-config</span><span class="o">=</span><span class="s2">"tenant_id=</span><span class="k">${</span><span class="nv">TF_VAR_remotestate_tenant_id</span><span class="k">}</span><span class="s2">"</span>
+<span class="nb">cd</span> .terraform/modules/analysis_jobs/
 <span class="nb">export </span><span class="nv">GITLAB_PRIVATE_TOKEN</span><span class="o">=</span>&lt;token-value&gt;
 ./gradlew getJobArtifacts
-<span class="c">## end optional step</span>
+<span class="nb">cd</span> <span class="k">${</span><span class="nv">WORKING_DIR</span><span class="k">}</span>/data-science/terraform/providers/analysis
 terraform apply</code></pre>
 </div>
 </div>
@@ -953,10 +975,13 @@ data loss.</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Infrastructure: <code>terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure destroy</code></p>
+<p>Analysis Jobs: <code>terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/analysis destroy</code></p>
 </li>
 <li>
 <p>Application Stack: <code>terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack destroy</code></p>
+</li>
+<li>
+<p>Infrastructure: <code>terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure destroy</code></p>
 </li>
 </ol>
 </div>
@@ -1447,7 +1472,7 @@ into the data lake</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-13 17:47:54 +0100
+Last updated 2021-02-13 11:47:54 -0500
 </div>
 </div>
 <style>

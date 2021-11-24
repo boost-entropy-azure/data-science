@@ -1,4 +1,3 @@
-
 module "analytics-cache" {
   source              = "../../modules/mod-azure-datasci-redis"
   cluster_name        = var.cluster_name

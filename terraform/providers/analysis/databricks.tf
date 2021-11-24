@@ -4,7 +4,7 @@ resource "azurerm_databricks_workspace" "analytics" {
   location                    = var.location
   sku                         = "standard"
   managed_resource_group_name = join("-", [var.resource_group_name, "databricks"])
-  
+
   tags = merge(
     var.default_tags,
     tomap({name = "fact"})

@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "resource_group" {
   name     = var.resource_group_name
   location = var.location
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 
   tags = var.default_tags
