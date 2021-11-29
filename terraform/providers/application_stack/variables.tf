@@ -45,13 +45,16 @@ variable "principal_pword_expiry" {
 variable "mqtt_topics" {
   type        = list(string)
   description = "The list of MQTT Topics to that should be pulled from the MQTT Broker and pushed into Azure Event Hubs"
-  default     = ["default1", "default2"]
+  default     = [
+    "gsm_message", "cdma_message", "umts_message", "lte_message", "nr_message", "80211_beacon_message",
+    "bluetooth_message", "gnss_message", "device_status_message", "cellular_ota_message"
+  ]
 }
 
 variable "alert_topics" {
   type        = list(string)
   description = "The list of Alert Topics pushed into Azure Event Hubs"
-  default     = ["test_message"]
+  default     = ["alert_message"]
 }
 
 variable "network_subnet_data_id" {
