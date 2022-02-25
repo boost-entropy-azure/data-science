@@ -57,6 +57,12 @@ variable "alert_topics" {
   default     = ["alert_message"]
 }
 
+variable "event_topics" {
+  type        = list(string)
+  description = "The list of Events coming from EventGrid pushed into Azure Event Hubs"
+  default     = ["photo_message"]
+}
+
 variable "network_subnet_data_id" {
   description = "Data Network Subnet Id"
   type        = string

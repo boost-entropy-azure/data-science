@@ -62,6 +62,17 @@ resource "azurerm_eventhub_namespace_authorization_rule" "postgres_connector_aut
   manage = false
 }
 
+resource "azurerm_eventhub_namespace_authorization_rule" "datahub_connector_auth_rule" {
+  depends_on          = [azurerm_eventhub_namespace.eventhubs, azurerm_eventhub.topic]
+  name                = "datahub"
+  namespace_name      = azurerm_eventhub_namespace.eventhubs.name
+  resource_group_name = azurerm_eventhub_namespace.eventhubs.resource_group_name
+
+  listen = true
+  send   = false
+  manage = false
+}
+
 resource "azurerm_eventhub_consumer_group" "fe_consumer_group" {
   for_each            = toset(var.topics)
   name                = "frontend"

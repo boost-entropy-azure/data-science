@@ -97,17 +97,6 @@ resource "azurerm_template_deployment" "datasci_container" {
 #   container_access_type = "private"
 # }
 
-
-# resource "null_resource" "upload_consul_config_file" {
-
-#   depends_on = [local_file.consul_config_file]
-
-#   provisioner "local-exec" {
-
-#     command = "az storage file upload --share-name ${var.consul_config_share_name} --account-name ${var.storage_account_name} --account-key ${var.storage_account_key} --source ${local_file.consul_config_file.filename}"
-#   }
-# }
-
 output "storage_account_facts_primary_dfs_endpoint" {
   value = azurerm_storage_account.lake_storage_account.primary_dfs_endpoint
 }

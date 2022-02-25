@@ -4,6 +4,11 @@ output "resource_group_location" {
   description = "Resource Group Location"
 }
 
+output "resource_group_id" {
+  value       = azurerm_resource_group.resource_group.id
+  description = "Resource Group ID"
+}
+
 output "storage_account_facts" {
   value       = azurerm_storage_account.tfstate_account
   description = "Storage Account Facts"
