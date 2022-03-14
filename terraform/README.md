@@ -12,7 +12,7 @@ Currently, this Terraform configuration deploys the following resources to Azure
 - An Event Hubs Namespace for Raw traffic, and an Event Hub instance per specified MQTT topic
 - An Event Hubs Namespace for automated alerts, with one alert Event Hub instance
 - An Azure data lake storage container
-- VMs with Apache Spark, and Jupyter Notebook
+- An AKS cluster with namespaces and select secrets
 
 ## Dependencies
 
@@ -35,6 +35,7 @@ Order of dependencies:
     1. Security_Groups
     1. Storage
     1. Identities
+    1. AKS
 
 - Application Stack:
 
@@ -44,6 +45,7 @@ Order of dependencies:
     1. Fact Table
     1. Status Monitor
     1. Reverse Proxy
+    1. Kubernetes Namespaces and Secrets
 
 ## Directory Structure
 
@@ -62,9 +64,11 @@ Order of dependencies:
 │   │   ├── eventhubs.tf
 │   │   ├── fact_table.tf
 │   │   ├── grafana.tf
+│   │   ├── kubernetes.tf
 │   │   ├── required_provider.tf
 │   │   └── variables.tf
 │   └── infrastructure
+│       ├── aks.tf
 │       ├── backend.tf
 │       ├── data.tf
 │       ├── datasci-container.json

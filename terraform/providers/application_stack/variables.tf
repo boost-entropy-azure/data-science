@@ -120,3 +120,8 @@ variable "admin_username" {
   description = "Admin user"
   default     = "datasci_admin"
 }
+
+variable "postgres_admin_password" {
+  type        = string
+  description = "The Password associated with the administrator_login for the PostgreSQL database."
+}

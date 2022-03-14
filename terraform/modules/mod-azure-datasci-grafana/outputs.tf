@@ -1,3 +1,8 @@
+output "datasci_server_name" {
+  description = "The name of the datasci data store"
+  value       = module.datasci-data.server_name
+}
+
 output "datasci_fqdn" {
   description = "The fully qualified domain name of the datasci data store"
   value       = module.datasci-data.server_fqdn

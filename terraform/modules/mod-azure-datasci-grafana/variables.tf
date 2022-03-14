@@ -37,3 +37,8 @@ variable "default_tags" {
   type        = map(string)
   description = "Collection of default tags to apply to all resources"
 }
+
+variable "postgres_admin_password" {
+  type        = string
+  description = "The Password associated with the administrator_login for the PostgreSQL database."
+}

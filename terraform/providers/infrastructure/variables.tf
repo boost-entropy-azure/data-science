@@ -64,3 +64,9 @@ variable "source_from_vault" {
   description = "Pull source information from Azure Vault"
   default     = false
 }
+
+variable "aks_api_server_authorized_ip_ranges" {
+  type        = set(string)
+  description = "A set of CIDR range strings (e.g. 127.117.106.90/29) given access to the Kubernetes cluster API Server (e.g. used by kubectl)."
+  default     = []
+}

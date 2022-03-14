@@ -30,7 +30,7 @@ module "datasci-data" {
   location               = var.location
   default_tags           = var.default_tags
   administrator_login    = "postgres"
-  administrator_password = random_password.datasci_data_password.result
+  administrator_password = var.postgres_admin_password == null ? random_password.datasci_data_password.result : var.postgres_admin_password
   allow_access_from      = [
     {
       start_address = var.subnet_start_address

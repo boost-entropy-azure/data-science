@@ -36,4 +36,3 @@ output "virtualnet_addr_space" {
 output "network_subnet_data_id" {
   value = azurerm_subnet.subnet_data.id
 }
-

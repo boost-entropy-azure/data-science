@@ -1,6 +1,6 @@
 # remote-state-terraform-bootstrap
 
-This folder contains an manual bootstrap configuration for Terraform infrastructure as code. At present it contains the Terraform code needed to create a shared state backend. For this current deployment, we are leveraging the Azure backend, so the AWS related information is not applicable. Future enhancement will likely be a boolean option.
+This folder contains a manual bootstrap configuration for Terraform infrastructure as code. At present it contains the Terraform code needed to create a shared state backend. For this current deployment, we are leveraging the Azure backend, so the AWS related information is not applicable. Future enhancement will likely be a boolean option.
 
 Only execute and save this data **ONCE**. This does not have a remote state itself and the state data will not be saved within Git after execution. Use the `outputs` from the deployment to gather the required information, then archive this project.
 
