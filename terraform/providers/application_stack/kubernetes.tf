@@ -24,6 +24,10 @@ resource "kubernetes_namespace" "pipeline" {
 resource "kubernetes_namespace" "datahub" {
   metadata {
     name = "datahub"
+
+    labels = {
+      istio-injection = "enabled"
+    }
   }
 }
 
@@ -41,6 +45,19 @@ resource "kubernetes_secret" "event-hubs-creds" {
 
   data = {
     connection-string = module.eventhubs_mqtt.namespace_connection_string
+  }
+
+  type = "Opaque"
+}
+
+resource "kubernetes_secret" "service-bus-creds" {
+  metadata {
+    name      = "service-bus-creds"
+    namespace = kubernetes_namespace.pipeline.metadata[0].name
+  }
+
+  data = {
+    connection-string = azurerm_servicebus_namespace.dfp-service-bus.default_primary_connection_string
   }
 
   type = "Opaque"
