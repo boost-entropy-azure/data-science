@@ -22,8 +22,23 @@ resource "azurerm_servicebus_topic" "messages" {
   enable_partitioning = true
 }
 
-resource "azurerm_servicebus_subscription" "notification-subscription" {
-  name               = "notification-subscription"
+
+resource "azurerm_servicebus_topic" "report-routing" {
+  name         = "report-routing"
+  namespace_id = azurerm_servicebus_namespace.dfp-service-bus.id
+
+  enable_partitioning = true
+}
+
+
+resource "azurerm_servicebus_subscription" "newsfeed-notices" {
+  name               = "newsfeed-notices"
   topic_id           = azurerm_servicebus_topic.notices.id
+  max_delivery_count = 1
+}
+
+resource "azurerm_servicebus_subscription" "newsfeed-report-routing" {
+  name               = "newsfeed-report-routing"
+  topic_id           = azurerm_servicebus_topic.report-routing.id
   max_delivery_count = 1
 }
