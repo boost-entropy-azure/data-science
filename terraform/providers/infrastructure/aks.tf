@@ -1,4 +1,5 @@
 resource "azurerm_kubernetes_cluster" "kube" {
+  depends_on                          = [var.resource_group_name]
   name                                = join("-", ["aks", var.cluster_name, var.environment])
   location                            = var.location
   resource_group_name                 = var.resource_group_name
