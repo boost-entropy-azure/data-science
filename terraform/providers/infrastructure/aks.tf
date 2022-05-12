@@ -9,7 +9,7 @@ resource "azurerm_kubernetes_cluster" "kube" {
 
   default_node_pool {
     name            = "default"
-    node_count      = 4
+    node_count      = 5
     vm_size         = "Standard_D2_v3"
 
     tags = var.default_tags
