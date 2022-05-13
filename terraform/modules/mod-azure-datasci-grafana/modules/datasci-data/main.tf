@@ -29,6 +29,13 @@ resource "azurerm_postgresql_server" "data-pg" {
   ssl_enforcement_enabled          = true
   ssl_minimal_tls_version_enforced = "TLS1_2"
   tags                             = var.default_tags
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to storage_mb, since storage will auto-expand as data is inserted.
+      storage_mb
+    ]
+  }
 }
 
 resource "azurerm_postgresql_database" "grafana-db" {
