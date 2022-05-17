@@ -24,6 +24,26 @@ resource "kubernetes_namespace" "pipeline" {
 resource "kubernetes_namespace" "datahub" {
   metadata {
     name = "datahub"
+
+    labels = {
+      istio-injection = "enabled"
+    }
+  }
+}
+
+resource "kubernetes_namespace" "elastic-system" {
+  metadata {
+    name = "elastic-system"
+  }
+}
+
+resource "kubernetes_namespace" "elasticsearch" {
+  metadata {
+    name = "elasticsearch"
+
+    labels = {
+      istio-injection = "enabled"
+    }
   }
 }
 
@@ -107,6 +127,46 @@ resource "kubernetes_secret" "grafana-env-vars" {
     GF_DATABASE_CONN_MAX_LIFETIME   = 14400
     GF_DATABASE_MAX_IDLE_CONN       = 2
     GF_DATABASE_MAX_OPEN_CONN       = 0
+  }
+
+  type = "Opaque"
+}
+
+# Secrets used in Elasticsearch namespace
+resource "kubernetes_secret" "elasticsearch-mqtt-eventhub-creds" {
+  metadata {
+    name      = "mqtt-eventhub-creds"
+    namespace = kubernetes_namespace.elasticsearch.metadata[0].name
+  }
+
+  data = {
+    connection-string = module.eventhubs_mqtt.namespace_connection_string
+  }
+
+  type = "Opaque"
+}
+
+resource "kubernetes_secret" "elasticsearch-alerts-eventhub-creds" {
+  metadata {
+    name      = "alerts-eventhub-creds"
+    namespace = kubernetes_namespace.elasticsearch.metadata[0].name
+  }
+
+  data = {
+    connection-string = module.eventhubs_alert.namespace_connection_string
+  }
+
+  type = "Opaque"
+}
+
+resource "kubernetes_secret" "elasticsearch-photo-eventhub-creds" {
+  metadata {
+    name      = "photos-eventhub-creds"
+    namespace = kubernetes_namespace.elasticsearch.metadata[0].name
+  }
+
+  data = {
+    connection-string = module.eventhubs_events.namespace_connection_string
   }
 
   type = "Opaque"
