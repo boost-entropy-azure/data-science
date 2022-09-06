@@ -33,3 +33,17 @@ data "azurerm_key_vault_secret" "azure_secret1" {
   name         = var.azure_keyvault_secret1
   key_vault_id = data.azurerm_key_vault.azure_vault.0.id
 }
+
+# =========================== FLUX CD ===========================
+data "flux_install" "main" {
+  target_path        = var.flux_target_path
+  registry           = var.harbor_registry
+  image_pull_secrets = var.flux_image_pull_secrets
+}
+
+data "flux_sync" "main" {
+  target_path = var.flux_target_path
+  url         = var.flux_repo_url
+  branch      = var.flux_repo_branch
+}
+# ===============================================================
