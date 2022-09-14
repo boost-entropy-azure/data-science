@@ -7,5 +7,13 @@ terraform {
       source  = "fluxcd/flux"
       version = "~> 0.17.0"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.3.2"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = "~> 1.11.2"
+    }
   }
 }
