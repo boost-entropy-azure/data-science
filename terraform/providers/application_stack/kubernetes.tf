@@ -256,3 +256,27 @@ resource "kubernetes_secret" "main" {
     password = var.gitlab_token
   }
 }
+
+locals {
+  known_hosts = "gitlab.ctic-dev.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNbaAp+mGmxCCB8c6kDx0lF5+zHo3+Fe4FVUTTz0E0gQE2YE9NhnexYb6LWgQTB3DJu7fhD9dcZke4DHkvifghY="
+}
+
+resource "tls_private_key" "main" {
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P256"
+}
+
+resource "kubernetes_secret" "main" {
+  depends_on = [kubectl_manifest.install]
+
+  metadata {
+    name      = data.flux_sync.main.secret
+    namespace = data.flux_sync.main.namespace
+  }
+
+  data = {
+    identity       = tls_private_key.main.private_key_pem
+    "identity.pub" = tls_private_key.main.public_key_pem
+    known_hosts    = local.known_hosts
+  }
+}
