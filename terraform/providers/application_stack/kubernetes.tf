@@ -8,6 +8,14 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(data.terraform_remote_state.infrastructure.outputs.aks_cluster_ca_certificate)
 }
 
+provider "kubectl" {
+  host                   = data.terraform_remote_state.infrastructure.outputs.aks_host
+  client_certificate     = base64decode(data.terraform_remote_state.infrastructure.outputs.aks_client_certificate)
+  client_key             = base64decode(data.terraform_remote_state.infrastructure.outputs.aks_client_key)
+  cluster_ca_certificate = base64decode(data.terraform_remote_state.infrastructure.outputs.aks_cluster_ca_certificate)
+  load_config_file       = false
+}
+
 #
 # Namespaces
 #
