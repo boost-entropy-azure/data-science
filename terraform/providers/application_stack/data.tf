@@ -16,7 +16,6 @@ data "terraform_remote_state" "infrastructure" {
 # =========================== FLUX CD ===========================
 data "flux_install" "main" {
   target_path        = var.flux_target_path
-  registry           = var.flux_harbor_registry
   image_pull_secrets = var.flux_image_pull_secrets
 }
 

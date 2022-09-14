@@ -141,11 +141,6 @@ variable "flux_repo_url" {
   description = "URL of the Git repository that Flux should sync."
 }
 
-variable "flux_harbor_registry" {
-  type        = string
-  description = "Container registry where the charts and images are published."
-}
-
 variable "flux_image_pull_secrets" {
   type        = string
   description = "Kubernetes secret name used for pulling the toolkit images from a private registry."
