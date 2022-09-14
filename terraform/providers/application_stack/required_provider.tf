@@ -15,9 +15,8 @@ terraform {
       source  = "gavinbunney/kubectl"
       version = "~> 1.11.2"
     }
-    github = {
-      source  = "integrations/github"
-      version = "~> 4.12.2"
+    gitlab = {
+      source = "gitlabhq/gitlab"
+      version = "3.18.0"
     }
-  }
 }

@@ -13,12 +13,6 @@ data "terraform_remote_state" "infrastructure" {
   }
 }
 
-# =========================== GIT ===============================
-data "github_repository" "main" {
-  name = var.flux_repo_url
-}
-# ===============================================================
-
 # =========================== FLUX CD ===========================
 data "flux_install" "main" {
   target_path        = var.flux_target_path
