@@ -16,7 +16,7 @@ data "terraform_remote_state" "infrastructure" {
 # =========================== FLUX CD ===========================
 data "flux_install" "main" {
   target_path        = var.flux_target_path
-  registry           = var.harbor_registry
+  registry           = var.flux_harbor_registry
   image_pull_secrets = var.flux_image_pull_secrets
 }
 
@@ -24,5 +24,26 @@ data "flux_sync" "main" {
   target_path = var.flux_target_path
   url         = var.flux_repo_url
   branch      = var.flux_repo_branch
+}
+
+data "kubectl_file_documents" "install" {
+  content = data.flux_install.main.content
+}
+
+data "kubectl_file_documents" "sync" {
+  content = data.flux_sync.main.content
+}
+
+locals {
+  install = [for v in data.kubectl_file_documents.install.documents : {
+    data : yamldecode(v)
+    content : v
+    }
+  ]
+  sync = [for v in data.kubectl_file_documents.sync.documents : {
+    data : yamldecode(v)
+    content : v
+    }
+  ]
 }
 # ===============================================================
