@@ -70,28 +70,3 @@ variable "aks_api_server_authorized_ip_ranges" {
   description = "A set of CIDR range strings (e.g. 127.117.106.90/29) given access to the Kubernetes cluster API Server (e.g. used by kubectl)."
   default     = []
 }
-
-variable "flux_target_path" {
-  type        = string
-  description = "Relative path to the Git repository root where Flux manifests are committed."
-}
-
-variable "flux_repo_branch" {
-  type        = string
-  description = "Branch of the Git repository where Flux should sync."
-}
-
-variable "flux_repo_url" {
-  type        = string
-  description = "URL of the Git repository that Flux should sync."
-}
-
-variable "harbor_registry" {
-  type        = string
-  description = "Container registry where the charts and images are published."
-}
-
-variable "flux_image_pull_secrets" {
-  type        = string
-  description = "Kubernetes secret name used for pulling the toolkit images from a private registry."
-}

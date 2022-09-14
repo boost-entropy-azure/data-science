@@ -12,3 +12,17 @@ data "terraform_remote_state" "infrastructure" {
     tenant_id            = var.remotestate_tenant_id
   }
 }
+
+# =========================== FLUX CD ===========================
+data "flux_install" "main" {
+  target_path        = var.flux_target_path
+  registry           = var.harbor_registry
+  image_pull_secrets = var.flux_image_pull_secrets
+}
+
+data "flux_sync" "main" {
+  target_path = var.flux_target_path
+  url         = var.flux_repo_url
+  branch      = var.flux_repo_branch
+}
+# ===============================================================

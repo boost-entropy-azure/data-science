@@ -68,7 +68,7 @@ resource "azurerm_storage_account" "boot_storage" {
 }
 
 # CONTAINER STORAGE
-resource "azurerm_template_deployment" "datasci_container" {
+resource "azurerm_resource_group_template_deployment" "datasci_container" {
   name                = join("-", [var.cluster_name, var.environment, "container"])
   resource_group_name = var.resource_group_name
   deployment_mode     = "Incremental"
@@ -77,12 +77,16 @@ resource "azurerm_template_deployment" "datasci_container" {
     azurerm_storage_account.lake_storage_account
   ]
 
-  parameters = {
-    location           = var.location
-    storageAccountName = azurerm_storage_account.lake_storage_account.name
-  }
+  parameters_content = jsonencode({
+    "location" = {
+      value = var.location
+    },
+    "storageAccountName" = {
+      value = azurerm_storage_account.lake_storage_account.name
+    }
+  })
 
-  template_body = file("${path.module}/datasci-container.json")
+  template_content = file("${path.module}/datasci-container.json")
 }
 
 # resource "azurerm_storage_container" "backups" {
@@ -106,7 +110,7 @@ output "storage_account_id" {
 }
 
 output "storage_container_name" {
-  value = azurerm_template_deployment.datasci_container.name
+  value = azurerm_resource_group_template_deployment.datasci_container.name
 }
 
 output "storage_account_boot_storage_primary_blob_endpoint" {
@@ -114,11 +118,11 @@ output "storage_account_boot_storage_primary_blob_endpoint" {
 }
 
 output "container_template_deploy" {
-  value = azurerm_template_deployment.datasci_container
+  value = azurerm_resource_group_template_deployment.datasci_container
 }
 
 output "container_template_deploy_name" {
-  value = azurerm_template_deployment.datasci_container.name
+  value = azurerm_resource_group_template_deployment.datasci_container.name
 }
 
 output "storage_account_connection_string" {
