@@ -209,8 +209,31 @@ resource "kubectl_manifest" "install" {
   yaml_body  = each.value
 }
 
+# Apply manifests on the cluster
+resource "kubectl_manifest" "apply" {
+  for_each   = { for v in local.apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content }
+  depends_on = [kubernetes_namespace.flux_system]
+  yaml_body = each.value
+}
+
+# Apply manifests on the cluster
 resource "kubectl_manifest" "sync" {
   for_each   = { for v in local.sync : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content }
   depends_on = [kubernetes_namespace.flux_system]
-  yaml_body  = each.value
+  yaml_body = each.value
+}
+
+# Kubernetes secret with the Git credentials
+resource "kubernetes_secret" "main" {
+  depends_on = [kubectl_manifest.apply]
+
+  metadata {
+    name      = data.flux_sync.main.secret
+    namespace = data.flux_sync.main.namespace
+  }
+
+  data = {
+    username = var.gitlab_user
+    password = var.gitlab_token
+  }
 }
