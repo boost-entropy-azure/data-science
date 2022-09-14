@@ -40,7 +40,6 @@ export TF_VAR_flux_repo_url="https://gitlab.ctic-dev.com/engineering/dfp/pipelin
 export TF_VAR_flux_repo_branch="master"
 export TF_VAR_flux_target_path="./clusters/staging"
 export TF_VAR_flux_harbor_registry="https://harbor.eng.ctic-dev.com"
-export TF_VAR_flux_image_pull_secrets="cti-registry-creds"
 
 # GitLab Token is used to authenticate when FluxCD is pulling a repo from our company GitLab instance
 export TF_VAR_gitlab_token="YOUR_GITLAB_TOKEN"
