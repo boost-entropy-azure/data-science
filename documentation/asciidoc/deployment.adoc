@@ -42,6 +42,9 @@ export TF_VAR_flux_target_path="./clusters/staging"
 export TF_VAR_flux_harbor_registry="https://harbor.eng.ctic-dev.com"
 export TF_VAR_flux_image_pull_secrets="cti-registry-creds"
 
+export TF_VAR_gitlab_user="YOUR_GITLAB_USERNAME"
+export TF_VAR_gitlab_token="YOUR_GITLAB_TOKEN"
+
 export TF_VAR_state_container="remote-tfstates"
 export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}' $(echo ${TF_VAR_environment^^}))
 export TF_VAR_alert_topics='["alert_message"]'

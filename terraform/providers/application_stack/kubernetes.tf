@@ -16,6 +16,11 @@ provider "kubectl" {
   load_config_file       = false
 }
 
+provider "github" {
+  owner = var.gitlab_user
+  token = var.gitlab_token
+}
+
 #
 # Namespaces
 #

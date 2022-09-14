@@ -145,3 +145,13 @@ variable "flux_image_pull_secrets" {
   type        = string
   description = "Kubernetes secret name used for pulling the toolkit images from a private registry."
 }
+
+variable "gitlab_user" {
+  type        = string
+  description = "The GitLab user which will be used to authenticate when pulling from the Flux/Fleet-infra repository"
+}
+
+variable "gitlab_token" {
+  type        = string
+  description = "The GitLab token which will be used to authenticate when pulling from the Flux/Fleet-infra repository"
+}
