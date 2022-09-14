@@ -226,7 +226,7 @@ locals {
     content : v
     }
   ]
-  known_hosts = "gitlab.ctic-dev.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNbaAp+mGmxCCB8c6kDx0lF5+zHo3+Fe4FVUTTz0E0gQE2YE9NhnexYb6LWgQTB3DJu7fhD9dcZke4DHkvifghY="
+  known_hosts = "gitlab.ctic-dev.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPL3MeX/XuJP7xhSC7wuNgumRraR/6x6YVOgPZeg0WK54t3usPem6lJS7WdglKEJQvFXsHBm27JrEsGCiTrwgUAcdaRxws5k+ebb+rvgMAjaVy+JRNwq4k7rFB4iTdt7h7XOwvirfBMFvOjv/5rQkKHLA/QMM0TTZQHC4jW3NJ1eNkTzfWrT0CzX+cAzRq0pA5alLL1g+kkpK808i0xOVve3Skmtk1pzu6fENE8L9SLNRzS4JB4NbDqSSVbiPgueyXvdp7/h11XWoTccFs6jyc8DZIQQbDwlU2pjNylJg5TGWxEza+wdW2ZHTFPbVSMH2SvWPTzg6PRu7w95Zej2jr"
 }
 
 # Apply manifests on the cluster
