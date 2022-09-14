@@ -24,12 +24,4 @@ data "flux_sync" "main" {
   url         = var.flux_repo_url
   branch      = var.flux_repo_branch
 }
-
-data "kubectl_file_documents" "install" {
-  content = data.flux_install.main.content
-}
-
-data "kubectl_file_documents" "sync" {
-  content = data.flux_sync.main.content
-}
 # ===============================================================

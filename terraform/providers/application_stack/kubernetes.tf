@@ -209,6 +209,13 @@ resource "kubectl_manifest" "install" {
   yaml_body  = each.value
 }
 
+data "kubectl_file_documents" "install" {
+  content = data.flux_install.main.content
+}
+
+data "kubectl_file_documents" "sync" {
+  content = data.flux_sync.main.content
+}
 locals {
   # Convert documents list to include parsed yaml data
   apply = [ for v in data.kubectl_file_documents.apply.documents : {
