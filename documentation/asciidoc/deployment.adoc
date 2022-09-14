@@ -35,6 +35,9 @@ export TF_VAR_environment="dev"
 export TF_VAR_cluster_name="datasci"
 export TF_VAR_resource_group_name="rg-${TF_VAR_cluster_name}-${TF_VAR_environment}"
 export TF_VAR_tfstate_resource_group_name="rg-${TF_VAR_cluster_name}-tfstate-${TF_VAR_environment}"
+export TF_VAR_flux_repo_url="https://gitlab.ctic-dev.com/engineering/dfp/pipeline/flux.git"
+export TF_VAR_flux_repo_branch="master"
+export TF_VAR_flux_target_path="./clusters/staging"
 export TF_VAR_state_container="remote-tfstates"
 export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}' $(echo ${TF_VAR_environment^^}))
 export TF_VAR_alert_topics='["alert_message"]'
