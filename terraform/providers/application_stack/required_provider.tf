@@ -19,4 +19,5 @@ terraform {
       source = "gitlabhq/gitlab"
       version = "3.18.0"
     }
+  }
 }
