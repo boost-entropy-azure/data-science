@@ -209,6 +209,19 @@ resource "kubectl_manifest" "install" {
   yaml_body  = each.value
 }
 
+locals {
+  install = [for v in data.kubectl_file_documents.install.documents : {
+    data : yamldecode(v)
+    content : v
+    }
+  ]
+  sync = [for v in data.kubectl_file_documents.sync.documents : {
+    data : yamldecode(v)
+    content : v
+    }
+  ]
+}
+
 # Apply manifests on the cluster
 resource "kubectl_manifest" "apply" {
   for_each   = { for v in local.apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content }
