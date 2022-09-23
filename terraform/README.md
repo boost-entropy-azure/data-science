@@ -9,6 +9,7 @@ Currently, this Terraform configuration deploys the following resources to Azure
 - A Subnet
 - A Network Security Group
 - A storage account for boot diagnostics
+- A Flux installation to Kubernetes and a Flux sync to a GitHub/GitLab repository
 - An Event Hubs Namespace for Raw traffic, and an Event Hub instance per specified MQTT topic
 - An Event Hubs Namespace for automated alerts, with one alert Event Hub instance
 - An Azure data lake storage container

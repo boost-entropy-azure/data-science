@@ -8,6 +8,19 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(data.terraform_remote_state.infrastructure.outputs.aks_cluster_ca_certificate)
 }
 
+provider "kubectl" {
+  host                   = data.terraform_remote_state.infrastructure.outputs.aks_host
+  client_certificate     = base64decode(data.terraform_remote_state.infrastructure.outputs.aks_client_certificate)
+  client_key             = base64decode(data.terraform_remote_state.infrastructure.outputs.aks_client_key)
+  cluster_ca_certificate = base64decode(data.terraform_remote_state.infrastructure.outputs.aks_cluster_ca_certificate)
+  load_config_file       = false
+}
+
+provider "github" {
+  owner = var.gitlab_user
+  token = var.gitlab_token
+}
+
 #
 # Namespaces
 #
@@ -46,6 +59,19 @@ resource "kubernetes_namespace" "elasticsearch" {
     }
   }
 }
+
+resource "kubernetes_namespace" "flux_system" {
+  metadata {
+    name = "flux-system"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].labels,
+    ]
+  }
+}
+
 
 #
 # Secrets
@@ -170,4 +196,72 @@ resource "kubernetes_secret" "elasticsearch-photo-eventhub-creds" {
   }
 
   type = "Opaque"
+}
+
+
+#
+# Manifests
+#
+# Flux manifests
+resource "kubectl_manifest" "install" {
+  for_each   = { for v in local.install : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content }
+  depends_on = [kubernetes_namespace.flux_system]
+  yaml_body  = each.value
+}
+
+locals {
+  # Convert documents list to include parsed yaml data
+  apply = [ for v in data.kubectl_file_documents.apply.documents : {
+      data: yamldecode(v)
+      content: v
+    }
+  ]
+  install = [for v in data.kubectl_file_documents.install.documents : {
+    data : yamldecode(v)
+    content : v
+    }
+  ]
+  sync = [for v in data.kubectl_file_documents.sync.documents : {
+    data : yamldecode(v)
+    content : v
+    }
+  ]
+  known_hosts = "gitlab.ctic-dev.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPL3MeX/XuJP7xhSC7wuNgumRraR/6x6YVOgPZeg0WK54t3usPem6lJS7WdglKEJQvFXsHBm27JrEsGCiTrwgUAcdaRxws5k+ebb+rvgMAjaVy+JRNwq4k7rFB4iTdt7h7XOwvirfBMFvOjv/5rQkKHLA/QMM0TTZQHC4jW3NJ1eNkTzfWrT0CzX+cAzRq0pA5alLL1g+kkpK808i0xOVve3Skmtk1pzu6fENE8L9SLNRzS4JB4NbDqSSVbiPgueyXvdp7/h11XWoTccFs6jyc8DZIQQbDwlU2pjNylJg5TGWxEza+wdW2ZHTFPbVSMH2SvWPTzg6PRu7w95Zej2jr"
+}
+
+# Apply manifests on the cluster
+resource "kubectl_manifest" "apply" {
+  for_each   = { for v in local.apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content }
+  depends_on = [kubernetes_namespace.flux_system]
+  yaml_body = each.value
+}
+
+# Apply manifests on the cluster
+resource "kubectl_manifest" "sync" {
+  for_each   = { for v in local.sync : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content }
+  depends_on = [kubernetes_namespace.flux_system]
+  yaml_body = each.value
+}
+
+# Kubernetes secret with the Git credentials
+resource "kubernetes_secret" "main" {
+  depends_on = [kubectl_manifest.apply]
+
+  metadata {
+    name      = data.flux_sync.main.secret
+    namespace = data.flux_sync.main.namespace
+  }
+
+  data = {
+    username       = var.gitlab_user
+    password       = var.gitlab_token
+    identity       = tls_private_key.main.private_key_pem
+    "identity.pub" = tls_private_key.main.public_key_pem
+    known_hosts    = local.known_hosts
+  }
+}
+
+resource "tls_private_key" "main" {
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P256"
 }
