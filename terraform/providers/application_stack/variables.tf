@@ -125,3 +125,33 @@ variable "postgres_admin_password" {
   type        = string
   description = "The Password associated with the administrator_login for the PostgreSQL database."
 }
+
+variable "flux_target_path" {
+  type        = string
+  description = "Relative path to the Git repository root where Flux manifests are committed."
+}
+
+variable "flux_repo_branch" {
+  type        = string
+  description = "Branch of the Git repository where Flux should sync."
+}
+
+variable "flux_repo_url" {
+  type        = string
+  description = "URL of the Git repository that Flux should sync."
+}
+
+variable "flux_image_pull_secrets" {
+  type        = string
+  description = "Kubernetes secret name used for pulling the toolkit images from a private registry."
+}
+
+variable "gitlab_user" {
+  type        = string
+  description = "The GitLab user which will be used to authenticate when pulling from the Flux/Fleet-infra repository"
+}
+
+variable "gitlab_token" {
+  type        = string
+  description = "The GitLab token which will be used to authenticate when pulling from the Flux/Fleet-infra repository"
+}
