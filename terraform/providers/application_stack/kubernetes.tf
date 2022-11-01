@@ -158,6 +158,26 @@ resource "kubernetes_secret" "grafana-env-vars" {
   type = "Opaque"
 }
 
+resource "kubernetes_secret" "cellular-jobs-env-vars" {
+  metadata {
+    name      = "cellular-jobs-env-vars"
+    namespace = kubernetes_namespace.pipeline.metadata[0].name
+  }
+
+  data = {
+    DAGSTER_DEPLOYMENT        = "prod"
+    LTE_MESSAGE_SOURCE        = data.terraform_remote_state.infrastructure.outputs.storage_account_connection_string
+    LTE_CONTAINER             = data.terraform_remote_state.infrastructure.outputs.container_template_deploy_name
+    LTE_MESSAGES_VIRTUAL_DIR  = format("%s/lte_message/", module.eventhubs_mqtt.namespace)
+    NR_MESSAGE_SOURCE         = data.terraform_remote_state.infrastructure.outputs.storage_account_connection_string
+    NR_CONTAINER              = data.terraform_remote_state.infrastructure.outputs.container_template_deploy_name
+    NR_MESSAGES_VIRTUAL_DIR   = format("%s/nr_message/", module.eventhubs_mqtt.namespace)
+    ALERTS_DESTINATION        = module.eventhubs_alert.namespace_connection_string
+  }
+
+  type = "Opaque"
+}
+
 # Secrets used in Elasticsearch namespace
 resource "kubernetes_secret" "elasticsearch-mqtt-eventhub-creds" {
   metadata {

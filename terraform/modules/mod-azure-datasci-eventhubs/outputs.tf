@@ -43,8 +43,13 @@ output "namespace_datahub_connector_auth_rule_name" {
   value       = azurerm_eventhub_namespace_authorization_rule.datahub_connector_auth_rule.name
 }
 
+output "namespace" {
+  description = "namespace for event hub"
+  value       = azurerm_eventhub_namespace.eventhubs.name
+}
+
 output "namespace_fqn" {
-  description = "fully qualified namesapce for event hub"
+  description = "fully qualified namespace for event hub"
   value       = element(split("/", element(split(";", azurerm_eventhub_namespace.eventhubs.default_primary_connection_string), 0)), 2)
 }
 
