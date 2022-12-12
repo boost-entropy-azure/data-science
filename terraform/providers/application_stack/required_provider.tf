@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~> 2.97.0"
+      version = "~> 3.21.0"
     }
     flux = {
       source  = "fluxcd/flux"

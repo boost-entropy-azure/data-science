@@ -79,19 +79,6 @@ resource "kubernetes_namespace" "flux_system" {
 # Not all secrets needed for the pipeline are created here. In order to minimize coupling,
 # only those secrets that contain information created during the Terraform application are defined.
 #
-resource "kubernetes_secret" "event-hubs-creds" {
-  metadata {
-    name      = "event-hubs-creds"
-    namespace = kubernetes_namespace.pipeline.metadata[0].name
-  }
-
-  data = {
-    connection-string = module.eventhubs_mqtt.namespace_connection_string
-  }
-
-  type = "Opaque"
-}
-
 resource "kubernetes_secret" "postgres-connector-secrets" {
   metadata {
     name      = "postgres-connector-secrets"
@@ -179,10 +166,15 @@ resource "kubernetes_secret" "cellular-jobs-env-vars" {
 }
 
 # Secrets used in Elasticsearch namespace
-resource "kubernetes_secret" "elasticsearch-mqtt-eventhub-creds" {
+resource "kubernetes_secret" "mqtt-eventhub-creds" {
   metadata {
     name      = "mqtt-eventhub-creds"
     namespace = kubernetes_namespace.elasticsearch.metadata[0].name
+    annotations = {
+      "reflector.v1.k8s.emberstack.com/reflection-allowed" = "true"
+      "reflector.v1.k8s.emberstack.com/reflection-auto-namespaces" = kubernetes_namespace.pipeline.metadata[0].name
+      "reflector.v1.k8s.emberstack.com/reflection-auto-enabled" = "true"
+    }
   }
 
   data = {
@@ -192,10 +184,15 @@ resource "kubernetes_secret" "elasticsearch-mqtt-eventhub-creds" {
   type = "Opaque"
 }
 
-resource "kubernetes_secret" "elasticsearch-alerts-eventhub-creds" {
+resource "kubernetes_secret" "alerts-eventhub-creds" {
   metadata {
     name      = "alerts-eventhub-creds"
     namespace = kubernetes_namespace.elasticsearch.metadata[0].name
+    annotations = {
+      "reflector.v1.k8s.emberstack.com/reflection-allowed" = "true"
+      "reflector.v1.k8s.emberstack.com/reflection-auto-namespaces" = kubernetes_namespace.pipeline.metadata[0].name
+      "reflector.v1.k8s.emberstack.com/reflection-auto-enabled" = "true"
+    }
   }
 
   data = {
@@ -205,10 +202,15 @@ resource "kubernetes_secret" "elasticsearch-alerts-eventhub-creds" {
   type = "Opaque"
 }
 
-resource "kubernetes_secret" "elasticsearch-photo-eventhub-creds" {
+resource "kubernetes_secret" "sync-eventhub-creds" {
   metadata {
-    name      = "photos-eventhub-creds"
+    name      = "sync-eventhub-creds"
     namespace = kubernetes_namespace.elasticsearch.metadata[0].name
+    annotations = {
+      "reflector.v1.k8s.emberstack.com/reflection-allowed" = "true"
+      "reflector.v1.k8s.emberstack.com/reflection-auto-namespaces" = kubernetes_namespace.pipeline.metadata[0].name
+      "reflector.v1.k8s.emberstack.com/reflection-auto-enabled" = "true"
+    }
   }
 
   data = {

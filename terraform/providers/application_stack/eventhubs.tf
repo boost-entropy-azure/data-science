@@ -3,11 +3,14 @@
 # - infrastructure/storage.tf
 # - data.tf
 
+
 module "eventhubs_mqtt" {
   source              = "../../modules/mod-azure-datasci-eventhubs"
   namespace_name      = join("-", [var.cluster_name, var.environment, "mqtt-eventhubs"])
   resource_group_name = var.resource_group_name
   location            = var.location
+  k8s_subscription_id = var.k8s_subscription_id
+  partition_count     = var.partition_count
   topics              = toset(var.mqtt_topics)
   datalake_container  = data.terraform_remote_state.infrastructure.outputs.container_template_deploy_name
   storage_account_id  = data.terraform_remote_state.infrastructure.outputs.storage_account_id
@@ -19,6 +22,8 @@ module "eventhubs_alert" {
   namespace_name      = join("-", [var.cluster_name, var.environment, "alert-eventhubs"])
   resource_group_name = var.resource_group_name
   location            = var.location
+  k8s_subscription_id = var.k8s_subscription_id
+  partition_count     = var.partition_count
   topics              = toset(var.alert_topics)
   datalake_container  = data.terraform_remote_state.infrastructure.outputs.container_template_deploy_name
   storage_account_id  = data.terraform_remote_state.infrastructure.outputs.storage_account_id
@@ -31,6 +36,8 @@ module "eventhubs_events" {
   namespace_name      = join("-", [var.cluster_name, var.environment, "event-eventhubs"])
   resource_group_name = var.resource_group_name
   location            = var.location
+  k8s_subscription_id = var.k8s_subscription_id
+  partition_count     = var.partition_count
   topics              = toset(var.event_topics)
   datalake_container  = data.terraform_remote_state.infrastructure.outputs.container_template_deploy_name
   storage_account_id  = data.terraform_remote_state.infrastructure.outputs.storage_account_id
@@ -185,7 +192,7 @@ output "eventhubs_events_postgres_connector_rule_name" {
 }
 
 # output "eventhubs_events_id" {
-#   description = "The ID of the eventhub"
+#   description = "The ID of an eventhub"
 #   value       = module.eventhubs_events.eventhub_id
 # }
 

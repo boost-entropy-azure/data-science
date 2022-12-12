@@ -45,3 +45,35 @@ variable "default_tags" {
   type        = map(string)
   description = "Collection of default tags to apply to all resources"
 }
+
+variable "capacity" {
+  type        = number
+  description = "Eventhub namspace capacity"
+  default     = 1
+}
+
+variable "zone_redundant"{
+  type        = string
+  description = "Eventhub namespace zone redundancy"
+  default     = "false"
+}
+
+variable "partition_count" {
+  type        = number
+  description = "Eventhub topic parition count"
+  default     = 2
+}
+
+variable "sku" {
+  type        = string
+  description = "The eventhub namespace sku"
+  default      = "Standard"
+}
+
+variable "k8s_subscription_id" {
+  type        = string
+  description = "Separate subscription ID to use for kubernetes resources."
+  default     = ""
+}
+
+

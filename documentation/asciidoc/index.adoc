@@ -10,9 +10,9 @@
 == Introduction
 
 Welcome!
-The Data Science Pipeline project is an open source project with a goal of facilitating the analysis of sensor data. At its
-core, the Data Science Pipeline is a generic streaming platform which can be built upon. It was designed to be abstracted
-away from specific data and sensors so that any device can feed data into the pipeline and specific analysis jobs can be
+The Data Science Platform is an open source project with a goal of facilitating the analysis of sensor data. At its
+core, the Data Science Platform is a generic streaming platform which can be built upon. It was designed to be agnostic
+of specific data and sensor types so that any device may feed data into the pipeline and specific analysis jobs may be
 written to extract meaningful information.
 
 include::administration.adoc[]
@@ -22,4 +22,4 @@ include::deployment.adoc[]
 include::faq.adoc[]
 
 [.text-center]
-(C) Copyright 2021 CTI
+(C) Copyright 2023 CTI

@@ -1,6 +1,7 @@
 provider "azurerm" {
   #version = "~> 2.0"
   features {}
+  subscription_id = var.k8s_subscription_id
   disable_terraform_partner_id = true
   skip_provider_registration   = true
 }
