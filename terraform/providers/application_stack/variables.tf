@@ -126,6 +126,30 @@ variable "postgres_admin_password" {
   description = "The Password associated with the administrator_login for the PostgreSQL database."
 }
 
+variable "capacity" {
+  type        = number
+  description = "Eventhub namspace capacity"
+  default     = 2
+}
+
+variable "zone_redundant"{
+  type        = string
+  description = "Eventhub namespace zone redundancy"
+  default     = "false"
+}
+
+variable "partition_count" {
+  type        = number
+  description = "Eventhub topic partition count"
+  default     = 2
+}
+
+variable "sku" {
+  type        = string
+  description = "The eventhub namespace sku"
+  default      = "Standard"
+}
+
 variable "flux_target_path" {
   type        = string
   description = "Relative path to the Git repository root where Flux manifests are committed."
@@ -154,4 +178,10 @@ variable "gitlab_user" {
 variable "gitlab_token" {
   type        = string
   description = "The GitLab token which will be used to authenticate when pulling from the Flux/Fleet-infra repository"
+}
+
+variable "k8s_subscription_id" {
+  type        = string
+  description = "Separate subscription ID to use for kubernetes resources."
+  default     = ""
 }

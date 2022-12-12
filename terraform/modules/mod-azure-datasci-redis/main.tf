@@ -1,5 +1,8 @@
 provider "azurerm" {
   features {}
+  subscription_id = var.k8s_subscription_id
+  disable_terraform_partner_id = true
+  skip_provider_registration   = true
 }
 
 resource "azurerm_redis_cache" "analytics" {

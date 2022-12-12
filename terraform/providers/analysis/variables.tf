@@ -89,3 +89,8 @@ variable "application_remotestate_key" {
   type        = string
   default     = "application_stack.tfstate"
 }
+
+variable "k8s_subscription_id" {
+  description = "Subscription ID of the kubernetes specific subscripition "
+  type        = string
+}

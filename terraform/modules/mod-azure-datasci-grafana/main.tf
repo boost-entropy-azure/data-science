@@ -28,6 +28,7 @@ module "datasci-data" {
   cluster_name           = var.cluster_name
   environment            = var.environment
   location               = var.location
+  k8s_subscription_id    = var.k8s_subscription_id
   default_tags           = var.default_tags
   administrator_login    = "postgres"
   administrator_password = var.postgres_admin_password == null ? random_password.datasci_data_password.result : var.postgres_admin_password

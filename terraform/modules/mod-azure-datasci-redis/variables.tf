@@ -34,3 +34,7 @@ variable "connection_string" {
   type        = string
   description = "Data lake storage connection string"
 }
+
+variable "k8s_subscription_id" {
+  type = string
+}

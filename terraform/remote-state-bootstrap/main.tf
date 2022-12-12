@@ -9,8 +9,6 @@ terraform {
 
 provider "azurerm" {
   features {}
-  disable_terraform_partner_id = true
-  skip_provider_registration   = true
 }
 
 resource "azurerm_resource_group" "resource_group" {
@@ -40,7 +38,6 @@ resource "azurerm_storage_account" "tfstate_account" {
   account_replication_type = var.storageacct_repl
 
   enable_https_traffic_only = true
-  allow_blob_public_access  = false
   min_tls_version           = "TLS1_2" # not supported in GovCloud
   blob_properties { # not supported in GovCloud
     delete_retention_policy {
@@ -67,7 +64,6 @@ resource "azurerm_storage_account" "tfstate_account2" {
   account_replication_type = var.storageacct_repl
 
   enable_https_traffic_only = true
-  allow_blob_public_access  = false
   tags = merge(
     var.default_tags,
     {

@@ -58,8 +58,8 @@ output "namespace_connection_string" {
   value       = azurerm_eventhub_namespace.eventhubs.default_primary_connection_string
 }
 
-# TODO - need to find a way to output the eventhub ID of the photo_message eventhub topic
+# TODO - need to find a way to output the eventhub ID of a topic
 # output "eventhub_id" {
 #   description = "The ID of the eventhub"
-#   value       = azurerm_eventhub.topic[0].id
+#   value       = azurerm_eventhub.topic.0.id
 # }

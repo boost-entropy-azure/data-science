@@ -6,14 +6,13 @@ Currently, the main Terraform datasci.tf script deploys the following resources 
 
 - A Resource Group (optional)
 - A Virtual Network
-- A Subnet for the CentOS VM worker nodes
-- A Network Security Group for worker nodes
 - A storage accounts for boot diagnostics
 - An Event Hubs Namespace, and an Event Hub instance per specified MQTT topic
 - An Azure data lake storage container
-- A CentOS VM with PostgreSQL v10 for the Apache Spark job state
-- A set of CentOS VM worker nodes with Apache Spark, HDFS, YARN, Jupyter Notebook, and Consul
-- A set of Azure Databases for PostgreSQL server use with Grafana server
+- An Azure PostgreSQL server
+- An AKS cluster
+- A Databricks workspace
+- A Redis cache
 
 === Step-by-step Guide
 The data-science project is meant to be deployed from a DevOps Docker container which includes all the needed tools pre-installed and configured. To get started,
@@ -22,6 +21,7 @@ The data-science project is meant to be deployed from a DevOps Docker container 
 . In a terminal, run `docker run -dit --name datasci chesapeaketechnology/devops:latest /bin/bash` to download the container image
 . Log into the newly downloaded container by running `docker exec -u 0 -it datasci /bin/bash`
 . Set the needed environment variables as shown in the example below.
+.. If deploying to a 'blank' subscription, set TF_VAR_manage_* variables to 'true'. If deploying to a prepared environment (such as the MLZ) set those to 'false'
 .. Copy the entire code block below and paste it into a text document (VSCode is recommended).
 .. Update the values as necessary, specifically the cluster name, default tags, and Azure Account Credentials likely need to be updated.
 .. Copy the entire code block out of VSCode and paste it into the terminal of the devops container and hit the "Enter" key.
@@ -33,7 +33,13 @@ export WORKING_DIR="/opt/repos"
 export TF_VAR_location="eastus" # For Azure US Government: export TF_VAR_location="usgovvirginia"
 export TF_VAR_environment="dev"
 export TF_VAR_cluster_name="datasci"
-export TF_VAR_resource_group_name="rg-${TF_VAR_cluster_name}-${TF_VAR_environment}"
+export TF_VAR_manage_resource_group="true"
+export TF_VAR_resource_group_name="${TF_VAR_cluster_name}-${TF_VAR_environment}-rg"
+export TF_VAR_manage_virtual_network="true"
+export TF_VAR_virtual_network_name="${TF_VAR_cluster_name}-${TF_VAR_environment}-vnet"
+export TF_VAR_manage_subnet="true"
+export TF_VAR_subnet_name="${TF_VAR_cluster_name}-${TF_VAR_environment}-snet"
+
 export TF_VAR_tfstate_resource_group_name="rg-${TF_VAR_cluster_name}-tfstate-${TF_VAR_environment}"
 
 export TF_VAR_flux_repo_url="https://gitlab.ctic-dev.com/engineering/dfp/pipeline/flux.git"
@@ -48,6 +54,7 @@ export TF_VAR_state_container="remote-tfstates"
 export TF_VAR_default_tags=$(printf '{"Department"="Engineering","PoC"="Me","Environment"="%s","IaC_Managed"="Yes"}' $(echo ${TF_VAR_environment^^}))
 export TF_VAR_alert_topics='["alert_message"]'
 export TF_VAR_mqtt_topics='["gsm_message","cdma_message","umts_message","lte_message","nr_message","80211_beacon_message","bluetooth_message","gnss_message","device_status_message","cellular_ota_message"]'
+export TF_VAR_jobs='["gnss-monitor","cgi-monitor","phone-state-monitor","gnss-cache-monitor","cgi-alert-monitor"]'
 
 # Azure Account Credentials
 export ARM_ENVIRONMENT="public"
@@ -55,6 +62,8 @@ export ARM_CLIENT_ID="azure-serviceprincipal-client-id" # Called Application ID 
 export ARM_CLIENT_SECRET="azure-serviceprincipal-secret"
 export ARM_SUBSCRIPTION_ID="azure-subscription-id"
 export ARM_TENANT_ID="azure-tenant-id"
+# k8s subscription id
+export TF_VAR_k8s_subscription_id="azure-subscription-id" # if no separate k8s subscription is used, set this to TF_VAR_k8s_subscription_id="${$ARM_SUBSCRIPTION_ID}"
 
 # Remote State Configuration
 export TF_VAR_remotestate_client_id="${ARM_CLIENT_ID}"
@@ -201,8 +210,8 @@ data loss.
 To remove an environment:
 
 1. Analysis Jobs: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/analysis destroy`
-1. Application Stack: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack destroy`
-1. Infrastructure: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure destroy`
+2. Application Stack: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/application_stack destroy`
+3. Infrastructure: `terraform -chdir=${WORKING_DIR}/data-science/terraform/providers/infrastructure destroy`
 
 NOTE: Based on the Terraform bootstrap process, running the destroy command **WILL NOT** remove the Terraform state data or storage container, as that is (and should be) provisioned outside the main infrastructure states to ensure environment safety.
 

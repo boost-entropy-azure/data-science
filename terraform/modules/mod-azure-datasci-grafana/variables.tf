@@ -3,6 +3,10 @@ variable "resource_group_name" {
   description = "Azure resource group in which to deploy"
 }
 
+variable "k8s_subscription_id" {
+  type = string
+}
+
 variable "grafana_depends_on" {
   type        = string
   description = "Variable to force this module to wait on its dependencies"

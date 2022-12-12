@@ -1,14 +1,22 @@
 provider "azurerm" {
   features {}
+
+  subscription_id = var.k8s_subscription_id
 }
+
+data "azurerm_resource_group" "data_resource_group" {
+  name = var.resource_group_name
+}
+
 
 # Create Azure Event Hubs Namespace
 resource "azurerm_eventhub_namespace" "eventhubs" {
   name                = join("-", [var.namespace_name, "namespace"])
   location            = var.location
-  resource_group_name = var.resource_group_name
-  sku                 = "Standard"
-  capacity            = 1
+  resource_group_name = data.azurerm_resource_group.data_resource_group.name
+  sku                 = var.sku
+  capacity            = var.capacity
+  zone_redundant      = var.zone_redundant
   tags                = var.default_tags
 }
 
@@ -19,7 +27,7 @@ resource "azurerm_eventhub" "topic" {
   name                = each.key
   namespace_name      = azurerm_eventhub_namespace.eventhubs.name
   resource_group_name = var.resource_group_name
-  partition_count     = 2
+  partition_count     = var.partition_count
   message_retention   = 1
 
   capture_description {
@@ -93,7 +101,7 @@ resource "azurerm_eventhub_consumer_group" "view_consumer_group" {
 
 resource "azurerm_eventhub_consumer_group" "analytics_consumer_group" {
   for_each            = toset(var.topics)
-  name                = "analytics"
+  name                = "analysis"
   namespace_name      = azurerm_eventhub_namespace.eventhubs.name
   eventhub_name       = each.key
   resource_group_name = var.resource_group_name

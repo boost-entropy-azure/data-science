@@ -9,6 +9,41 @@ variable "resource_group_name" {
   default     = "rgdefault"
 }
 
+variable "manage_virtual_network" {
+  description = "Manage the virtual network"
+  type        = bool
+  default     = true
+}
+variable "virtual_network_name" {
+  description = "Virtual Network Name"
+  type        = string
+  default     = "default-vnet"
+}
+
+variable "manage_subnet" {
+  description = "Manage the subnet within the virtual network"
+  type        = bool
+  default     = true
+}
+
+variable "subnet_name" {
+  description = "Subnet Name"
+  type        = string
+  default     = "default-snet"
+}
+
+variable "manage_aks_cluster" {
+  description = "Manage the AKS cluster"
+  type        = bool
+  default     = true
+}
+
+variable "aks_cluster_name" {
+  description = "AKS cluster Name"
+  type        = string
+  default     = "default-aks"
+}
+
 variable "environment" {
   description = "Environment Name"
   type        = string
@@ -69,4 +104,20 @@ variable "aks_api_server_authorized_ip_ranges" {
   type        = set(string)
   description = "A set of CIDR range strings (e.g. 127.117.106.90/29) given access to the Kubernetes cluster API Server (e.g. used by kubectl)."
   default     = []
+}
+
+variable "k8s_subscription_id" {
+  type        = string
+  description = "Separate subscription ID to use for kubernetes resources."
+  default     = ""
+}
+
+variable "remotestate_client_id" {
+  description = "Remote state client id"
+  type        = string
+}
+
+variable "remotestate_client_secret" {
+  description = "Remote state client secret"
+  type        = string
 }

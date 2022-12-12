@@ -14,6 +14,7 @@ module "grafana" {
   cluster_name            = var.cluster_name
   location                = var.location
   environment             = var.environment
+  k8s_subscription_id     = var.k8s_subscription_id
   default_tags            = var.default_tags
   subnet_start_address    = "10.0.1.0"
   subnet_end_address      = "10.0.1.255"

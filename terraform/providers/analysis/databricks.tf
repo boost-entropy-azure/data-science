@@ -1,4 +1,5 @@
 resource "azurerm_databricks_workspace" "analytics" {
+  provider                    = azurerm.k8s
   name                        = join("-", ["workspace", var.cluster_name, var.environment])
   resource_group_name         = var.resource_group_name
   location                    = var.location
